@@ -393,7 +393,7 @@ textarea{resize:vertical;min-height:70px}
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   /* =============================================================
-     🔥 SUAS NOVAS CHAVES DO FIREBASE (PRINTLAB 3D)
+     🔥 SUAS CHAVES DO FIREBASE (PRINTLAB 3D)
   ============================================================= */
   const firebaseConfig = {
     apiKey: "AIzaSyCYbtviQhNFA-h5REyIRNeoXr5LKGBzUKA",
@@ -416,7 +416,14 @@ textarea{resize:vertical;min-height:70px}
     
     // Suas informações do Cloudinary:
     cloudinaryCloudName: 'saemfnk0', 
-    cloudinaryPreset: 'Impressão 3D'
+    cloudinaryPreset: 'Impressão 3D',
+    
+    // ⚠️ SUA CHAVE PIX AQUI
+    pixKey: 'arthurnass@icloud.com',
+
+    // ⚠️ SEU WHATSAPP PARA RECEBER O COMPROVANTE (Com 55 e DDD)
+    // Exemplo: '5511999999999'
+    whatsappAdmin: '5541988896304' 
   };
 
   /* =============================================================
@@ -429,7 +436,7 @@ textarea{resize:vertical;min-height:70px}
   let pendingImage = null;
   let pendingImageFile = null;
   let unsubOrders = null;
-  let isFirstOrdersLoad = true; // Controle para não bipar na primeira vez que abre o painel
+  let isFirstOrdersLoad = true;
 
   /* =============================================================
      HELPERS
@@ -449,25 +456,21 @@ textarea{resize:vertical;min-height:70px}
   }
   const saveCart = () => localStorage.setItem('pl_cart', JSON.stringify(cart));
 
-  // Função para tocar o som de notificação
   function playNotificationSound() {
     try {
       const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
       const oscillator = audioCtx.createOscillator();
       const gainNode = audioCtx.createGain();
       oscillator.type = 'sine';
-      oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // Nota A5
+      oscillator.frequency.setValueAtTime(880, audioCtx.currentTime);
       gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
       oscillator.connect(gainNode);
       gainNode.connect(audioCtx.destination);
       oscillator.start();
       oscillator.stop(audioCtx.currentTime + 0.2);
-    } catch (e) {
-      console.log('Áudio não suportado no navegador.', e);
-    }
+    } catch (e) { console.log('Áudio não suportado.'); }
   }
 
-  // Função para mostrar o Toast na tela
   function showToast(msg) {
     const toast = document.getElementById('toast');
     document.getElementById('toast-msg').textContent = msg;
@@ -493,19 +496,12 @@ textarea{resize:vertical;min-height:70px}
     onSnapshot(collection(db, 'products'),
       snap => {
         products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        renderProducts();
-        renderAdminProducts();
-        renderCart();
-        renderStats();
+        renderProducts(); renderAdminProducts(); renderCart(); renderStats();
       },
       err => {
         console.error('❌ Listener de produtos:', err);
         document.getElementById('product-grid').innerHTML =
-          `<div class="conn-error">
-             Não foi possível carregar os produtos.<br>
-             <small style="opacity:.8">${esc(err.message)}</small><br>
-             <small>Verifique se o Firestore está ativo no seu projeto.</small>
-           </div>`;
+          `<div class="conn-error">Não foi possível carregar os produtos.<br><small>${esc(err.message)}</small></div>`;
       }
     );
   }
@@ -521,7 +517,6 @@ textarea{resize:vertical;min-height:70px}
       snap => {
         const newOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         
-        // Lógica de Notificação (Só roda se não for a primeira vez carregando)
         if (!isFirstOrdersLoad && newOrders.length > 0) {
           const oldIds = orders.map(o => o.id);
           const hasNewOrder = newOrders.some(o => !oldIds.includes(o.id));
@@ -543,11 +538,11 @@ textarea{resize:vertical;min-height:70px}
   function unsubscribeOrders(){
     if(unsubOrders){ unsubOrders(); unsubOrders = null; }
     orders = [];
-    isFirstOrdersLoad = true; // Reseta ao sair
+    isFirstOrdersLoad = true;
   }
 
   /* =============================================================
-     VITRINE
+     VITRINE & CARRINHO
   ============================================================= */
   function renderProducts(){
     const grid = document.getElementById('product-grid');
@@ -573,9 +568,6 @@ textarea{resize:vertical;min-height:70px}
     `).join('');
   }
 
-  /* =============================================================
-     CARRINHO
-  ============================================================= */
   function cartTotal(){
     return cart.reduce((s, ci) => {
       const p = products.find(x => x.id === ci.id);
@@ -692,9 +684,17 @@ textarea{resize:vertical;min-height:70px}
 
       cart = []; saveCart(); renderCart(); form.reset();
 
-      const wa = CONFIG.whatsapp
-        ? waLink(CONFIG.whatsapp, `Novo pedido ${orderId} — ${orderData.customer.name}\nTotal: ${fmt(total)}`)
-        : null;
+      // Mensagem para o CLIENTE enviar para o ADMIN avisando que pagou
+      const msgPagamento = `Olá! Acabei de realizar o pagamento do pedido *${orderId}* via Pix.\n\nSegue o comprovante em anexo. Aguardo as próximas etapas!`;
+      const waPagamento = waLink(CONFIG.whatsappAdmin, msgPagamento);
+
+      const pixHTML = `
+        <div style="background:var(--green-soft); border:1px dashed var(--green); border-radius:12px; padding:16px; margin-top:16px; text-align:center;">
+          <span style="font-size:13px; color:var(--green-dark); font-weight:600; display:block; margin-bottom:4px;">Chave Pix para pagamento</span>
+          <strong style="font-size:16px; color:var(--text);">${esc(CONFIG.pixKey)}</strong>
+          <button class="btn btn-outline btn-sm" style="margin-top:10px; background:#fff;" onclick="navigator.clipboard.writeText('${CONFIG.pixKey}'); this.textContent='Copiado!'; setTimeout(()=>this.textContent='Copiar Chave', 2000)">Copiar Chave</button>
+        </div>
+      `;
 
       document.getElementById('cart-step-3').innerHTML = `
         <div style="text-align:center;padding:30px 0">
@@ -702,8 +702,9 @@ textarea{resize:vertical;min-height:70px}
                       color:var(--green-dark);display:grid;place-items:center;margin:0 auto 18px;font-size:30px">✓</div>
           <h3 style="font-size:20px;margin-bottom:8px">Pedido ${esc(orderId)} enviado!</h3>
           <p class="muted" style="font-size:14px;margin-bottom:22px">
-            Obrigado, ${esc(orderData.customer.name.split(' ')[0])}! Vamos entrar em contato pelo WhatsApp.
+            Obrigado, ${esc(orderData.customer.name.split(' ')[0])}! Seu pedido foi registrado.
           </p>
+          
           <div style="background:var(--bg-soft);border-radius:12px;padding:16px;text-align:left;font-size:14px">
             ${items.map(i => `<div style="display:flex;justify-content:space-between;padding:3px 0">
               <span class="muted">${i.qty}× ${esc(i.name)}</span><span>${fmt(i.price*i.qty)}</span></div>`).join('')}
@@ -712,7 +713,10 @@ textarea{resize:vertical;min-height:70px}
               <span>Total</span><span>${fmt(total)}</span>
             </div>
           </div>
-          ${wa ? `<a href="${wa}" target="_blank" class="btn btn-primary w-full" style="margin-top:18px">Enviar no WhatsApp</a>` : ''}
+
+          ${pixHTML}
+
+          ${waPagamento ? `<a href="${waPagamento}" target="_blank" class="btn btn-primary w-full" style="margin-top:18px; background:#25D366; box-shadow:0 6px 16px rgba(37,211,102,.3);">Já paguei / Enviar Comprovante</a>` : ''}
           <button class="btn btn-ghost w-full" style="margin-top:8px"
                   onclick="closeCart();setCartStep(1)">Continuar comprando</button>
         </div>`;
@@ -755,7 +759,7 @@ textarea{resize:vertical;min-height:70px}
   };
 
   /* =============================================================
-     ADMIN — PEDIDOS
+     ADMIN — PEDIDOS E ATUALIZAÇÃO DE STATUS NO WHATSAPP
   ============================================================= */
   const STATUS = {
     novo:      { label:'Novo',        cls:'st-novo' },
@@ -780,7 +784,10 @@ textarea{resize:vertical;min-height:70px}
     }
     list.innerHTML = filtered.map(o => {
       const st = STATUS[o.status] || STATUS.novo;
-      const wa = waLink(o.customer.phone, `Olá ${o.customer.name.split(' ')[0]}! Sobre seu pedido ${o.orderId || o.id}...`);
+      
+      const msgGeral = `Olá, ${o.customer.name.split(' ')[0]}! Tudo bem?\n\nEstou entrando em contato sobre o seu pedido *${o.orderId || o.id}* na PrintLab 3D.\n\nComo posso te ajudar?`;
+      const wa = waLink(o.customer.phone, msgGeral);
+
       const date = o.createdAt?.toDate ? o.createdAt.toDate().toLocaleString('pt-BR', { dateStyle:'short', timeStyle:'short' }) : '—';
       return `
         <div class="order-card">
@@ -806,17 +813,48 @@ textarea{resize:vertical;min-height:70px}
                 ${Object.entries(STATUS).map(([k,v]) =>
                   `<option value="${k}" ${o.status===k?'selected':''}>${v.label}</option>`).join('')}
               </select>
-              ${wa ? `<a class="wa-btn" href="${wa}" target="_blank">WhatsApp</a>` : ''}
+              ${wa ? `<a class="wa-btn" href="${wa}" target="_blank">Chamar no Zap</a>` : ''}
               <button class="icon-btn danger" title="Excluir" onclick="deleteOrder('${o.id}')">🗑</button>
             </div>
           </div>
         </div>`;
     }).join('');
   };
+
+  // ATUALIZAR STATUS E MANDAR WHATSAPP PARA O CLIENTE
   window.setOrderStatus = async function(id, status){
-    try { await updateDoc(doc(db, 'orders', id), { status }); }
-    catch (e) { console.error(e); alert('Erro: ' + e.message); }
+    try { 
+      await updateDoc(doc(db, 'orders', id), { status }); 
+      
+      // Achar o pedido para pegar o nome e telefone do cliente
+      const o = orders.find(x => x.id === id);
+      if(!o) return;
+      
+      const firstName = o.customer.name.split(' ')[0];
+      const orderId = o.orderId || id;
+      let msg = '';
+
+      // Mensagens profissionais baseadas no status
+      if (status === 'producao') {
+        msg = `Olá, ${firstName}! Tudo bem?\n\nConfirmamos o pagamento do seu pedido *${orderId}*.\nEle já entrou em produção e logo estará pronto! Avisaremos assim que enviarmos. 🎨`;
+      } else if (status === 'enviado') {
+        msg = `Olá, ${firstName}! Tudo bem?\n\nSeu pedido *${orderId}* acabou de ser despachado. 📦\nEm breve você receberá o código de rastreamento para acompanhar a entrega.`;
+      } else if (status === 'concluido') {
+        msg = `Olá, ${firstName}! Tudo bem?\n\nSeu pedido *${orderId}* foi concluído com sucesso! Esperamos que você ame o resultado. 💚\nSe puder, nos marque nas redes sociais mostrando sua peça nova!`;
+      }
+
+      // Se for um status que tem mensagem, abre o WhatsApp Web com o texto pronto
+      if (msg) {
+        const link = waLink(o.customer.phone, msg);
+        if (link) window.open(link, '_blank');
+      }
+
+    } catch (e) { 
+      console.error(e); 
+      alert('Erro: ' + e.message); 
+    }
   };
+
   window.deleteOrder = async function(id){
     if(!confirm('Excluir este pedido?')) return;
     try { await deleteDoc(doc(db, 'orders', id)); }
@@ -931,19 +969,15 @@ textarea{resize:vertical;min-height:70px}
         
         const data = await response.json();
         if (!response.ok) {
-          throw new Error(data.error?.message || 'Erro no upload do Cloudinary. Verifique o Cloud Name e o Preset.');
+          throw new Error(data.error?.message || 'Erro no upload do Cloudinary.');
         }
         imageUrl = data.secure_url;
-        console.log('✓ Upload concluído:', imageUrl);
       }
 
       const productData = { name, description, price, category, image: imageUrl };
       
-      if(id){ 
-        await updateDoc(doc(db, 'products', id), productData); 
-      } else { 
-        await addDoc(collection(db, 'products'), productData); 
-      }
+      if(id){ await updateDoc(doc(db, 'products', id), productData); } 
+      else { await addDoc(collection(db, 'products'), productData); }
       
       resetProductForm();
     } catch (err) {
@@ -957,12 +991,8 @@ textarea{resize:vertical;min-height:70px}
 
   window.deleteProduct = async function(id){
     if(!confirm('Excluir este produto?')) return;
-    try {
-      await deleteDoc(doc(db, 'products', id));
-    } catch (e) {
-      console.error(e);
-      alert('Erro ao excluir produto: ' + e.message);
-    }
+    try { await deleteDoc(doc(db, 'products', id)); } 
+    catch (e) { console.error(e); alert('Erro ao excluir produto: ' + e.message); }
   };
 
   /* =============================================================

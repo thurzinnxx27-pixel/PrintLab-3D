@@ -129,7 +129,6 @@ textarea{resize:vertical;min-height:70px}
 .order-customer .muted{font-size:13px;margin-top:2px}
 .order-items{list-style:none;border-top:1px dashed var(--border);padding-top:12px;margin-bottom:14px}
 .order-items li{display:flex;justify-content:space-between;font-size:13.5px;color:var(--muted);padding:3px 0}
-.order-items li span{color:var(--text);font-weight:600}
 .order-foot{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;border-top:1px solid var(--border);padding-top:14px}
 .order-foot > strong{font-size:16px;font-weight:800;letter-spacing:-.02em}
 .order-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
@@ -789,6 +788,19 @@ textarea{resize:vertical;min-height:70px}
       const wa = waLink(o.customer.phone, msgGeral);
 
       const date = o.createdAt?.toDate ? o.createdAt.toDate().toLocaleString('pt-BR', { dateStyle:'short', timeStyle:'short' }) : '—';
+      
+      // Monta a lista de itens com foto e nome
+      const itemsHTML = o.items.map(i => {
+        const prod = products.find(p => p.id === i.id);
+        const imgUrl = prod ? prod.image : null;
+        return `
+          <li style="display:flex; align-items:center; gap:10px; padding: 8px 0; border-bottom: 1px dashed var(--border);">
+            ${imgUrl ? `<img src="${imgUrl}" style="width:44px; height:44px; border-radius:6px; object-fit:cover;">` : ''}
+            <span style="flex:1; font-weight:600; color:var(--text); font-size:14px;">${i.qty}× ${esc(i.name)}</span>
+            <span style="font-weight:600;">${fmt(i.price*i.qty)}</span>
+          </li>`;
+      }).join('');
+
       return `
         <div class="order-card">
           <div class="order-top">
@@ -798,14 +810,23 @@ textarea{resize:vertical;min-height:70px}
             </div>
             <span class="badge ${st.cls}">${st.label}</span>
           </div>
+          
           <div class="order-customer">
             <strong>${esc(o.customer.name)}</strong> · ${esc(o.customer.phone)}
-            <div class="muted">${esc(o.customer.address)}</div>
-            <div class="muted">Pagamento: ${esc(o.customer.payment)}${o.customer.notes ? ' · Obs: ' + esc(o.customer.notes) : ''}</div>
+            <div class="muted" style="margin-top:4px; font-size:13px; color:var(--text);"><strong>Endereço:</strong> ${esc(o.customer.address)}</div>
+            <div class="muted" style="margin-top:2px; font-size:13px;">Pagamento: ${esc(o.customer.payment)}</div>
+            
+            ${o.customer.notes ? `
+              <div style="margin-top:10px; padding:10px; background:#FFF4E0; border-radius:8px; font-size:13px; color:#A85D00;">
+                <strong>Observações do cliente:</strong><br> ${esc(o.customer.notes)}
+              </div>
+            ` : ''}
           </div>
-          <ul class="order-items">
-            ${o.items.map(i => `<li>${i.qty}× ${esc(i.name)} <span>${fmt(i.price*i.qty)}</span></li>`).join('')}
+
+          <ul class="order-items" style="margin-top:16px; margin-bottom:16px; border-top:none;">
+            ${itemsHTML}
           </ul>
+
           <div class="order-foot">
             <strong>Total: ${fmt(o.total)}</strong>
             <div class="order-actions">
@@ -826,7 +847,6 @@ textarea{resize:vertical;min-height:70px}
     try { 
       await updateDoc(doc(db, 'orders', id), { status }); 
       
-      // Achar o pedido para pegar o nome e telefone do cliente
       const o = orders.find(x => x.id === id);
       if(!o) return;
       
@@ -834,7 +854,6 @@ textarea{resize:vertical;min-height:70px}
       const orderId = o.orderId || id;
       let msg = '';
 
-      // Mensagens profissionais baseadas no status
       if (status === 'producao') {
         msg = `Olá, ${firstName}! Tudo bem?\n\nConfirmamos o pagamento do seu pedido *${orderId}*.\nEle já entrou em produção e logo estará pronto! Avisaremos assim que enviarmos. 🎨`;
       } else if (status === 'enviado') {
@@ -843,7 +862,6 @@ textarea{resize:vertical;min-height:70px}
         msg = `Olá, ${firstName}! Tudo bem?\n\nSeu pedido *${orderId}* foi concluído com sucesso! Esperamos que você ame o resultado. 💚\nSe puder, nos marque nas redes sociais mostrando sua peça nova!`;
       }
 
-      // Se for um status que tem mensagem, abre o WhatsApp Web com o texto pronto
       if (msg) {
         const link = waLink(o.customer.phone, msg);
         if (link) window.open(link, '_blank');

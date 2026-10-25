@@ -156,6 +156,22 @@ textarea{resize:vertical;min-height:70px}
 @keyframes spin{to{transform:rotate(360deg)}}
 .site-footer{border-top:1px solid var(--border);padding:40px 24px;text-align:center;color:var(--muted);font-size:13.5px;background:var(--bg-soft)}
 .site-footer strong{color:var(--text)}
+.admin-secret-link{display:inline-block; margin-top:16px; color:var(--muted); text-decoration:none; font-size:12px; opacity:0.4; transition:opacity 0.2s;}
+.admin-secret-link:hover{opacity:1;}
+
+/* Toast de Notificação */
+.toast {
+  position: fixed; top: 24px; right: 24px; background: #fff;
+  border: 1px solid var(--border); border-left: 4px solid var(--green);
+  padding: 16px 20px; border-radius: 12px; box-shadow: var(--shadow-lg);
+  display: flex; align-items: center; gap: 14px; z-index: 9999;
+  transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+.toast.show { transform: translateX(0); }
+.toast-icon { font-size: 24px; }
+.toast-text strong { display: block; font-size: 15px; color: var(--text); margin-bottom: 2px;}
+.toast-text span { font-size: 13.5px; color: var(--muted); }
+
 @media(max-width:860px){
   .admin-grid{grid-template-columns:1fr}
   .hero{padding:64px 20px 60px}
@@ -167,10 +183,21 @@ textarea{resize:vertical;min-height:70px}
   .container{padding:0 16px}
   .cart-btn{padding:9px 14px;font-size:14px}
   .stats{grid-template-columns:repeat(2,1fr)}
+  .toast { top: 10px; right: 10px; left: 10px; transform: translateY(-120%); }
+  .toast.show { transform: translateY(0); }
 }
 </style>
 </head>
 <body>
+
+<!-- Alerta Visual de Novo Pedido -->
+<div id="toast" class="toast">
+  <div class="toast-icon">🔔</div>
+  <div class="toast-text">
+    <strong>Novo Pedido Recebido!</strong>
+    <span id="toast-msg">Confira no painel</span>
+  </div>
+</div>
 
 <header class="site-header">
   <div class="header-inner">
@@ -184,7 +211,6 @@ textarea{resize:vertical;min-height:70px}
     </a>
     <nav class="nav">
       <button class="nav-link" onclick="showView('store')">Loja</button>
-      <button class="nav-link" onclick="showView('admin')">Admin</button>
       <button class="btn btn-primary cart-btn" onclick="openCart()">
         Carrinho <span class="badge-count" id="cart-count">0</span>
       </button>
@@ -200,7 +226,6 @@ textarea{resize:vertical;min-height:70px}
       <p class="hero-sub">Decoração, utilidades e presentes personalizados com acabamento profissional. Escolha seu modelo e faça o pedido em minutos.</p>
       <div class="hero-actions">
         <a href="#produtos" class="btn btn-primary btn-lg">Ver produtos</a>
-        <button class="btn btn-outline btn-lg" onclick="showView('admin')">Painel do admin</button>
       </div>
       <div class="hero-trust">
         <span>✓ Feito sob demanda</span>
@@ -228,6 +253,9 @@ textarea{resize:vertical;min-height:70px}
 <main id="view-admin" class="hidden">
   <div class="container admin-wrap">
     <div id="admin-login" class="auth-card">
+      <div style="margin-bottom: 20px;">
+        <button class="btn btn-ghost btn-sm" onclick="showView('store')" style="padding-left:0; color:var(--green-dark)">← Voltar para a Loja</button>
+      </div>
       <h2>Área do administrador</h2>
       <p class="muted">Acesse para gerenciar pedidos e produtos.</p>
       <label class="field">
@@ -245,7 +273,10 @@ textarea{resize:vertical;min-height:70px}
           <h2>Painel</h2>
           <p class="muted">Gerencie seus pedidos e produtos em tempo real.</p>
         </div>
-        <button class="btn btn-outline" onclick="logout()">Sair</button>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-ghost" onclick="showView('store')">Ver Loja</button>
+          <button class="btn btn-outline" onclick="logout()">Sair</button>
+        </div>
       </div>
 
       <div class="stats">
@@ -319,7 +350,9 @@ textarea{resize:vertical;min-height:70px}
 
 <footer class="site-footer">
   <strong data-store-name>PrintLab 3D</strong> · Impressão 3D sob medida<br>
-  <span style="font-size:12.5px">Feito com carinho, camada por camada 💚</span>
+  <span style="font-size:12.5px">Feito com carinho, camada por camada 💚</span><br>
+  <!-- Acesso restrito ao admin -->
+  <a href="#" class="admin-secret-link" onclick="showView('admin');return false;">Acesso Restrito</a>
 </footer>
 
 <div class="overlay" id="overlay" onclick="closeCart()"></div>
@@ -360,22 +393,22 @@ textarea{resize:vertical;min-height:70px}
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
   /* =============================================================
-     🔥 CONFIGURAÇÃO DO FIREBASE (BANCO DE DADOS)
+     🔥 SUAS NOVAS CHAVES DO FIREBASE (PRINTLAB 3D)
   ============================================================= */
   const firebaseConfig = {
-    apiKey: "AIzaSyCx2cSJAH9L6xgLM_HTRFbPI6_UCt7Dr1o",
-    authDomain: "design-lab-natal.firebaseapp.com",
-    projectId: "design-lab-natal",
-    storageBucket: "design-lab-natal.firebasestorage.app",
-    messagingSenderId: "343066883459",
-    appId: "1:343066883459:web:0694089ca85082f1e072b6"
+    apiKey: "AIzaSyCYbtviQhNFA-h5REyIRNeoXr5LKGBzUKA",
+    authDomain: "printlab-3d-15611.firebaseapp.com",
+    projectId: "printlab-3d-15611",
+    storageBucket: "printlab-3d-15611.firebasestorage.app",
+    messagingSenderId: "54439366409",
+    appId: "1:54439366409:web:4446f135e89365c3160dd8"
   };
 
   const app = initializeApp(firebaseConfig);
   const db  = getFirestore(app);
 
   /* =============================================================
-     ⚙️ CONFIGURAÇÕES GERAIS E CLOUDINARY (FOTOS)
+     ⚙️ CONFIGURAÇÕES GERAIS E CLOUDINARY
   ============================================================= */
   const CONFIG = {
     storeName: 'PrintLab 3D',
@@ -396,6 +429,7 @@ textarea{resize:vertical;min-height:70px}
   let pendingImage = null;
   let pendingImageFile = null;
   let unsubOrders = null;
+  let isFirstOrdersLoad = true; // Controle para não bipar na primeira vez que abre o painel
 
   /* =============================================================
      HELPERS
@@ -414,6 +448,32 @@ textarea{resize:vertical;min-height:70px}
     return `https://wa.me/${d}${text ? '?text=' + encodeURIComponent(text) : ''}`;
   }
   const saveCart = () => localStorage.setItem('pl_cart', JSON.stringify(cart));
+
+  // Função para tocar o som de notificação
+  function playNotificationSound() {
+    try {
+      const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      const oscillator = audioCtx.createOscillator();
+      const gainNode = audioCtx.createGain();
+      oscillator.type = 'sine';
+      oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // Nota A5
+      gainNode.gain.setValueAtTime(0.5, audioCtx.currentTime);
+      oscillator.connect(gainNode);
+      gainNode.connect(audioCtx.destination);
+      oscillator.start();
+      oscillator.stop(audioCtx.currentTime + 0.2);
+    } catch (e) {
+      console.log('Áudio não suportado no navegador.', e);
+    }
+  }
+
+  // Função para mostrar o Toast na tela
+  function showToast(msg) {
+    const toast = document.getElementById('toast');
+    document.getElementById('toast-msg').textContent = msg;
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 5000);
+  }
 
   /* =============================================================
      NAVEGAÇÃO
@@ -444,23 +504,38 @@ textarea{resize:vertical;min-height:70px}
           `<div class="conn-error">
              Não foi possível carregar os produtos.<br>
              <small style="opacity:.8">${esc(err.message)}</small><br>
-             <small>Verifique se o Firestore está ativo no seu projeto <strong>design-lab-natal</strong>.</small>
+             <small>Verifique se o Firestore está ativo no seu projeto.</small>
            </div>`;
       }
     );
   }
 
   /* =============================================================
-     TEMPO REAL — PEDIDOS (FIRESTORE)
+     TEMPO REAL — PEDIDOS (FIRESTORE) E NOTIFICAÇÃO
   ============================================================= */
   function subscribeOrders(){
     if(unsubOrders) return;
     const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
+    
     unsubOrders = onSnapshot(q,
       snap => {
-        orders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        const newOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+        
+        // Lógica de Notificação (Só roda se não for a primeira vez carregando)
+        if (!isFirstOrdersLoad && newOrders.length > 0) {
+          const oldIds = orders.map(o => o.id);
+          const hasNewOrder = newOrders.some(o => !oldIds.includes(o.id));
+          
+          if (hasNewOrder) {
+            playNotificationSound();
+            showToast(`Pedido de ${newOrders[0].customer.name.split(' ')[0]} acabou de chegar!`);
+          }
+        }
+        
+        orders = newOrders;
         renderAdminOrders();
         renderStats();
+        isFirstOrdersLoad = false;
       },
       err => console.error('❌ Listener de pedidos:', err)
     );
@@ -468,6 +543,7 @@ textarea{resize:vertical;min-height:70px}
   function unsubscribeOrders(){
     if(unsubOrders){ unsubOrders(); unsubOrders = null; }
     orders = [];
+    isFirstOrdersLoad = true; // Reseta ao sair
   }
 
   /* =============================================================
@@ -842,7 +918,6 @@ textarea{resize:vertical;min-height:70px}
     try {
       let imageUrl = pendingImage;
 
-      // Se há um novo arquivo, faz o upload para o Cloudinary
       if(pendingImageFile){
         console.log('📤 Enviando imagem para o Cloudinary...');
         const formData = new FormData();
@@ -883,8 +958,6 @@ textarea{resize:vertical;min-height:70px}
   window.deleteProduct = async function(id){
     if(!confirm('Excluir este produto?')) return;
     try {
-      // Obs: O Cloudinary não permite deletar imagens pelo frontend sem expor a chave secreta.
-      // Portanto, a imagem ficará salva lá (o que é seguro), mas o produto sairá da loja.
       await deleteDoc(doc(db, 'products', id));
     } catch (e) {
       console.error(e);

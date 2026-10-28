@@ -71,16 +71,8 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);ba
 .testimonial-author { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; }
 .testimonial-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--green-soft); display: grid; place-items: center; font-size: 18px; }
 
-/* MODAL DE AVALIAÇÃO */
-.star-rating { font-size: 32px; color: #d1d5db; cursor: pointer; display: flex; gap: 5px; justify-content: center; margin-bottom: 16px; }
-.star-rating .active { color: #F59E0B; }
-
 /* Aviso A1 Mini */
-.a1-warning {
-  background: #FFF4E0; border: 1px solid #FFD699; border-left: 4px solid #F59E0B;
-  padding: 16px; border-radius: 12px; display: flex; align-items: center; gap: 12px;
-  margin-top: 24px; margin-bottom: -24px;
-}
+.a1-warning { background: #FFF4E0; border: 1px solid #FFD699; border-left: 4px solid #F59E0B; padding: 16px; border-radius: 12px; display: flex; align-items: center; gap: 12px; margin-top: 24px; margin-bottom: -24px; }
 .a1-warning-icon { font-size: 24px; }
 .a1-warning-text strong { color: #B45309; display: block; margin-bottom: 2px; }
 .a1-warning-text span { color: #92400E; font-size: 14px; }
@@ -129,6 +121,8 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);ba
 .review-modal-content h2 { font-size: 22px; margin-bottom: 8px; }
 .review-modal-content textarea { width: 100%; min-height: 100px; margin-bottom: 20px; padding: 12px; border: 1px solid var(--border); border-radius: 12px; font-family: inherit; resize: vertical; }
 .review-modal-content .btn { width: 100%; padding: 14px; }
+.star-rating { font-size: 32px; color: #d1d5db; cursor: pointer; display: flex; gap: 5px; justify-content: center; margin-bottom: 16px; }
+.star-rating .active { color: #F59E0B; }
 
 @media (max-width: 768px) { .modal-content { grid-template-columns: 1fr; } .modal-img { min-height: 200px; border-radius: 20px 20px 0 0; } .modal-info { padding: 24px; } }
 
@@ -308,7 +302,7 @@ textarea{resize:vertical;min-height:70px}
   </div>
 </header>
 
-<!-- Botão Flutuante do WhatsApp (Número Atualizado) -->
+<!-- Botão Flutuante do WhatsApp -->
 <a href="https://wa.me/5541988896304?text=Ol%C3%A1!%20Gostaria%20de%20tirar%20uma%20d%C3%BAvida." target="_blank" class="wa-float" title="Fale comigo no WhatsApp">
   <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
 </a>
@@ -330,7 +324,6 @@ textarea{resize:vertical;min-height:70px}
     </div>
   </section>
 
-  <!-- COMO FUNCIONA -->
   <section class="how-it-works">
     <div class="container">
       <div class="section-head fade-in" style="justify-content: center; text-align: center;">
@@ -359,7 +352,6 @@ textarea{resize:vertical;min-height:70px}
     </div>
   </section>
 
-  <!-- DEPOIMENTOS -->
   <section class="testimonials">
     <div class="container">
       <div class="section-head fade-in" style="justify-content: center; text-align: center;">
@@ -370,7 +362,6 @@ textarea{resize:vertical;min-height:70px}
       </div>
       
       <div class="testimonials-grid" id="testimonials-grid">
-        <!-- Os depoimentos vão aparecer aqui via JS -->
         <div class="empty fade-in" style="grid-column: 1 / -1;">
           Nenhuma avaliação ainda. Seja o primeiro a comprar e avaliar! 💚
         </div>
@@ -379,7 +370,6 @@ textarea{resize:vertical;min-height:70px}
   </section>
 
   <div class="container" id="produtos">
-    <!-- AVISO A1 MINI -->
     <div class="a1-warning fade-in" style="margin-top: 64px;">
       <div class="a1-warning-icon">⚠️</div>
       <div class="a1-warning-text">
@@ -404,7 +394,6 @@ textarea{resize:vertical;min-height:70px}
     </div>
   </div>
 
-  <!-- FAQ -->
   <section class="faq-section">
     <div class="container">
       <div class="section-head fade-in" style="justify-content: center; text-align: center;">
@@ -430,7 +419,6 @@ textarea{resize:vertical;min-height:70px}
     </div>
   </section>
 
-  <!-- MAKERWORLD -->
   <div class="makerworld-section">
     <div class="makerworld-card fade-in">
       <h2>Não encontrou o que procura?</h2>
@@ -450,7 +438,6 @@ textarea{resize:vertical;min-height:70px}
   </div>
 </main>
 
-<!-- MODAL DE PRODUTO -->
 <div class="modal-overlay" id="product-modal" onclick="closeModal(event)">
   <div class="modal-content" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeModal(event)">✕</button>
@@ -465,7 +452,6 @@ textarea{resize:vertical;min-height:70px}
   </div>
 </div>
 
-<!-- MODAL DE AVALIAÇÃO -->
 <div class="modal-overlay" id="review-modal" onclick="closeReviewModal(event)">
   <div class="modal-content review-modal-content" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeReviewModal(event)">✕</button>
@@ -745,7 +731,7 @@ textarea{resize:vertical;min-height:70px}
     cloudinaryCloudName: 'saemfnk0', 
     cloudinaryPreset: 'Impressão 3D',
     pixKey: 'arthurnass@icloud.com',
-    whatsappAdmin: '5541988896304' // ✅ SEU NÚMERO ATUALIZADO AQUI
+    whatsappAdmin: '5541988896304' 
   };
 
   let products = [];
@@ -1314,6 +1300,15 @@ textarea{resize:vertical;min-height:70px}
   window.onPrimaryClick = function(){
     if(cartStep === 1){ 
       if(!cart.length) return; 
+      
+      // CORREÇÃO: OBRIGAR LOGIN PARA EVITAR PEDIDOS FANTASMAS
+      if(!currentUser) {
+        alert("Para finalizar a compra e acompanhar seu pedido, por favor crie uma conta ou faça login.");
+        closeCart();
+        showView('account');
+        return;
+      }
+
       setCartStep(2); 
       
       if(currentUserProfile) {
@@ -1341,13 +1336,6 @@ textarea{resize:vertical;min-height:70px}
     const form = document.getElementById('checkout-form');
     if(!form.checkValidity()){ form.reportValidity(); return; }
 
-    if(!currentUser) {
-      if(confirm("Para acompanhar seu pedido pelo site, recomendo criar uma conta ou entrar. Deseja continuar como visitante?")) {
-      } else {
-        closeCart(); showView('account'); return;
-      }
-    }
-
     const btn = document.getElementById('cart-primary-btn');
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Enviando…';
@@ -1371,11 +1359,11 @@ textarea{resize:vertical;min-height:70px}
     const addressString = `${addressDetails.street}, ${addressDetails.number}${addressDetails.complement ? ' - ' + addressDetails.complement : ''} - ${addressDetails.neighborhood}, ${addressDetails.city} - ${addressDetails.state}, CEP: ${addressDetails.cep}`;
 
     const orderData = {
-      userId: currentUser ? currentUser.uid : null,
+      userId: currentUser.uid, // Garantido que não é nulo
       customer: {
         name:     document.getElementById('c-name').value.trim(),
         phone:    document.getElementById('c-phone').value.trim(),
-        email:    currentUser ? currentUser.email : '',
+        email:    currentUser.email,
         address:  addressString,
         addressDetails: addressDetails, 
         payment:  document.getElementById('c-payment').value,
@@ -1517,7 +1505,7 @@ textarea{resize:vertical;min-height:70px}
             <div>
               <span class="order-id">${esc(o.orderId || o.id)}</span>
               <span class="order-date">${date}</span>
-              ${o.userId ? `<span class="badge" style="background:#E6F9EE; color:#007A2F; margin-left:10px;">Cliente Cadastrado</span>` : ''}
+              ${o.userId ? `<span class="badge" style="background:#E6F9EE; color:#007A2F; margin-left:10px;">Cliente</span>` : ''}
             </div>
             <span class="badge ${st.cls}">${st.label}</span>
           </div>
@@ -1579,7 +1567,7 @@ textarea{resize:vertical;min-height:70px}
 
     } catch (e) { 
       console.error(e); 
-      alert('Erro: ' + e.message); 
+      alert('Erro ao atualizar status: ' + e.message); 
     }
   };
 

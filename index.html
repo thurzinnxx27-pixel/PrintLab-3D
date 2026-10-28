@@ -63,7 +63,8 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);ba
 
 .about-section { padding: 64px 24px; background: #fff; border-bottom: 1px solid var(--border); }
 .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; max-width: 1000px; margin: 0 auto; align-items: center; }
-.about-img { width: 100%; border-radius: 24px; box-shadow: var(--shadow-md); aspect-ratio: 1; object-fit: cover; background: var(--bg-soft); display: grid; place-items: center; color: var(--muted); font-size: 48px; }
+.about-img { width: 100%; border-radius: 24px; box-shadow: var(--shadow-md); aspect-ratio: 1; object-fit: cover; background: var(--bg-soft); display: grid; place-items: center; color: var(--muted); font-size: 48px; overflow: hidden; padding: 0; }
+.about-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
 .about-text h2 { font-size: 32px; font-weight: 800; margin-bottom: 16px; letter-spacing: -.03em; }
 .about-text p { font-size: 16px; color: var(--muted); line-height: 1.7; margin-bottom: 16px; }
 @media(max-width: 768px) { .about-grid { grid-template-columns: 1fr; gap: 24px; } .about-img { max-width: 300px; margin: 0 auto; } }
@@ -112,7 +113,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);ba
 
 .badge-sold-out { position: absolute; top: 10px; left: 10px; background: #E5484D; color: #fff; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.05em; z-index: 10;}
 
-/* SELOS DO PRODUTO */
 .product-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
 .badge-eco { background: #ECFDF5; color: #047857; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid #A7F3D0; }
 .badge-handmade { background: #FDF4FF; color: #86198F; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid #F5D0FE; }
@@ -127,7 +127,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);ba
 .modal-info .desc { color: var(--muted); font-size: 15px; line-height: 1.6; margin-bottom: 24px; flex: 1; }
 .modal-info .price-tag { font-size: 28px; font-weight: 800; margin-bottom: 20px; }
 
-/* GALERIA DE IMAGENS */
 .modal-gallery { display: flex; flex-direction: column; background: var(--bg-soft); border-radius: 20px 0 0 20px; padding: 20px; gap: 12px; }
 .modal-main-img { width: 100%; aspect-ratio: 1; border-radius: 12px; object-fit: cover; background: #fff; box-shadow: var(--shadow-sm); }
 .modal-thumbs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: none; }
@@ -391,10 +390,13 @@ textarea{resize:vertical;min-height:70px}
     </div>
   </section>
 
+  <!-- SOBRE MIM COM A SUA FOTO -->
   <section class="about-section" id="sobre">
     <div class="container">
       <div class="about-grid fade-in">
-        <div class="about-img">📸<br><span style="font-size:16px; font-weight:600; margin-top:10px;">Sua Foto Aqui</span></div>
+        <div class="about-img">
+          <img src="https://res.cloudinary.com/saemfnk0/image/upload/1B232EDD-3268-40FC-9F59-A36D971F85C5.png" alt="Arthur Nass">
+        </div>
         <div class="about-text">
           <h2>Olá, eu sou o Arthur!</h2>
           <p>A PrintLab 3D nasceu da minha paixão por criar coisas incríveis, camada por camada. Tudo começou como um hobby com a minha Bambu Lab A1 mini, e hoje é o meu jeito de transformar ideias em realidade.</p>
@@ -494,7 +496,6 @@ textarea{resize:vertical;min-height:70px}
   <div class="modal-content" onclick="event.stopPropagation()">
     <button class="modal-close" onclick="closeModal(event)">✕</button>
     
-    <!-- GALERIA DE IMAGENS -->
     <div class="modal-gallery">
       <img id="modal-main-img" class="modal-main-img" src="" alt="">
       <div class="modal-thumbs" id="modal-thumbs"></div>
@@ -874,9 +875,8 @@ textarea{resize:vertical;min-height:70px}
   let cart     = JSON.parse(localStorage.getItem('pl_cart') || '[]');
   let cartStep = 1;
   
-  // Para múltiplas imagens
-  let pendingImages = []; // Array de base64 para preview
-  let pendingFiles = [];  // Array de File para upload
+  let pendingImages = []; 
+  let pendingFiles = [];  
   
   let unsubOrders = null;
   let unsubMyOrders = null;
@@ -1354,7 +1354,6 @@ textarea{resize:vertical;min-height:70px}
         </div>
       `;
 
-      // Capa é a primeira imagem do array
       const coverImage = p.images && p.images.length > 0 ? p.images[0] : null;
 
       return `
@@ -1381,7 +1380,6 @@ textarea{resize:vertical;min-height:70px}
     }, 50);
   }
 
-  // MODAL LOGIC
   window.openModal = function(id) {
     const p = products.find(x => x.id === id);
     if(!p) return;
@@ -1390,7 +1388,6 @@ textarea{resize:vertical;min-height:70px}
     activeModalSize = null;
     activeModalPrice = p.price;
     
-    // Configura Galeria de Fotos
     const mainImg = document.getElementById('modal-main-img');
     const thumbsContainer = document.getElementById('modal-thumbs');
     
@@ -1417,7 +1414,6 @@ textarea{resize:vertical;min-height:70px}
     document.getElementById('modal-desc').textContent = p.description || 'Nenhuma descrição detalhada fornecida.';
     document.getElementById('modal-price').textContent = fmt(activeModalPrice);
 
-    // Configura botão
     const addBtn = document.getElementById('modal-add-btn');
     if(p.soldOut) {
        addBtn.textContent = 'Produto Esgotado';
@@ -1431,7 +1427,6 @@ textarea{resize:vertical;min-height:70px}
        addBtn.style.cursor = 'pointer';
     }
 
-    // Configura Selos
     const badgesContainer = document.getElementById('modal-badges');
     badgesContainer.innerHTML = '';
     badgesContainer.classList.add('hidden');
@@ -1441,7 +1436,6 @@ textarea{resize:vertical;min-height:70px}
       if(p.isHandmade) badgesContainer.innerHTML += `<span class="badge-handmade">✋ Feito à Mão</span>`;
     }
 
-    // Configura Cores
     const colorsContainer = document.getElementById('modal-colors-container');
     const colorsList = document.getElementById('modal-colors');
     if (p.colors && p.colors.trim() !== '') {
@@ -1456,7 +1450,6 @@ textarea{resize:vertical;min-height:70px}
       activeModalColor = 'Padrão';
     }
 
-    // Configura Tamanhos
     const sizesContainer = document.getElementById('modal-sizes-container');
     const sizesList = document.getElementById('modal-sizes');
     if (p.sizes && p.sizes.trim() !== '') {
@@ -2006,14 +1999,9 @@ textarea{resize:vertical;min-height:70px}
     `}).join('');
   }
 
-  // LÓGICA DE MÚLTIPLAS IMAGENS
   window.handleImages = function(e){
     const files = Array.from(e.target.files);
     if(!files.length) return;
-    
-    // Se estiver criando um novo produto, limpa o array. Se estiver editando, mantém as antigas?
-    // Para simplificar, sempre que escolher novas imagens, ele adiciona.
-    // Se quiser substituir todas, podemos resetar.
     
     files.forEach(file => {
       pendingFiles.push(file);
@@ -2096,7 +2084,7 @@ textarea{resize:vertical;min-height:70px}
     document.getElementById('p-sold-out').checked = p.soldOut || false;
     
     pendingImages = p.images ? [...p.images] : [];
-    pendingFiles = []; // Novos uploads serão adicionados no array de files
+    pendingFiles = [];
     renderImagePreviews();
     
     document.getElementById('product-form-title').textContent = 'Editar produto';
@@ -2123,18 +2111,11 @@ textarea{resize:vertical;min-height:70px}
     btn.innerHTML = '<span class="spinner"></span> Salvando…';
 
     try {
-      let finalImages = [...pendingImages]; // Começa com as que já existem ou foram pré-visualizadas
+      let finalImages = [...pendingImages]; 
 
-      // Se tem novos arquivos de imagem, envia para o Cloudinary
       if(pendingFiles.length > 0) {
         console.log(`📤 Enviando ${pendingFiles.length} imagens para o Cloudinary...`);
         
-        // Remove as imagens em base64 que ainda não foram para o Cloudinary para não duplicar
-        // Mas se o user editou e manteve as antigas, o array pendingImages já tem as URLs.
-        // O segredo é: sempre que um novo upload acontece, adicionamos a URL final ao array.
-        
-        // Esta lógica pode ficar confusa. A forma segura é:
-        // Vamos limpar o array final e reconstruir:
         let uploadedUrls = pendingImages.filter(img => img.startsWith('http')); 
         
         for(let i = 0; i < pendingFiles.length; i++) {
@@ -2260,4 +2241,4 @@ textarea{resize:vertical;min-height:70px}
   init();
 </script>
 </body>
-</html>
+      </html>

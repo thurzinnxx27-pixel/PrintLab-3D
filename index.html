@@ -96,6 +96,17 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);ba
 .field{display:block;margin-bottom:14px}
 .field > span{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px}
 input,select,textarea{width:100%;font-family:inherit;font-size:14.5px;color:var(--text);padding:11px 13px;border:1px solid var(--border);border-radius:11px;background:#fff;transition:.2s;outline:none}
+
+/* CORREÇÃO DO AUTO-PREENCHIMENTO (AUTOFILL) */
+input:-webkit-autofill,
+input:-webkit-autofill:hover, 
+input:-webkit-autofill:focus, 
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 30px white inset !important;
+    -webkit-text-fill-color: var(--text) !important;
+    transition: background-color 5000s ease-in-out 0s;
+}
+
 input:focus,select:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px rgba(0,174,66,.14)}
 textarea{resize:vertical;min-height:70px}
 .error{color:var(--danger);font-size:13px;margin-top:10px;min-height:18px}
@@ -547,8 +558,8 @@ textarea{resize:vertical;min-height:70px}
   let unsubMyOrders = null;
   let isFirstOrdersLoad = true;
   
-  let currentUser = null;        // Usuário logado no Auth
-  let currentUserProfile = null; // Dados do endereço puxados do Firestore
+  let currentUser = null;        
+  let currentUserProfile = null; 
 
   /* =============================================================
      MÁSCARAS DE FORMATAÇÃO
@@ -665,7 +676,6 @@ textarea{resize:vertical;min-height:70px}
     e.preventDefault();
     const btn = document.getElementById('btn-do-register');
     
-    // Pega todos os dados do formulário
     const name = document.getElementById('reg-name').value;
     const email = document.getElementById('reg-email').value;
     const pass = document.getElementById('reg-pass').value;
@@ -681,14 +691,11 @@ textarea{resize:vertical;min-height:70px}
     btn.disabled = true; btn.textContent = 'Criando conta...';
     
     try {
-      // 1. Cria o usuário no Auth
       const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
       const user = userCredential.user;
       
-      // 2. Atualiza o nome no perfil do Auth
       await updateProfile(user, { displayName: name });
       
-      // 3. Salva os dados de endereço no Firestore (coleção 'users')
       await setDoc(doc(db, 'users', user.uid), {
         name, email, phone, cep, state, street, number, complement, neighborhood, city
       });
@@ -724,7 +731,6 @@ textarea{resize:vertical;min-height:70px}
     }
   }
 
-  // Monitora o estado de login do Firebase e puxa o perfil de endereço
   onAuthStateChanged(auth, async (user) => {
     currentUser = user;
     const navBtn = document.getElementById('nav-account-btn');
@@ -734,7 +740,6 @@ textarea{resize:vertical;min-height:70px}
       navBtn.style.color = 'var(--green-dark)';
       navBtn.style.fontWeight = '700';
       
-      // Puxa o endereço salvo no Firestore
       try {
         const docSnap = await getDoc(doc(db, 'users', user.uid));
         if (docSnap.exists()) {
@@ -953,13 +958,11 @@ textarea{resize:vertical;min-height:70px}
     updateCartFooter();
   };
   
-  // AQUI ACONTECE A MÁGICA DE PREENCHER OS DADOS
   window.onPrimaryClick = function(){
     if(cartStep === 1){ 
       if(!cart.length) return; 
       setCartStep(2); 
       
-      // Se o cliente estiver logado, preenche tudo automaticamente!
       if(currentUserProfile) {
         document.getElementById('c-name').value = currentUserProfile.name || '';
         document.getElementById('c-phone').value = currentUserProfile.phone || '';
@@ -971,7 +974,6 @@ textarea{resize:vertical;min-height:70px}
         document.getElementById('c-neighborhood').value = currentUserProfile.neighborhood || '';
         document.getElementById('c-city').value = currentUserProfile.city || '';
       } else if(currentUser) {
-        // Se estiver logado mas não tiver perfil salvo (ex: conta antiga)
         document.getElementById('c-name').value = currentUser.displayName || '';
       }
     }

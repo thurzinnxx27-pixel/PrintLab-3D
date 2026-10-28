@@ -61,7 +61,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);ba
 .how-step h3 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
 .how-step p { color: var(--muted); font-size: 14.5px; }
 
-/* SOBRE MIM */
 .about-section { padding: 64px 24px; background: #fff; border-bottom: 1px solid var(--border); }
 .about-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; max-width: 1000px; margin: 0 auto; align-items: center; }
 .about-img { width: 100%; border-radius: 24px; box-shadow: var(--shadow-md); aspect-ratio: 1; object-fit: cover; background: var(--bg-soft); display: grid; place-items: center; color: var(--muted); font-size: 48px; }
@@ -111,8 +110,12 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);ba
 .price{font-size:18px;font-weight:800;letter-spacing:-.02em}
 .empty{text-align:center;padding:60px 20px;color:var(--muted);border:1.5px dashed var(--border);border-radius:var(--radius)}
 
-/* SELO ESGOTADO */
 .badge-sold-out { position: absolute; top: 10px; left: 10px; background: #E5484D; color: #fff; font-size: 11px; font-weight: 800; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 0.05em; z-index: 10;}
+
+/* SELOS DO PRODUTO */
+.product-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 10px; }
+.badge-eco { background: #ECFDF5; color: #047857; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid #A7F3D0; }
+.badge-handmade { background: #FDF4FF; color: #86198F; font-size: 10px; font-weight: 700; padding: 3px 8px; border-radius: 6px; display: inline-flex; align-items: center; gap: 4px; text-transform: uppercase; letter-spacing: 0.05em; border: 1px solid #F5D0FE; }
 
 .modal-overlay { position: fixed; inset: 0; background: rgba(15,20,25,.6); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(4px); }
 .modal-overlay.open { opacity: 1; pointer-events: auto; }
@@ -125,10 +128,10 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);ba
 .modal-info .desc { color: var(--muted); font-size: 15px; line-height: 1.6; margin-bottom: 24px; flex: 1; }
 .modal-info .price-tag { font-size: 28px; font-weight: 800; margin-bottom: 20px; }
 
-.color-selector { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
-.color-option { padding: 8px 16px; border: 1px solid var(--border); border-radius: 999px; font-size: 14px; font-weight: 600; cursor: pointer; background: #fff; transition: 0.2s; }
-.color-option:hover { border-color: var(--green); }
-.color-option.selected { background: var(--green-soft); border-color: var(--green); color: var(--green-dark); }
+.color-selector, .size-selector { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.color-option, .size-option { padding: 8px 16px; border: 1px solid var(--border); border-radius: 999px; font-size: 14px; font-weight: 600; cursor: pointer; background: #fff; transition: 0.2s; }
+.color-option:hover, .size-option:hover { border-color: var(--green); }
+.color-option.selected, .size-option.selected { background: var(--green-soft); border-color: var(--green); color: var(--green-dark); }
 
 .review-modal-content { display: block !important; max-width: 500px !important; padding: 30px; text-align: center; }
 .review-modal-content h2 { font-size: 22px; margin-bottom: 8px; }
@@ -271,7 +274,6 @@ textarea{resize:vertical;min-height:70px}
 .express-box-text { font-size: 13px; color: #B45309; font-weight: 600; line-height: 1.3; }
 .express-box-text span { display: block; font-size: 11px; font-weight: 400; color: #D97706; }
 
-/* PAUSAR LOJA */
 .store-paused-banner { background: #FEECEC; color: #B42318; text-align: center; padding: 10px; font-weight: 600; font-size: 14px; border-bottom: 1px solid #F8C9CA; }
 
 @media(max-width:860px){
@@ -377,7 +379,6 @@ textarea{resize:vertical;min-height:70px}
     </div>
   </section>
 
-  <!-- SOBRE MIM -->
   <section class="about-section" id="sobre">
     <div class="container">
       <div class="about-grid fade-in">
@@ -488,9 +489,19 @@ textarea{resize:vertical;min-height:70px}
       <h2 id="modal-title"></h2>
       <p class="desc" id="modal-desc"></p>
       
+      <!-- SELOS -->
+      <div id="modal-badges" class="product-badges hidden"></div>
+
+      <!-- CORES -->
       <div id="modal-colors-container" class="hidden">
         <span style="font-size:13px; font-weight:600; display:block; margin-bottom:8px;">Escolha a cor:</span>
         <div class="color-selector" id="modal-colors"></div>
+      </div>
+
+      <!-- TAMANHOS -->
+      <div id="modal-sizes-container" class="hidden">
+        <span style="font-size:13px; font-weight:600; display:block; margin-bottom:8px;">Escolha o tamanho:</span>
+        <div class="size-selector" id="modal-sizes"></div>
       </div>
 
       <div class="price-tag" id="modal-price"></div>
@@ -671,7 +682,7 @@ textarea{resize:vertical;min-height:70px}
               </label>
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                 <label class="field">
-                  <span>Preço (R$) *</span>
+                  <span>Preço Base (R$) *</span>
                   <input id="p-price" type="number" step="0.01" min="0" required placeholder="79.90">
                 </label>
                 <label class="field">
@@ -680,9 +691,25 @@ textarea{resize:vertical;min-height:70px}
                 </label>
               </div>
               <label class="field">
-                <span>Cores Disponíveis</span>
-                <input id="p-colors" placeholder="Ex: Preto, Branco, Azul (separados por vírgula)">
+                <span>Cores (separadas por vírgula)</span>
+                <input id="p-colors" placeholder="Ex: Preto, Branco, Azul">
               </label>
+              <label class="field">
+                <span>Tamanhos e Preços (opcional)</span>
+                <input id="p-sizes" placeholder="Ex: P: 50.00, M: 80.00, G: 100.00">
+              </label>
+              
+              <div style="display:flex; gap:16px; margin-bottom:14px; flex-wrap:wrap;">
+                <label class="field" style="display:flex; align-items:center; gap:8px; cursor:pointer; margin-bottom:0;">
+                  <input type="checkbox" id="p-eco" style="width:auto; transform:scale(1.2);">
+                  <span style="margin-bottom:0;">🌱 Eco-Friendly</span>
+                </label>
+                <label class="field" style="display:flex; align-items:center; gap:8px; cursor:pointer; margin-bottom:0;">
+                  <input type="checkbox" id="p-handmade" style="width:auto; transform:scale(1.2);">
+                  <span style="margin-bottom:0;">✋ Feito à Mão</span>
+                </label>
+              </div>
+
               <label class="field" style="display:flex; align-items:center; gap:8px; cursor:pointer; margin-top:10px;">
                 <input type="checkbox" id="p-sold-out" style="width:auto; transform:scale(1.2);">
                 <span style="margin-bottom:0;">Produto Esgotado (Pausar Vendas)</span>
@@ -844,6 +871,8 @@ textarea{resize:vertical;min-height:70px}
   let currentUserProfile = null; 
   let activeModalProductId = null;
   let activeModalColor = null;
+  let activeModalSize = null;
+  let activeModalPrice = 0;
   let reviewOrderId = null;
   let reviewRating = 5;
   let appliedDiscount = 0;
@@ -1194,19 +1223,17 @@ textarea{resize:vertical;min-height:70px}
     }).join('');
   }
 
-  // LÓGICA COMPRAR NOVAMENTE
   window.buyAgain = function(orderId) {
     const order = myOrders.find(o => o.id === orderId);
     if (!order) return;
 
-    // Adiciona todos os itens do pedido antigo ao carrinho atual (mantendo as cores)
     order.items.forEach(item => {
-      const key = getCartItemKey(item.id, item.color);
-      const existingItem = cart.find(i => getCartItemKey(i.id, i.color) === key);
+      const key = getCartItemKey(item.id, item.color, item.size);
+      const existingItem = cart.find(i => getCartItemKey(i.id, i.color, i.size) === key);
       if (existingItem) {
         existingItem.qty += item.qty;
       } else {
-        cart.push({ id: item.id, color: item.color, qty: item.qty });
+        cart.push({ id: item.id, color: item.color, size: item.size, price: item.price, qty: item.qty });
       }
     });
 
@@ -1302,6 +1329,13 @@ textarea{resize:vertical;min-height:70px}
         ? `<button class="btn btn-outline btn-sm" disabled style="opacity:0.5; cursor:not-allowed;">Esgotado</button>`
         : `<button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); addToCart('${p.id}')">Adicionar</button>`;
 
+      const badgesHtml = `
+        <div class="product-badges">
+          ${p.isEco ? `<span class="badge-eco">🌱 Eco-Friendly</span>` : ''}
+          ${p.isHandmade ? `<span class="badge-handmade">✋ Feito à Mão</span>` : ''}
+        </div>
+      `;
+
       return `
       <article class="product-card fade-in" onclick="openModal('${p.id}')">
         <div class="product-img">
@@ -1311,6 +1345,7 @@ textarea{resize:vertical;min-height:70px}
         <div class="product-info">
           <span class="product-cat">${esc(p.category || 'Geral')}</span>
           <h3>${esc(p.name)}</h3>
+          ${badgesHtml}
           <p>${esc(p.description || '')}</p>
           <div class="product-bottom">
             <span class="price">${fmt(p.price)}</span>
@@ -1331,19 +1366,18 @@ textarea{resize:vertical;min-height:70px}
     if(!p) return;
     activeModalProductId = id;
     activeModalColor = null;
+    activeModalSize = null;
+    activeModalPrice = p.price;
     
     document.getElementById('modal-img').src = p.image || '';
     document.getElementById('modal-img').style.display = p.image ? 'block' : 'none';
     document.getElementById('modal-cat').textContent = p.category || 'Geral';
     document.getElementById('modal-title').textContent = p.name;
     document.getElementById('modal-desc').textContent = p.description || 'Nenhuma descrição detalhada fornecida.';
-    document.getElementById('modal-price').textContent = fmt(p.price);
+    document.getElementById('modal-price').textContent = fmt(activeModalPrice);
 
-    // Configura botão e cores
-    const colorsContainer = document.getElementById('modal-colors-container');
-    const colorsList = document.getElementById('modal-colors');
+    // Configura botão
     const addBtn = document.getElementById('modal-add-btn');
-    
     if(p.soldOut) {
        addBtn.textContent = 'Produto Esgotado';
        addBtn.disabled = true;
@@ -1356,18 +1390,54 @@ textarea{resize:vertical;min-height:70px}
        addBtn.style.cursor = 'pointer';
     }
 
+    // Configura Selos
+    const badgesContainer = document.getElementById('modal-badges');
+    badgesContainer.innerHTML = '';
+    badgesContainer.classList.add('hidden');
+    if(p.isEco || p.isHandmade) {
+      badgesContainer.classList.remove('hidden');
+      if(p.isEco) badgesContainer.innerHTML += `<span class="badge-eco">🌱 Eco-Friendly</span>`;
+      if(p.isHandmade) badgesContainer.innerHTML += `<span class="badge-handmade">✋ Feito à Mão</span>`;
+    }
+
+    // Configura Cores
+    const colorsContainer = document.getElementById('modal-colors-container');
+    const colorsList = document.getElementById('modal-colors');
     if (p.colors && p.colors.trim() !== '') {
       const colors = p.colors.split(',').map(c => c.trim()).filter(c => c !== '');
       colorsContainer.classList.remove('hidden');
-      
       colorsList.innerHTML = colors.map((c, index) => `
         <div class="color-option ${index === 0 ? 'selected' : ''}" onclick="selectColor('${c}', this)">${c}</div>
       `).join('');
-      
       activeModalColor = colors[0];
     } else {
       colorsContainer.classList.add('hidden');
       activeModalColor = 'Padrão';
+    }
+
+    // Configura Tamanhos
+    const sizesContainer = document.getElementById('modal-sizes-container');
+    const sizesList = document.getElementById('modal-sizes');
+    if (p.sizes && p.sizes.trim() !== '') {
+      // Formato esperado: P: 50.00, M: 80.00
+      const sizesRaw = p.sizes.split(',').map(s => s.trim()).filter(s => s !== '');
+      sizesContainer.classList.remove('hidden');
+      sizesList.innerHTML = sizesRaw.map((s, index) => {
+        const parts = s.split(':');
+        const sizeName = parts[0].trim();
+        const sizePrice = parseFloat(parts[1]) || p.price;
+        return `<div class="size-option ${index === 0 ? 'selected' : ''}" onclick="selectSize('${sizeName}', ${sizePrice}, this)">${sizeName}</div>`;
+      }).join('');
+      
+      // Pega o primeiro tamanho para setar o preço inicial
+      const firstPart = sizesRaw[0].split(':');
+      activeModalSize = firstPart[0].trim();
+      activeModalPrice = parseFloat(firstPart[1]) || p.price;
+      document.getElementById('modal-price').textContent = fmt(activeModalPrice);
+    } else {
+      sizesContainer.classList.add('hidden');
+      activeModalSize = 'Padrão';
+      activeModalPrice = p.price;
     }
     
     document.getElementById('product-modal').classList.add('open');
@@ -1376,6 +1446,14 @@ textarea{resize:vertical;min-height:70px}
   window.selectColor = function(color, element) {
     activeModalColor = color;
     document.querySelectorAll('#modal-colors .color-option').forEach(el => el.classList.remove('selected'));
+    element.classList.add('selected');
+  };
+
+  window.selectSize = function(size, price, element) {
+    activeModalSize = size;
+    activeModalPrice = price;
+    document.getElementById('modal-price').textContent = fmt(activeModalPrice);
+    document.querySelectorAll('#modal-sizes .size-option').forEach(el => el.classList.remove('selected'));
     element.classList.add('selected');
   };
 
@@ -1388,56 +1466,58 @@ textarea{resize:vertical;min-height:70px}
   window.addToCartFromModal = function() {
     if(activeModalProductId) {
       const p = products.find(x => x.id === activeModalProductId);
-      if(p && p.soldOut) return; // Bloqueia se estiver esgotado
-      addToCart(activeModalProductId, activeModalColor);
+      if(p && p.soldOut) return;
+      addToCart(activeModalProductId, activeModalColor, activeModalSize, activeModalPrice);
       closeModal();
     }
   };
 
-  function getCartItemKey(id, color) {
-    return color ? `${id}_${color}` : id;
+  function getCartItemKey(id, color, size) {
+    return `${id}_${color || 'padrao'}_${size || 'padrao'}`;
   }
 
   function cartTotal(){
     return cart.reduce((s, ci) => {
-      const p = products.find(x => x.id === ci.id);
-      return s + (p ? p.price * ci.qty : 0);
+      return s + (ci.price * ci.qty);
     }, 0);
   }
 
-  window.addToCart = function(id, color = null){
+  window.addToCart = function(id, color = null, size = null, price = null){
     const p = products.find(x => x.id === id);
     if(!p || p.soldOut) return;
     
+    // Se o produto tem cores e não foi passada cor (ex: clicou no card), força "Padrão"
     const itemColor = color || (p.colors ? 'Padrão' : null);
-    const key = getCartItemKey(id, itemColor);
+    const itemSize = size || (p.sizes ? 'Padrão' : null);
+    const itemPrice = price || p.price;
+    const key = getCartItemKey(id, itemColor, itemSize);
     
-    const item = cart.find(i => getCartItemKey(i.id, i.color) === key);
+    const item = cart.find(i => getCartItemKey(i.id, i.color, i.size) === key);
     if(item) item.qty++; 
-    else cart.push({ id, color: itemColor, qty: 1 });
+    else cart.push({ id, color: itemColor, size: itemSize, price: itemPrice, qty: 1 });
     
     saveCart(); renderCart(); openCart();
   };
   
-  window.incQty = function(id, color){ 
-    const key = getCartItemKey(id, color);
-    const i = cart.find(x => getCartItemKey(x.id, x.color) === key); 
+  window.incQty = function(id, color, size){ 
+    const key = getCartItemKey(id, color, size);
+    const i = cart.find(x => getCartItemKey(x.id, x.color, x.size) === key); 
     if(!i) return; 
     i.qty++; saveCart(); renderCart(); 
   };
   
-  window.decQty = function(id, color){
-    const key = getCartItemKey(id, color);
-    const i = cart.find(x => getCartItemKey(x.id, x.color) === key); 
+  window.decQty = function(id, color, size){
+    const key = getCartItemKey(id, color, size);
+    const i = cart.find(x => getCartItemKey(x.id, x.color, x.size) === key); 
     if(!i) return;
     i.qty--; 
-    if(i.qty <= 0) cart = cart.filter(x => getCartItemKey(x.id, x.color) !== key);
+    if(i.qty <= 0) cart = cart.filter(x => getCartItemKey(x.id, x.color, x.size) !== key);
     saveCart(); renderCart();
   };
   
-  window.removeItem = function(id, color){ 
-    const key = getCartItemKey(id, color);
-    cart = cart.filter(x => getCartItemKey(x.id, x.color) !== key); 
+  window.removeItem = function(id, color, size){ 
+    const key = getCartItemKey(id, color, size);
+    cart = cart.filter(x => getCartItemKey(x.id, x.color, x.size) !== key); 
     saveCart(); renderCart(); 
   };
 
@@ -1502,6 +1582,7 @@ textarea{resize:vertical;min-height:70px}
         if(!p) return '';
         
         const colorLabel = ci.color && ci.color !== 'Padrão' ? `<span style="color:var(--muted); font-size:11px; display:block; margin-top:2px;">Cor: ${ci.color}</span>` : '';
+        const sizeLabel = ci.size && ci.size !== 'Padrão' ? `<span style="color:var(--muted); font-size:11px; display:block; margin-top:2px;">Tamanho: ${ci.size}</span>` : '';
         
         return `
           <div class="cart-item">
@@ -1509,14 +1590,15 @@ textarea{resize:vertical;min-height:70px}
             <div class="cart-item-info">
               <strong>${esc(p.name)}</strong>
               ${colorLabel}
-              <span>${fmt(p.price)}</span>
+              ${sizeLabel}
+              <span>${fmt(ci.price)}</span>
             </div>
             <div class="qty">
-              <button onclick="decQty('${p.id}', '${ci.color}')">−</button>
+              <button onclick="decQty('${p.id}', '${ci.color}', '${ci.size}')">−</button>
               <span>${ci.qty}</span>
-              <button onclick="incQty('${p.id}', '${ci.color}')">+</button>
+              <button onclick="incQty('${p.id}', '${ci.color}', '${ci.size}')">+</button>
             </div>
-            <button class="remove-btn" onclick="removeItem('${p.id}', '${ci.color}')">✕</button>
+            <button class="remove-btn" onclick="removeItem('${p.id}', '${ci.color}', '${ci.size}')">✕</button>
           </div>`;
       }).join('');
     }
@@ -1597,7 +1679,7 @@ textarea{resize:vertical;min-height:70px}
 
     const items = cart.map(ci => {
       const p = products.find(x => x.id === ci.id);
-      return p ? { id:p.id, name:p.name, color: ci.color, price:p.price, qty:ci.qty } : null;
+      return p ? { id:p.id, name:p.name, color: ci.color, size: ci.size, price: ci.price, qty:ci.qty } : null;
     }).filter(Boolean);
     
     let subtotal = items.reduce((s,i) => s + i.price * i.qty, 0);
@@ -1671,7 +1753,7 @@ textarea{resize:vertical;min-height:70px}
           
           <div style="background:var(--bg-soft);border-radius:12px;padding:16px;text-align:left;font-size:14px">
             ${items.map(i => `<div style="display:flex;justify-content:space-between;padding:3px 0">
-              <span class="muted">${i.qty}× ${esc(i.name)} ${i.color && i.color !== 'Padrão' ? `(${i.color})` : ''}</span><span>${fmt(i.price*i.qty)}</span></div>`).join('')}
+              <span class="muted">${i.qty}× ${esc(i.name)} ${i.color && i.color !== 'Padrão' ? `(${i.color})` : ''} ${i.size && i.size !== 'Padrão' ? `(${i.size})` : ''}</span><span>${fmt(i.price*i.qty)}</span></div>`).join('')}
             ${orderData.discount > 0 ? `<div style="display:flex;justify-content:space-between;padding:3px 0;color:var(--green-dark)">
               <span>Desconto (${orderData.discount*100}%)</span><span>- ${fmt(discountAmount)}</span></div>` : ''}
             ${orderData.isExpress ? `<div style="display:flex;justify-content:space-between;padding:3px 0;color:#B45309">
@@ -1762,10 +1844,11 @@ textarea{resize:vertical;min-height:70px}
         const prod = products.find(p => p.id === i.id);
         const imgUrl = prod ? prod.image : null;
         const colorLabel = i.color && i.color !== 'Padrão' ? ` - ${i.color}` : '';
+        const sizeLabel = i.size && i.size !== 'Padrão' ? ` - Tam: ${i.size}` : '';
         return `
           <li style="display:flex; align-items:center; gap:10px; padding: 8px 0; border-bottom: 1px dashed var(--border);">
             ${imgUrl ? `<img src="${imgUrl}" style="width:44px; height:44px; border-radius:6px; object-fit:cover;">` : ''}
-            <span style="flex:1; font-weight:600; color:var(--text); font-size:14px;">${i.qty}× ${esc(i.name)}${colorLabel}</span>
+            <span style="flex:1; font-weight:600; color:var(--text); font-size:14px;">${i.qty}× ${esc(i.name)}${colorLabel}${sizeLabel}</span>
             <span style="font-weight:600;">${fmt(i.price*i.qty)}</span>
           </li>`;
       }).join('');
@@ -1910,6 +1993,8 @@ textarea{resize:vertical;min-height:70px}
     document.getElementById('product-form-title').textContent = 'Novo produto';
     document.getElementById('p-save-btn').textContent = 'Salvar produto';
     document.getElementById('p-sold-out').checked = false;
+    document.getElementById('p-eco').checked = false;
+    document.getElementById('p-handmade').checked = false;
     pendingImage = null;
     pendingImageFile = null;
     renderImagePreview();
@@ -1923,6 +2008,9 @@ textarea{resize:vertical;min-height:70px}
     document.getElementById('p-price').value = p.price;
     document.getElementById('p-cat').value = p.category || '';
     document.getElementById('p-colors').value = p.colors || '';
+    document.getElementById('p-sizes').value = p.sizes || '';
+    document.getElementById('p-eco').checked = p.isEco || false;
+    document.getElementById('p-handmade').checked = p.isHandmade || false;
     document.getElementById('p-sold-out').checked = p.soldOut || false;
     pendingImage = p.image || null;
     pendingImageFile = null;
@@ -1940,6 +2028,9 @@ textarea{resize:vertical;min-height:70px}
     const price = parseFloat(document.getElementById('p-price').value) || 0;
     const category = document.getElementById('p-cat').value.trim() || 'Geral';
     const colors = document.getElementById('p-colors').value.trim();
+    const sizes = document.getElementById('p-sizes').value.trim();
+    const isEco = document.getElementById('p-eco').checked;
+    const isHandmade = document.getElementById('p-handmade').checked;
     const soldOut = document.getElementById('p-sold-out').checked;
     if(!name) return;
 
@@ -1968,7 +2059,7 @@ textarea{resize:vertical;min-height:70px}
         imageUrl = data.secure_url;
       }
 
-      const productData = { name, description, price, category, colors, soldOut, image: imageUrl };
+      const productData = { name, description, price, category, colors, sizes, isEco, isHandmade, soldOut, image: imageUrl };
       
       if(id){ await updateDoc(doc(db, 'products', id), productData); } 
       else { await addDoc(collection(db, 'products'), productData); }
@@ -1989,7 +2080,6 @@ textarea{resize:vertical;min-height:70px}
     catch (e) { console.error(e); alert('Erro ao excluir produto: ' + e.message); }
   };
 
-  // CONTROLE DE PAUSA DA LOJA
   window.toggleStorePause = async function() {
     storePaused = !storePaused;
     const btn = document.getElementById('btn-pause-store');

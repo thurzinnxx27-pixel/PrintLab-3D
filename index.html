@@ -100,7 +100,7 @@ input:focus,select:focus,textarea:focus{border-color:var(--green);box-shadow:0 0
 textarea{resize:vertical;min-height:70px}
 .error{color:var(--danger);font-size:13px;margin-top:10px;min-height:18px}
 .admin-wrap{padding-top:48px;padding-bottom:96px}
-.auth-card{max-width:400px;margin:40px auto;background:#fff;border:1px solid var(--border);border-radius:20px;padding:34px 30px;box-shadow:var(--shadow-md)}
+.auth-card{max-width:480px;margin:40px auto;background:#fff;border:1px solid var(--border);border-radius:20px;padding:34px 30px;box-shadow:var(--shadow-md)}
 .auth-card h2{font-size:22px;letter-spacing:-.025em;margin-bottom:6px;font-weight:800}
 .auth-card p{margin-bottom:22px;font-size:14px}
 .admin-head{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:28px}
@@ -159,23 +159,25 @@ textarea{resize:vertical;min-height:70px}
 .admin-secret-link:hover{opacity:1;}
 
 /* Toast de Notificação */
-.toast {
-  position: fixed; top: 24px; right: 24px; background: #fff;
-  border: 1px solid var(--border); border-left: 4px solid var(--green);
-  padding: 16px 20px; border-radius: 12px; box-shadow: var(--shadow-lg);
-  display: flex; align-items: center; gap: 14px; z-index: 9999;
-  transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
+.toast { position: fixed; top: 24px; right: 24px; background: #fff; border: 1px solid var(--border); border-left: 4px solid var(--green); padding: 16px 20px; border-radius: 12px; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 14px; z-index: 9999; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .toast.show { transform: translateX(0); }
 .toast-icon { font-size: 24px; }
 .toast-text strong { display: block; font-size: 15px; color: var(--text); margin-bottom: 2px;}
 .toast-text span { font-size: 13.5px; color: var(--muted); }
+
+/* Client Dashboard */
+.client-order { display: flex; align-items: center; justify-content: space-between; padding: 16px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; background: #fff; }
+.client-order-info h4 { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
+.client-order-info p { font-size: 13px; color: var(--muted); }
+.status-line { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
+.status-dot { width: 10px; height: 10px; border-radius: 50%; }
 
 @media(max-width:860px){
   .admin-grid{grid-template-columns:1fr}
   .hero{padding:64px 20px 60px}
   .nav-link{padding:9px 10px;font-size:14px}
   .brand span:last-child{display:none}
+  .header-inner { flex-wrap: wrap; justify-content: center; }
 }
 @media(max-width:520px){
   .header-inner{padding:12px 16px}
@@ -184,6 +186,7 @@ textarea{resize:vertical;min-height:70px}
   .stats{grid-template-columns:repeat(2,1fr)}
   .toast { top: 10px; right: 10px; left: 10px; transform: translateY(-120%); }
   .toast.show { transform: translateY(0); }
+  .client-order { flex-direction: column; align-items: flex-start; gap: 12px; }
 }
 </style>
 </head>
@@ -193,8 +196,8 @@ textarea{resize:vertical;min-height:70px}
 <div id="toast" class="toast">
   <div class="toast-icon">🔔</div>
   <div class="toast-text">
-    <strong>Novo Pedido Recebido!</strong>
-    <span id="toast-msg">Confira no painel</span>
+    <strong>Aviso</strong>
+    <span id="toast-msg">Mensagem</span>
   </div>
 </div>
 
@@ -210,6 +213,7 @@ textarea{resize:vertical;min-height:70px}
     </a>
     <nav class="nav">
       <button class="nav-link" onclick="showView('store')">Loja</button>
+      <button class="nav-link" id="nav-account-btn" onclick="showView('account')">Entrar</button>
       <button class="btn btn-primary cart-btn" onclick="openCart()">
         Carrinho <span class="badge-count" id="cart-count">0</span>
       </button>
@@ -217,6 +221,7 @@ textarea{resize:vertical;min-height:70px}
   </div>
 </header>
 
+<!-- VITRINE -->
 <main id="view-store">
   <section class="hero">
     <div class="hero-inner">
@@ -249,6 +254,89 @@ textarea{resize:vertical;min-height:70px}
   </section>
 </main>
 
+<!-- ÁREA DO CLIENTE (LOGIN/CADASTRO E MEUS PEDIDOS) -->
+<main id="view-account" class="hidden">
+  <div class="container admin-wrap">
+    
+    <!-- Formulário de Login/Cadastro -->
+    <div id="client-auth-screen" class="auth-card">
+      <div style="margin-bottom: 20px;">
+        <button class="btn btn-ghost btn-sm" onclick="showView('store')" style="padding-left:0; color:var(--green-dark)">← Voltar para a Loja</button>
+      </div>
+      
+      <div class="tabs" style="margin-bottom: 20px;">
+        <button class="tab active" id="tab-login" onclick="switchAuthTab('login')">Entrar</button>
+        <button class="tab" id="tab-register" onclick="switchAuthTab('register')">Criar Conta</button>
+      </div>
+
+      <!-- Login -->
+      <form id="form-login" onsubmit="handleLogin(event)">
+        <h2>Bem-vindo de volta!</h2>
+        <p class="muted">Acesse sua conta para ver seus pedidos.</p>
+        <label class="field"><span>E-mail</span><input type="email" id="login-email" required placeholder="seu@email.com"></label>
+        <label class="field"><span>Senha</span><input type="password" id="login-pass" required placeholder="••••••••"></label>
+        <button type="submit" class="btn btn-primary w-full" id="btn-do-login">Entrar</button>
+        <p class="error" id="login-error"></p>
+      </form>
+
+      <!-- Cadastro -->
+      <form id="form-register" class="hidden" onsubmit="handleRegister(event)">
+        <h2>Crie sua conta</h2>
+        <p class="muted">Preencha seus dados uma única vez e compre mais rápido no futuro.</p>
+        
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <label class="field" style="grid-column: 1 / -1;"><span>Nome completo *</span><input type="text" id="reg-name" required placeholder="João Silva"></label>
+          <label class="field" style="grid-column: 1 / -1;"><span>E-mail *</span><input type="email" id="reg-email" required placeholder="seu@email.com"></label>
+          <label class="field"><span>Senha *</span><input type="password" id="reg-pass" required placeholder="Mínimo 6 caracteres"></label>
+          <label class="field"><span>WhatsApp *</span><input id="reg-phone" required placeholder="(11) 99999-9999" oninput="maskPhone(this)"></label>
+        </div>
+
+        <h3 style="font-size:15px; font-weight:800; margin: 20px 0 10px;">Endereço de Entrega</h3>
+        
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <label class="field"><span>CEP *</span><input id="reg-cep" required placeholder="00000-000" oninput="maskCEP(this)"></label>
+          <label class="field"><span>Estado (UF) *</span><input id="reg-state" required placeholder="SP" maxlength="2" style="text-transform:uppercase"></label>
+        </div>
+
+        <label class="field"><span>Rua / Avenida *</span><input id="reg-street" required placeholder="Ex: Av. Paulista"></label>
+
+        <div style="display:grid; grid-template-columns:1fr 2fr; gap:10px;">
+          <label class="field"><span>Número *</span><input id="reg-number" required placeholder="123"></label>
+          <label class="field"><span>Complemento</span><input id="reg-complement" placeholder="Apto 45, Bloco B"></label>
+        </div>
+
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <label class="field"><span>Bairro *</span><input id="reg-neighborhood" required placeholder="Centro"></label>
+          <label class="field"><span>Cidade *</span><input id="reg-city" required placeholder="São Paulo"></label>
+        </div>
+
+        <button type="submit" class="btn btn-primary w-full" id="btn-do-register" style="margin-top:10px;">Criar Conta</button>
+        <p class="error" id="register-error"></p>
+      </form>
+    </div>
+
+    <!-- Dashboard do Cliente Logado -->
+    <div id="client-dashboard" class="hidden">
+      <div class="admin-head">
+        <div>
+          <h2>Minha Conta</h2>
+          <p class="muted">Acompanhe o status dos seus pedidos em tempo real.</p>
+        </div>
+        <div style="display:flex; gap:10px;">
+          <button class="btn btn-ghost" onclick="showView('store')">Ir para a Loja</button>
+          <button class="btn btn-outline" onclick="handleLogout()">Sair</button>
+        </div>
+      </div>
+
+      <div id="client-orders-list">
+        <!-- Pedidos do cliente vão aparecer aqui -->
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<!-- PAINEL DO ADMIN -->
 <main id="view-admin" class="hidden">
   <div class="container admin-wrap">
     <div id="admin-login" class="auth-card">
@@ -263,18 +351,18 @@ textarea{resize:vertical;min-height:70px}
                onkeydown="if(event.key==='Enter')tryLogin()">
       </label>
       <button class="btn btn-primary w-full" onclick="tryLogin()">Entrar</button>
-      <p class="error" id="login-error"></p>
+      <p class="error" id="login-error-admin"></p>
     </div>
 
     <div id="admin-dashboard" class="hidden">
       <div class="admin-head">
         <div>
-          <h2>Painel</h2>
+          <h2>Painel Admin</h2>
           <p class="muted">Gerencie seus pedidos e produtos em tempo real.</p>
         </div>
         <div style="display:flex; gap:10px;">
           <button class="btn btn-ghost" onclick="showView('store')">Ver Loja</button>
-          <button class="btn btn-outline" onclick="logout()">Sair</button>
+          <button class="btn btn-outline" onclick="logoutAdmin()">Sair</button>
         </div>
       </div>
 
@@ -350,10 +438,10 @@ textarea{resize:vertical;min-height:70px}
 <footer class="site-footer">
   <strong data-store-name>PrintLab 3D</strong> · Impressão 3D sob medida<br>
   <span style="font-size:12.5px">Feito com carinho, camada por camada 💚</span><br>
-  <!-- Acesso restrito ao admin -->
   <a href="#" class="admin-secret-link" onclick="showView('admin');return false;">Acesso Restrito</a>
 </footer>
 
+<!-- CARRINHO -->
 <div class="overlay" id="overlay" onclick="closeCart()"></div>
 <aside class="cart-drawer" id="cart-drawer">
   <div class="cart-header">
@@ -366,13 +454,11 @@ textarea{resize:vertical;min-height:70px}
     <form id="checkout-form">
       <label class="field"><span>Nome completo *</span><input id="c-name" required placeholder="João Silva"></label>
       
-      <!-- MÁSCARA NO WHATSAPP -->
       <label class="field">
         <span>WhatsApp *</span>
         <input id="c-phone" required placeholder="(11) 99999-9999" oninput="maskPhone(this)">
       </label>
       
-      <!-- ENDEREÇO DETALHADO -->
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
         <label class="field"><span>CEP *</span><input id="c-cep" required placeholder="00000-000" oninput="maskCEP(this)"></label>
         <label class="field"><span>Estado (UF) *</span><input id="c-state" required placeholder="SP" maxlength="2" style="text-transform:uppercase"></label>
@@ -413,11 +499,14 @@ textarea{resize:vertical;min-height:70px}
   import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
   import {
     getFirestore, collection, onSnapshot, addDoc, doc, updateDoc, deleteDoc,
-    query, orderBy, serverTimestamp
+    query, orderBy, serverTimestamp, where, getDoc, setDoc
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  import {
+    getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile
+  } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
   /* =============================================================
-     🔥 SUAS CHAVES DO FIREBASE (PRINTLAB 3D)
+     🔥 SUAS CHAVES DO FIREBASE
   ============================================================= */
   const firebaseConfig = {
     apiKey: "AIzaSyCYbtviQhNFA-h5REyIRNeoXr5LKGBzUKA",
@@ -430,23 +519,18 @@ textarea{resize:vertical;min-height:70px}
 
   const app = initializeApp(firebaseConfig);
   const db  = getFirestore(app);
+  const auth = getAuth(app);
 
   /* =============================================================
      ⚙️ CONFIGURAÇÕES GERAIS E CLOUDINARY
   ============================================================= */
   const CONFIG = {
     storeName: 'PrintLab 3D',
-    adminPassword: 'admin123',   // ⚠️ TROQUE ESTA SENHA
-    
-    // Suas informações do Cloudinary:
+    adminPassword: 'admin123',
     cloudinaryCloudName: 'saemfnk0', 
     cloudinaryPreset: 'Impressão 3D',
-    
-    // ⚠️ SUA CHAVE PIX AQUI
     pixKey: 'arthurnass@icloud.com',
-
-    // ⚠️ SEU WHATSAPP PARA RECEBER O COMPROVANTE (Com 55 e DDD)
-    whatsappAdmin: '5541988896304'
+    whatsappAdmin: '5511999999999' 
   };
 
   /* =============================================================
@@ -454,23 +538,26 @@ textarea{resize:vertical;min-height:70px}
   ============================================================= */
   let products = [];
   let orders   = [];
+  let myOrders = [];
   let cart     = JSON.parse(localStorage.getItem('pl_cart') || '[]');
   let cartStep = 1;
   let pendingImage = null;
   let pendingImageFile = null;
   let unsubOrders = null;
+  let unsubMyOrders = null;
   let isFirstOrdersLoad = true;
+  
+  let currentUser = null;        // Usuário logado no Auth
+  let currentUserProfile = null; // Dados do endereço puxados do Firestore
 
   /* =============================================================
      MÁSCARAS DE FORMATAÇÃO
   ============================================================= */
   window.maskPhone = function(input) {
     let v = input.value.replace(/\D/g, "");
-    if (v.length > 13) v = v.slice(0, 13); // Limita tamanho máximo
-    
+    if (v.length > 13) v = v.slice(0, 13); 
     let formatted = "";
     if (v.length > 0) {
-      // Se o número começar com 55, coloca o + na frente e ignora o 55 no resto da formatação
       if (v.length > 11 && v.startsWith("55")) {
         formatted += "+55 ";
         v = v.slice(2);
@@ -537,14 +624,194 @@ textarea{resize:vertical;min-height:70px}
   ============================================================= */
   window.showView = function(name){
     document.getElementById('view-store').classList.toggle('hidden', name !== 'store');
+    document.getElementById('view-account').classList.toggle('hidden', name !== 'account');
     document.getElementById('view-admin').classList.toggle('hidden', name !== 'admin');
     closeCart();
     window.scrollTo({ top: 0, behavior: 'instant' });
-    if(name === 'admin') checkAuth();
+    
+    if(name === 'admin') checkAdminAuth();
+    if(name === 'account') checkClientAuthUI();
   };
 
   /* =============================================================
-     TEMPO REAL — PRODUTOS (FIRESTORE)
+     AUTENTICAÇÃO DE CLIENTES E SALVAMENTO DE PERFIL
+  ============================================================= */
+  window.switchAuthTab = function(tab) {
+    document.getElementById('tab-login').classList.toggle('active', tab === 'login');
+    document.getElementById('tab-register').classList.toggle('active', tab === 'register');
+    document.getElementById('form-login').classList.toggle('hidden', tab !== 'login');
+    document.getElementById('form-register').classList.toggle('hidden', tab !== 'register');
+  };
+
+  window.handleLogin = async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btn-do-login');
+    const email = document.getElementById('login-email').value;
+    const pass = document.getElementById('login-pass').value;
+    btn.disabled = true; btn.textContent = 'Entrando...';
+    
+    try {
+      await signInWithEmailAndPassword(auth, email, pass);
+      document.getElementById('login-error').textContent = '';
+      document.getElementById('form-login').reset();
+    } catch (err) {
+      document.getElementById('login-error').textContent = 'E-mail ou senha incorretos.';
+    } finally {
+      btn.disabled = false; btn.textContent = 'Entrar';
+    }
+  };
+
+  window.handleRegister = async function(e) {
+    e.preventDefault();
+    const btn = document.getElementById('btn-do-register');
+    
+    // Pega todos os dados do formulário
+    const name = document.getElementById('reg-name').value;
+    const email = document.getElementById('reg-email').value;
+    const pass = document.getElementById('reg-pass').value;
+    const phone = document.getElementById('reg-phone').value;
+    const cep = document.getElementById('reg-cep').value;
+    const state = document.getElementById('reg-state').value.toUpperCase();
+    const street = document.getElementById('reg-street').value;
+    const number = document.getElementById('reg-number').value;
+    const complement = document.getElementById('reg-complement').value;
+    const neighborhood = document.getElementById('reg-neighborhood').value;
+    const city = document.getElementById('reg-city').value;
+
+    btn.disabled = true; btn.textContent = 'Criando conta...';
+    
+    try {
+      // 1. Cria o usuário no Auth
+      const userCredential = await createUserWithEmailAndPassword(auth, email, pass);
+      const user = userCredential.user;
+      
+      // 2. Atualiza o nome no perfil do Auth
+      await updateProfile(user, { displayName: name });
+      
+      // 3. Salva os dados de endereço no Firestore (coleção 'users')
+      await setDoc(doc(db, 'users', user.uid), {
+        name, email, phone, cep, state, street, number, complement, neighborhood, city
+      });
+
+      document.getElementById('register-error').textContent = '';
+      document.getElementById('form-register').reset();
+    } catch (err) {
+      console.error(err);
+      let msg = 'Erro ao criar conta. Tente novamente.';
+      if(err.code === 'auth/email-already-in-use') msg = 'Este e-mail já está em uso.';
+      if(err.code === 'auth/weak-password') msg = 'A senha precisa ter no mínimo 6 caracteres.';
+      document.getElementById('register-error').textContent = msg;
+    } finally {
+      btn.disabled = false; btn.textContent = 'Criar Conta';
+    }
+  };
+
+  window.handleLogout = async function() {
+    await signOut(auth);
+    showView('store');
+  };
+
+  function checkClientAuthUI() {
+    if (currentUser) {
+      document.getElementById('client-auth-screen').classList.add('hidden');
+      document.getElementById('client-dashboard').classList.remove('hidden');
+      subscribeMyOrders();
+    } else {
+      document.getElementById('client-auth-screen').classList.remove('hidden');
+      document.getElementById('client-dashboard').classList.add('hidden');
+      if(unsubMyOrders) { unsubMyOrders(); unsubMyOrders = null; }
+      myOrders = [];
+    }
+  }
+
+  // Monitora o estado de login do Firebase e puxa o perfil de endereço
+  onAuthStateChanged(auth, async (user) => {
+    currentUser = user;
+    const navBtn = document.getElementById('nav-account-btn');
+    
+    if (user) {
+      navBtn.textContent = user.displayName ? user.displayName.split(' ')[0] : 'Minha Conta';
+      navBtn.style.color = 'var(--green-dark)';
+      navBtn.style.fontWeight = '700';
+      
+      // Puxa o endereço salvo no Firestore
+      try {
+        const docSnap = await getDoc(doc(db, 'users', user.uid));
+        if (docSnap.exists()) {
+          currentUserProfile = docSnap.data();
+        }
+      } catch (e) {
+        console.error("Erro ao puxar perfil:", e);
+      }
+
+    } else {
+      navBtn.textContent = 'Entrar';
+      navBtn.style.color = '';
+      navBtn.style.fontWeight = '';
+      currentUserProfile = null;
+    }
+    
+    if(!document.getElementById('view-account').classList.contains('hidden')){
+      checkClientAuthUI();
+    }
+  });
+
+  /* =============================================================
+     PEDIDOS DO CLIENTE (TEMPO REAL)
+  ============================================================= */
+  function subscribeMyOrders() {
+    if(!currentUser || unsubMyOrders) return;
+    
+    const q = query(collection(db, 'orders'), where('userId', '==', currentUser.uid), orderBy('createdAt', 'desc'));
+    
+    unsubMyOrders = onSnapshot(q, (snap) => {
+      myOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+      
+      if(!document.getElementById('client-dashboard').classList.contains('hidden')){
+        renderClientOrders();
+      }
+    }, err => console.error(err));
+  }
+
+  function renderClientOrders() {
+    const list = document.getElementById('client-orders-list');
+    if(!myOrders.length) {
+      list.innerHTML = '<div class="empty">Você ainda não fez nenhum pedido.</div>';
+      return;
+    }
+
+    const STATUS_LABELS = {
+      novo: { label: 'Aguardando Pagamento', color: '#E6F9EE', text: '#007A2F' },
+      producao: { label: 'Em Produção', color: '#FFF4E0', text: '#A85D00' },
+      enviado: { label: 'Saiu para Entrega', color: '#E7F0FF', text: '#1D4ED8' },
+      concluido: { label: 'Entregue', color: '#F0F2F5', text: '#525B69' }
+    };
+
+    list.innerHTML = myOrders.map(o => {
+      const st = STATUS_LABELS[o.status] || STATUS_LABELS.novo;
+      const date = o.createdAt?.toDate ? o.createdAt.toDate().toLocaleString('pt-BR', { dateStyle:'short', timeStyle:'short' }) : '—';
+      
+      return `
+        <div class="client-order">
+          <div class="client-order-info">
+            <h4>Pedido ${o.orderId || o.id}</h4>
+            <p>Realizado em ${date}</p>
+            <div class="status-line">
+              <div class="status-dot" style="background:${st.text}"></div>
+              <span class="badge" style="background:${st.color}; color:${st.text}">${st.label}</span>
+            </div>
+          </div>
+          <div style="text-align:right">
+            <strong style="display:block; font-size:16px; margin-bottom:4px;">${fmt(o.total)}</strong>
+            <span class="muted" style="font-size:13px;">${o.items.reduce((s,i)=>s+i.qty,0)} itens</span>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  /* =============================================================
+     TEMPO REAL — PRODUTOS E ADMIN
   ============================================================= */
   function subscribeProducts(){
     onSnapshot(collection(db, 'products'),
@@ -552,18 +819,11 @@ textarea{resize:vertical;min-height:70px}
         products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         renderProducts(); renderAdminProducts(); renderCart(); renderStats();
       },
-      err => {
-        console.error('❌ Listener de produtos:', err);
-        document.getElementById('product-grid').innerHTML =
-          `<div class="conn-error">Não foi possível carregar os produtos.<br><small>${esc(err.message)}</small></div>`;
-      }
+      err => console.error('❌ Listener de produtos:', err)
     );
   }
 
-  /* =============================================================
-     TEMPO REAL — PEDIDOS (FIRESTORE) E NOTIFICAÇÃO
-  ============================================================= */
-  function subscribeOrders(){
+  function subscribeAdminOrders(){
     if(unsubOrders) return;
     const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
     
@@ -589,7 +849,7 @@ textarea{resize:vertical;min-height:70px}
       err => console.error('❌ Listener de pedidos:', err)
     );
   }
-  function unsubscribeOrders(){
+  function unsubscribeAdminOrders(){
     if(unsubOrders){ unsubOrders(); unsubOrders = null; }
     orders = [];
     isFirstOrdersLoad = true;
@@ -601,14 +861,12 @@ textarea{resize:vertical;min-height:70px}
   function renderProducts(){
     const grid = document.getElementById('product-grid');
     if(!products.length){
-      grid.innerHTML = '<div class="empty">Nenhum produto cadastrado ainda. Adicione pelo painel do admin.</div>';
+      grid.innerHTML = '<div class="empty">Nenhum produto cadastrado ainda.</div>';
       return;
     }
     grid.innerHTML = products.map(p => `
       <article class="product-card">
-        <div class="product-img">
-          ${p.image ? `<img src="${p.image}" alt="${esc(p.name)}">` : placeholderHTML()}
-        </div>
+        <div class="product-img">${p.image ? `<img src="${p.image}" alt="${esc(p.name)}">` : placeholderHTML()}</div>
         <div class="product-info">
           <span class="product-cat">${esc(p.category || 'Geral')}</span>
           <h3>${esc(p.name)}</h3>
@@ -694,10 +952,32 @@ textarea{resize:vertical;min-height:70px}
       n === 1 ? 'Seu carrinho' : n === 2 ? 'Dados do pedido' : 'Pedido enviado';
     updateCartFooter();
   };
+  
+  // AQUI ACONTECE A MÁGICA DE PREENCHER OS DADOS
   window.onPrimaryClick = function(){
-    if(cartStep === 1){ if(!cart.length) return; setCartStep(2); }
+    if(cartStep === 1){ 
+      if(!cart.length) return; 
+      setCartStep(2); 
+      
+      // Se o cliente estiver logado, preenche tudo automaticamente!
+      if(currentUserProfile) {
+        document.getElementById('c-name').value = currentUserProfile.name || '';
+        document.getElementById('c-phone').value = currentUserProfile.phone || '';
+        document.getElementById('c-cep').value = currentUserProfile.cep || '';
+        document.getElementById('c-state').value = currentUserProfile.state || '';
+        document.getElementById('c-street').value = currentUserProfile.street || '';
+        document.getElementById('c-number').value = currentUserProfile.number || '';
+        document.getElementById('c-complement').value = currentUserProfile.complement || '';
+        document.getElementById('c-neighborhood').value = currentUserProfile.neighborhood || '';
+        document.getElementById('c-city').value = currentUserProfile.city || '';
+      } else if(currentUser) {
+        // Se estiver logado mas não tiver perfil salvo (ex: conta antiga)
+        document.getElementById('c-name').value = currentUser.displayName || '';
+      }
+    }
     else if(cartStep === 2){ submitOrder(); }
   };
+  
   window.openCart  = function(){ document.getElementById('cart-drawer').classList.add('open'); document.getElementById('overlay').classList.add('open'); };
   window.closeCart = function(){ document.getElementById('cart-drawer').classList.remove('open'); document.getElementById('overlay').classList.remove('open'); };
 
@@ -709,6 +989,14 @@ textarea{resize:vertical;min-height:70px}
     const form = document.getElementById('checkout-form');
     if(!form.checkValidity()){ form.reportValidity(); return; }
 
+    if(!currentUser) {
+      if(confirm("Para acompanhar seu pedido pelo site, recomendamos criar uma conta ou entrar. Deseja continuar como visitante?")) {
+        // segue o fluxo
+      } else {
+        closeCart(); showView('account'); return;
+      }
+    }
+
     const btn = document.getElementById('cart-primary-btn');
     btn.disabled = true;
     btn.innerHTML = '<span class="spinner"></span> Enviando…';
@@ -719,7 +1007,6 @@ textarea{resize:vertical;min-height:70px}
     }).filter(Boolean);
     const total = items.reduce((s,i) => s + i.price * i.qty, 0);
 
-    // Monta os detalhes do endereço
     const addressDetails = {
       cep: document.getElementById('c-cep').value.trim(),
       street: document.getElementById('c-street').value.trim(),
@@ -730,13 +1017,14 @@ textarea{resize:vertical;min-height:70px}
       state: document.getElementById('c-state').value.trim().toUpperCase()
     };
 
-    // Junta tudo em uma string formatada para o painel admin
     const addressString = `${addressDetails.street}, ${addressDetails.number}${addressDetails.complement ? ' - ' + addressDetails.complement : ''} - ${addressDetails.neighborhood}, ${addressDetails.city} - ${addressDetails.state}, CEP: ${addressDetails.cep}`;
 
     const orderData = {
+      userId: currentUser ? currentUser.uid : null,
       customer: {
         name:     document.getElementById('c-name').value.trim(),
         phone:    document.getElementById('c-phone').value.trim(),
+        email:    currentUser ? currentUser.email : '',
         address:  addressString,
         addressDetails: addressDetails, 
         payment:  document.getElementById('c-payment').value,
@@ -799,36 +1087,33 @@ textarea{resize:vertical;min-height:70px}
   }
 
   /* =============================================================
-     ADMIN — LOGIN
+     ADMIN — LOGIN E AÇÕES
   ============================================================= */
-  function checkAuth(){
+  function checkAdminAuth(){
     const logged = sessionStorage.getItem('pl_auth') === '1';
     document.getElementById('admin-login').classList.toggle('hidden', logged);
     document.getElementById('admin-dashboard').classList.toggle('hidden', !logged);
-    if(logged) subscribeOrders();
-    else unsubscribeOrders();
+    if(logged) subscribeAdminOrders();
+    else unsubscribeAdminOrders();
   }
   window.tryLogin = function(){
     const pass = document.getElementById('admin-pass').value;
     if(pass === CONFIG.adminPassword){
       sessionStorage.setItem('pl_auth','1');
-      document.getElementById('login-error').textContent = '';
+      document.getElementById('login-error-admin').textContent = '';
       document.getElementById('admin-pass').value = '';
-      checkAuth();
+      checkAdminAuth();
     } else {
-      document.getElementById('login-error').textContent = 'Senha incorreta. Tente novamente.';
+      document.getElementById('login-error-admin').textContent = 'Senha incorreta. Tente novamente.';
     }
   };
-  window.logout = function(){ sessionStorage.removeItem('pl_auth'); checkAuth(); };
+  window.logoutAdmin = function(){ sessionStorage.removeItem('pl_auth'); checkAdminAuth(); };
   window.switchTab = function(name){
     document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === name));
     document.getElementById('tab-orders').classList.toggle('hidden', name !== 'orders');
     document.getElementById('tab-products').classList.toggle('hidden', name !== 'products');
   };
 
-  /* =============================================================
-     ADMIN — PEDIDOS E ATUALIZAÇÃO DE STATUS NO WHATSAPP
-  ============================================================= */
   const STATUS = {
     novo:      { label:'Novo',        cls:'st-novo' },
     producao:  { label:'Em produção', cls:'st-producao' },
@@ -855,7 +1140,6 @@ textarea{resize:vertical;min-height:70px}
       
       const msgGeral = `Olá, ${o.customer.name.split(' ')[0]}! Tudo bem?\n\nEstou entrando em contato sobre o seu pedido *${o.orderId || o.id}* na PrintLab 3D.\n\nComo posso te ajudar?`;
       const wa = waLink(o.customer.phone, msgGeral);
-
       const date = o.createdAt?.toDate ? o.createdAt.toDate().toLocaleString('pt-BR', { dateStyle:'short', timeStyle:'short' }) : '—';
       
       const itemsHTML = o.items.map(i => {
@@ -875,6 +1159,7 @@ textarea{resize:vertical;min-height:70px}
             <div>
               <span class="order-id">${esc(o.orderId || o.id)}</span>
               <span class="order-date">${date}</span>
+              ${o.userId ? `<span class="badge" style="background:#E6F9EE; color:#007A2F; margin-left:10px;">Cliente Cadastrado</span>` : ''}
             </div>
             <span class="badge ${st.cls}">${st.label}</span>
           </div>
@@ -910,7 +1195,6 @@ textarea{resize:vertical;min-height:70px}
     }).join('');
   };
 
-  // ATUALIZAR STATUS E MANDAR WHATSAPP PARA O CLIENTE
   window.setOrderStatus = async function(id, status){
     try { 
       await updateDoc(doc(db, 'orders', id), { status }); 
@@ -1089,10 +1373,15 @@ textarea{resize:vertical;min-height:70px}
     document.querySelectorAll('[data-store-name]').forEach(el => el.textContent = CONFIG.storeName);
     renderImagePreview();
     setCartStep(1);
-    checkAuth();
     subscribeProducts();
+    
+    onAuthStateChanged(auth, user => {
+      if(!document.getElementById('view-account').classList.contains('hidden')){
+        checkClientAuthUI();
+      }
+    });
   }
   init();
 </script>
 </body>
-  </html>
+</html>

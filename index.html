@@ -97,7 +97,6 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);ba
 .field > span{display:block;font-size:13px;font-weight:600;color:var(--text);margin-bottom:6px}
 input,select,textarea{width:100%;font-family:inherit;font-size:14.5px;color:var(--text);padding:11px 13px;border:1px solid var(--border);border-radius:11px;background:#fff;transition:.2s;outline:none}
 
-/* CORREÇÃO DO AUTO-PREENCHIMENTO (AUTOFILL) */
 input:-webkit-autofill,
 input:-webkit-autofill:hover, 
 input:-webkit-autofill:focus, 
@@ -169,14 +168,12 @@ textarea{resize:vertical;min-height:70px}
 .admin-secret-link{display:inline-block; margin-top:16px; color:var(--muted); text-decoration:none; font-size:12px; opacity:0.4; transition:opacity 0.2s;}
 .admin-secret-link:hover{opacity:1;}
 
-/* Toast de Notificação */
 .toast { position: fixed; top: 24px; right: 24px; background: #fff; border: 1px solid var(--border); border-left: 4px solid var(--green); padding: 16px 20px; border-radius: 12px; box-shadow: var(--shadow-lg); display: flex; align-items: center; gap: 14px; z-index: 9999; transform: translateX(120%); transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 .toast.show { transform: translateX(0); }
 .toast-icon { font-size: 24px; }
 .toast-text strong { display: block; font-size: 15px; color: var(--text); margin-bottom: 2px;}
 .toast-text span { font-size: 13.5px; color: var(--muted); }
 
-/* Client Dashboard */
 .client-order { display: flex; align-items: center; justify-content: space-between; padding: 16px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; background: #fff; }
 .client-order-info h4 { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
 .client-order-info p { font-size: 13px; color: var(--muted); }
@@ -203,7 +200,6 @@ textarea{resize:vertical;min-height:70px}
 </head>
 <body>
 
-<!-- Alerta Visual de Novo Pedido -->
 <div id="toast" class="toast">
   <div class="toast-icon">🔔</div>
   <div class="toast-text">
@@ -232,7 +228,6 @@ textarea{resize:vertical;min-height:70px}
   </div>
 </header>
 
-<!-- VITRINE -->
 <main id="view-store">
   <section class="hero">
     <div class="hero-inner">
@@ -265,11 +260,9 @@ textarea{resize:vertical;min-height:70px}
   </section>
 </main>
 
-<!-- ÁREA DO CLIENTE (LOGIN/CADASTRO E MEUS PEDIDOS) -->
 <main id="view-account" class="hidden">
   <div class="container admin-wrap">
     
-    <!-- Formulário de Login/Cadastro -->
     <div id="client-auth-screen" class="auth-card">
       <div style="margin-bottom: 20px;">
         <button class="btn btn-ghost btn-sm" onclick="showView('store')" style="padding-left:0; color:var(--green-dark)">← Voltar para a Loja</button>
@@ -280,7 +273,6 @@ textarea{resize:vertical;min-height:70px}
         <button class="tab" id="tab-register" onclick="switchAuthTab('register')">Criar Conta</button>
       </div>
 
-      <!-- Login -->
       <form id="form-login" onsubmit="handleLogin(event)">
         <h2>Bem-vindo de volta!</h2>
         <p class="muted">Acesse sua conta para ver seus pedidos.</p>
@@ -290,7 +282,6 @@ textarea{resize:vertical;min-height:70px}
         <p class="error" id="login-error"></p>
       </form>
 
-      <!-- Cadastro -->
       <form id="form-register" class="hidden" onsubmit="handleRegister(event)">
         <h2>Crie sua conta</h2>
         <p class="muted">Preencha seus dados uma única vez e compre mais rápido no futuro.</p>
@@ -326,7 +317,6 @@ textarea{resize:vertical;min-height:70px}
       </form>
     </div>
 
-    <!-- Dashboard do Cliente Logado -->
     <div id="client-dashboard" class="hidden">
       <div class="admin-head">
         <div>
@@ -340,14 +330,12 @@ textarea{resize:vertical;min-height:70px}
       </div>
 
       <div id="client-orders-list">
-        <!-- Pedidos do cliente vão aparecer aqui -->
       </div>
     </div>
 
   </div>
 </main>
 
-<!-- PAINEL DO ADMIN -->
 <main id="view-admin" class="hidden">
   <div class="container admin-wrap">
     <div id="admin-login" class="auth-card">
@@ -406,6 +394,46 @@ textarea{resize:vertical;min-height:70px}
         <div class="admin-grid">
           <div class="card">
             <h3 id="product-form-title">Novo produto</h3>
+            
+            <!-- MÓDULO DE IMPORTAÇÃO DO MAKERWORLD -->
+            <div style="background:var(--green-soft); border:1px solid var(--green); border-radius:12px; padding:16px; margin-bottom:20px;">
+              <h4 style="font-size:14px; font-weight:800; color:var(--green-dark); margin-bottom:8px;">⚡ Importar do MakerWorld</h4>
+              <p style="font-size:12px; color:var(--muted); margin-bottom:10px;">Cole o link do modelo que você tem <strong>licença comercial</strong> para vender. O sistema vai puxar a foto, o peso e o tempo de impressão automaticamente para calcular o preço.</p>
+              
+              <div style="display:flex; gap:8px;">
+                <input type="url" id="mw-url" placeholder="https://makerworld.com/en/models/..." style="flex:1; font-size:13px; padding:8px 10px;">
+                <button type="button" class="btn btn-primary btn-sm" onclick="importFromMakerWorld()" id="btn-import-mw">Puxar Dados</button>
+              </div>
+              <p id="mw-status" style="font-size:12px; margin-top:8px; color:var(--green-dark);"></p>
+              
+              <div id="price-calculator" class="hidden" style="margin-top:12px; padding-top:12px; border-top:1px dashed var(--border);">
+                <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+                  <label class="field" style="margin-bottom:0;">
+                    <span style="font-size:11px;">Peso (g)</span>
+                    <input type="number" id="calc-weight" oninput="calculatePrice()" placeholder="Ex: 50">
+                  </label>
+                  <label class="field" style="margin-bottom:0;">
+                    <span style="font-size:11px;">Tempo (h)</span>
+                    <input type="number" step="0.1" id="calc-time" oninput="calculatePrice()" placeholder="Ex: 2.5">
+                  </label>
+                </div>
+                <div style="margin-top:10px; font-size:12px;">
+                  <div style="display:flex; justify-content:space-between;">
+                    <span>Custo Filamento (R$0,11/g):</span>
+                    <span id="cost-filament">R$ 0,00</span>
+                  </div>
+                  <div style="display:flex; justify-content:space-between;">
+                    <span>Custo Máquina (R$2,00/h):</span>
+                    <span id="cost-machine">R$ 0,00</span>
+                  </div>
+                  <div style="display:flex; justify-content:space-between; font-weight:800; margin-top:4px; color:var(--green-dark);">
+                    <span>Preço Sugerido (2x custo):</span>
+                    <span id="suggested-price">R$ 0,00</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
             <form id="product-form" onsubmit="saveProduct(event)">
               <input type="hidden" id="p-id">
               <div class="img-preview" id="p-preview">Sem imagem</div>
@@ -452,7 +480,6 @@ textarea{resize:vertical;min-height:70px}
   <a href="#" class="admin-secret-link" onclick="showView('admin');return false;">Acesso Restrito</a>
 </footer>
 
-<!-- CARRINHO -->
 <div class="overlay" id="overlay" onclick="closeCart()"></div>
 <aside class="cart-drawer" id="cart-drawer">
   <div class="cart-header">
@@ -464,29 +491,20 @@ textarea{resize:vertical;min-height:70px}
   <div class="cart-body hidden" id="cart-step-2">
     <form id="checkout-form">
       <label class="field"><span>Nome completo *</span><input id="c-name" required placeholder="João Silva"></label>
-      
-      <label class="field">
-        <span>WhatsApp *</span>
-        <input id="c-phone" required placeholder="(11) 99999-9999" oninput="maskPhone(this)">
-      </label>
-      
+      <label class="field"><span>WhatsApp *</span><input id="c-phone" required placeholder="(11) 99999-9999" oninput="maskPhone(this)"></label>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
         <label class="field"><span>CEP *</span><input id="c-cep" required placeholder="00000-000" oninput="maskCEP(this)"></label>
         <label class="field"><span>Estado (UF) *</span><input id="c-state" required placeholder="SP" maxlength="2" style="text-transform:uppercase"></label>
       </div>
-
       <label class="field"><span>Rua / Avenida *</span><input id="c-street" required placeholder="Ex: Av. Paulista"></label>
-
       <div style="display:grid; grid-template-columns:1fr 2fr; gap:10px;">
         <label class="field"><span>Número *</span><input id="c-number" required placeholder="123"></label>
         <label class="field"><span>Complemento</span><input id="c-complement" placeholder="Apto 45, Bloco B"></label>
       </div>
-
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
         <label class="field"><span>Bairro *</span><input id="c-neighborhood" required placeholder="Centro"></label>
         <label class="field"><span>Cidade *</span><input id="c-city" required placeholder="São Paulo"></label>
       </div>
-
       <label class="field"><span>Forma de pagamento</span>
         <select id="c-payment">
           <option>Pix</option>
@@ -516,9 +534,6 @@ textarea{resize:vertical;min-height:70px}
     getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, updateProfile
   } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-  /* =============================================================
-     🔥 SUAS CHAVES DO FIREBASE
-  ============================================================= */
   const firebaseConfig = {
     apiKey: "AIzaSyCYbtviQhNFA-h5REyIRNeoXr5LKGBzUKA",
     authDomain: "printlab-3d-15611.firebaseapp.com",
@@ -532,21 +547,18 @@ textarea{resize:vertical;min-height:70px}
   const db  = getFirestore(app);
   const auth = getAuth(app);
 
-  /* =============================================================
-     ⚙️ CONFIGURAÇÕES GERAIS E CLOUDINARY
-  ============================================================= */
   const CONFIG = {
     storeName: 'PrintLab 3D',
     adminPassword: 'admin123',
     cloudinaryCloudName: 'saemfnk0', 
     cloudinaryPreset: 'Impressão 3D',
     pixKey: 'arthurnass@icloud.com',
-    whatsappAdmin: '5511999999999' 
+    whatsappAdmin: '5511999999999',
+    // Custos para a calculadora
+    costPerGram: 0.11, // R$ 110,00 / 1000g
+    costPerHour: 2.00  // Energia + desgaste
   };
 
-  /* =============================================================
-     ESTADO
-  ============================================================= */
   let products = [];
   let orders   = [];
   let myOrders = [];
@@ -561,9 +573,6 @@ textarea{resize:vertical;min-height:70px}
   let currentUser = null;        
   let currentUserProfile = null; 
 
-  /* =============================================================
-     MÁSCARAS DE FORMATAÇÃO
-  ============================================================= */
   window.maskPhone = function(input) {
     let v = input.value.replace(/\D/g, "");
     if (v.length > 13) v = v.slice(0, 13); 
@@ -590,9 +599,6 @@ textarea{resize:vertical;min-height:70px}
     }
   };
 
-  /* =============================================================
-     HELPERS
-  ============================================================= */
   const fmt = n => (Number(n)||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c =>
     ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -630,9 +636,6 @@ textarea{resize:vertical;min-height:70px}
     setTimeout(() => toast.classList.remove('show'), 5000);
   }
 
-  /* =============================================================
-     NAVEGAÇÃO
-  ============================================================= */
   window.showView = function(name){
     document.getElementById('view-store').classList.toggle('hidden', name !== 'store');
     document.getElementById('view-account').classList.toggle('hidden', name !== 'account');
@@ -644,9 +647,6 @@ textarea{resize:vertical;min-height:70px}
     if(name === 'account') checkClientAuthUI();
   };
 
-  /* =============================================================
-     AUTENTICAÇÃO DE CLIENTES E SALVAMENTO DE PERFIL
-  ============================================================= */
   window.switchAuthTab = function(tab) {
     document.getElementById('tab-login').classList.toggle('active', tab === 'login');
     document.getElementById('tab-register').classList.toggle('active', tab === 'register');
@@ -761,9 +761,6 @@ textarea{resize:vertical;min-height:70px}
     }
   });
 
-  /* =============================================================
-     PEDIDOS DO CLIENTE (TEMPO REAL)
-  ============================================================= */
   function subscribeMyOrders() {
     if(!currentUser || unsubMyOrders) return;
     
@@ -815,9 +812,6 @@ textarea{resize:vertical;min-height:70px}
     }).join('');
   }
 
-  /* =============================================================
-     TEMPO REAL — PRODUTOS E ADMIN
-  ============================================================= */
   function subscribeProducts(){
     onSnapshot(collection(db, 'products'),
       snap => {
@@ -860,9 +854,6 @@ textarea{resize:vertical;min-height:70px}
     isFirstOrdersLoad = true;
   }
 
-  /* =============================================================
-     VITRINE & CARRINHO
-  ============================================================= */
   function renderProducts(){
     const grid = document.getElementById('product-grid');
     if(!products.length){
@@ -983,9 +974,6 @@ textarea{resize:vertical;min-height:70px}
   window.openCart  = function(){ document.getElementById('cart-drawer').classList.add('open'); document.getElementById('overlay').classList.add('open'); };
   window.closeCart = function(){ document.getElementById('cart-drawer').classList.remove('open'); document.getElementById('overlay').classList.remove('open'); };
 
-  /* =============================================================
-     CHECKOUT
-  ============================================================= */
   async function submitOrder(){
     if(!cart.length) return;
     const form = document.getElementById('checkout-form');
@@ -993,7 +981,6 @@ textarea{resize:vertical;min-height:70px}
 
     if(!currentUser) {
       if(confirm("Para acompanhar seu pedido pelo site, recomendamos criar uma conta ou entrar. Deseja continuar como visitante?")) {
-        // segue o fluxo
       } else {
         closeCart(); showView('account'); return;
       }
@@ -1088,9 +1075,6 @@ textarea{resize:vertical;min-height:70px}
     }
   }
 
-  /* =============================================================
-     ADMIN — LOGIN E AÇÕES
-  ============================================================= */
   function checkAdminAuth(){
     const logged = sessionStorage.getItem('pl_auth') === '1';
     document.getElementById('admin-login').classList.toggle('hidden', logged);
@@ -1233,9 +1217,113 @@ textarea{resize:vertical;min-height:70px}
     catch (e) { console.error(e); alert('Erro: ' + e.message); }
   };
 
-  /* =============================================================
-     ADMIN — PRODUTOS
-  ============================================================= */
+  // ==============================================================
+  // FUNÇÕES DO MAKERWORLD E CALCULADORA
+  // ==============================================================
+  
+  window.importFromMakerWorld = async function() {
+    const urlInput = document.getElementById('mw-url').value.trim();
+    const statusEl = document.getElementById('mw-status');
+    const btn = document.getElementById('btn-import-mw');
+    
+    if (!urlInput || !urlInput.includes('makerworld.com')) {
+      statusEl.textContent = 'Por favor, cole um link válido do MakerWorld.';
+      statusEl.style.color = 'var(--danger)';
+      return;
+    }
+
+    // Extrai o ID do modelo da URL (ex: .../models/1717122-...)
+    const match = urlInput.match(/models\/(\d+)/);
+    if (!match) {
+      statusEl.textContent = 'Não foi possível encontrar o ID do modelo na URL.';
+      statusEl.style.color = 'var(--danger)';
+      return;
+    }
+    
+    const modelId = match[1];
+    btn.disabled = true;
+    btn.innerHTML = '<span class="spinner"></span> Buscando...';
+    statusEl.textContent = 'Conectando ao MakerWorld...';
+    statusEl.style.color = 'var(--muted)';
+
+    try {
+      // Usa um proxy CORS público para evitar bloqueio do navegador
+      const targetUrl = `https://makerworld.com/api/v1/design-service/design/${modelId}?handle=en`;
+      const proxyUrl = `https://api.allorigins.win/raw?url=${encodeURIComponent(targetUrl)}`;
+      
+      const response = await fetch(proxyUrl);
+      if (!response.ok) throw new Error('Falha na resposta do MakerWorld.');
+      
+      const data = await response.json();
+      
+      // Preenche os campos do formulário
+      document.getElementById('p-name').value = data.title || '';
+      document.getElementById('p-desc').value = (data.description || '').replace(/<[^>]*>?/gm, '') + `\n\nLink original: ${urlInput}`;
+      
+      // Pega a imagem de capa
+      if (data.coverUrl) {
+        pendingImage = data.coverUrl;
+        document.getElementById('p-preview').innerHTML = `<img src="${data.coverUrl}" alt="">`;
+        pendingImageFile = null; // Não é um upload local, é uma URL
+      }
+
+      // Pega o peso e tempo do perfil padrão (ou do primeiro disponível)
+      let weight = 0;
+      let timeHours = 0;
+      
+      if (data.instances && data.instances.length > 0) {
+        const defaultInstance = data.instances.find(i => i.id === data.defaultInstanceId) || data.instances[0];
+        if (defaultInstance) {
+          weight = defaultInstance.weight || 0;
+          timeHours = defaultInstance.prediction ? (defaultInstance.prediction / 3600) : 0;
+        }
+      }
+
+      // Preenche a calculadora e mostra
+      document.getElementById('calc-weight').value = weight.toFixed(0);
+      document.getElementById('calc-time').value = timeHours.toFixed(1);
+      document.getElementById('price-calculator').classList.remove('hidden');
+      
+      calculatePrice(); // Roda o cálculo
+      
+      statusEl.textContent = 'Dados importados com sucesso! Verifique a licença antes de salvar.';
+      statusEl.style.color = 'var(--green-dark)';
+      
+    } catch (err) {
+      console.error(err);
+      statusEl.textContent = 'Erro ao buscar dados. O modelo pode ser privado ou a API mudou.';
+      statusEl.style.color = 'var(--danger)';
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Puxar Dados';
+    }
+  };
+
+  window.calculatePrice = function() {
+    const weight = parseFloat(document.getElementById('calc-weight').value) || 0;
+    const time = parseFloat(document.getElementById('calc-time').value) || 0;
+    
+    const costFilament = weight * CONFIG.costPerGram;
+    const costMachine = time * CONFIG.costPerHour;
+    const totalCost = costFilament + costMachine;
+    
+    // Preço sugerido: Custo x 2 (margem de 100%)
+    const suggestedPrice = totalCost * 2;
+
+    document.getElementById('cost-filament').textContent = fmt(costFilament);
+    document.getElementById('cost-machine').textContent = fmt(costMachine);
+    document.getElementById('suggested-price').textContent = fmt(suggestedPrice);
+    
+    // Preenche o campo de preço se estiver vazio ou se o usuário quiser
+    const priceInput = document.getElementById('p-price');
+    if (priceInput && (!priceInput.value || priceInput.value == '0')) {
+      priceInput.value = suggestedPrice.toFixed(2);
+    }
+  };
+
+  // ==============================================================
+  // ADMIN — PRODUTOS (SALVAR/EDITAR)
+  // ==============================================================
   function renderAdminProducts(){
     const el = document.getElementById('admin-products-list');
     if(!products.length){
@@ -1292,6 +1380,9 @@ textarea{resize:vertical;min-height:70px}
     document.getElementById('p-id').value = '';
     document.getElementById('product-form-title').textContent = 'Novo produto';
     document.getElementById('p-save-btn').textContent = 'Salvar produto';
+    document.getElementById('mw-url').value = '';
+    document.getElementById('mw-status').textContent = '';
+    document.getElementById('price-calculator').classList.add('hidden');
     pendingImage = null;
     pendingImageFile = null;
     renderImagePreview();
@@ -1367,9 +1458,6 @@ textarea{resize:vertical;min-height:70px}
     catch (e) { console.error(e); alert('Erro ao excluir produto: ' + e.message); }
   };
 
-  /* =============================================================
-     INIT
-  ============================================================= */
   function init(){
     document.title = CONFIG.storeName + ' — Impressão 3D sob medida';
     document.querySelectorAll('[data-store-name]').forEach(el => el.textContent = CONFIG.storeName);

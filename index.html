@@ -272,7 +272,7 @@ textarea{resize:vertical;min-height:70px}
       <div class="a1-warning-icon">⚠️</div>
       <div class="a1-warning-text">
         <strong>Atenção ao tamanho da impressão</strong>
-        <span>Atualmente, produzimos apenas peças que caibam na mesa da <strong>Bambu Lab A1 mini</strong> (limite máximo de 180 × 180 × 180 mm).</span>
+        <span>Atualmente, produzo apenas peças que caibam na mesa da <strong>Bambu Lab A1 mini</strong> (limite máximo de 180 × 180 × 180 mm).</span>
       </div>
     </div>
 
@@ -293,7 +293,7 @@ textarea{resize:vertical;min-height:70px}
   <div class="makerworld-section">
     <div class="makerworld-card">
       <h2>Não encontrou o que procura?</h2>
-      <p>Explore milhares de modelos incríveis no MakerWorld. Se você encontrar um modelo que caiba na A1 mini, mande o link no WhatsApp e nós orçamos para você!</p>
+      <p>Explore milhares de modelos incríveis no MakerWorld. Se você encontrar um modelo que caiba na A1 mini, mande o link no WhatsApp e eu orço para você!</p>
       
       <div class="mw-buttons">
         <a href="https://makerworld.com/pt" target="_blank" class="btn btn-primary">
@@ -301,7 +301,6 @@ textarea{resize:vertical;min-height:70px}
         </a>
       </div>
       
-      <!-- NOVO TEXTO INFORMATIVO -->
       <div class="mw-tip">
         <p style="margin-bottom:0;">Quer uma experiência ainda melhor? 📱<br>
         Baixe o aplicativo <strong>Bambu Handy</strong> na loja de aplicativos do seu celular (Play Store ou App Store) para explorar os modelos com muito mais facilidade e conforto.</p>
@@ -531,7 +530,7 @@ textarea{resize:vertical;min-height:70px}
       
       <!-- Aviso no Checkout -->
       <div style="background:#FFF4E0; padding:12px; border-radius:8px; border:1px solid #FFD699; font-size:13px; color:#B45309; margin-top:10px;">
-        <strong>Lembrete:</strong> Só imprimimos peças que caibam na mesa da Bambu Lab A1 mini (180x180x180mm).
+        <strong>Lembrete:</strong> Só imprimo peças que caibam na mesa da Bambu Lab A1 mini (180x180x180mm).
       </div>
     </form>
   </div>
@@ -997,7 +996,7 @@ textarea{resize:vertical;min-height:70px}
     if(!form.checkValidity()){ form.reportValidity(); return; }
 
     if(!currentUser) {
-      if(confirm("Para acompanhar seu pedido pelo site, recomendamos criar uma conta ou entrar. Deseja continuar como visitante?")) {
+      if(confirm("Para acompanhar seu pedido pelo site, recomendo criar uma conta ou entrar. Deseja continuar como visitante?")) {
       } else {
         closeCart(); showView('account'); return;
       }
@@ -1210,11 +1209,11 @@ textarea{resize:vertical;min-height:70px}
       let msg = '';
 
       if (status === 'producao') {
-        msg = `Olá, ${firstName}! Tudo bem?\n\nConfirmamos o pagamento do seu pedido *${orderId}*.\nEle já entrou em produção e logo estará pronto! Avisaremos assim que enviarmos. 🎨`;
+        msg = `Olá, ${firstName}! Tudo bem?\n\nConfirmei o pagamento do seu pedido *${orderId}*.\nEle já entrou em produção e logo estará pronto! Avisarei assim que enviar. 🎨`;
       } else if (status === 'enviado') {
-        msg = `Olá, ${firstName}! Tudo bem?\n\nSeu pedido *${orderId}* acabou de ser despachado. 📦\nEm breve você receberá o código de rastreamento para acompanhar a entrega.`;
+        msg = `Olá, ${firstName}! Tudo bem?\n\nAcabei de despachar o seu pedido *${orderId}*. 📦\nEm breve você receberá o código de rastreamento para acompanhar a entrega.`;
       } else if (status === 'concluido') {
-        msg = `Olá, ${firstName}! Tudo bem?\n\nSeu pedido *${orderId}* foi concluído com sucesso! Esperamos que você ame o resultado. 💚\nSe puder, nos marque nas redes sociais mostrando sua peça nova!`;
+        msg = `Olá, ${firstName}! Tudo bem?\n\nSeu pedido *${orderId}* foi concluído com sucesso! Espero que você ame o resultado. 💚\nSe puder, me marque nas redes sociais mostrando sua peça nova!`;
       }
 
       if (msg) {

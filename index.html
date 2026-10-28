@@ -62,6 +62,15 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);ba
 .how-step h3 { font-size: 18px; font-weight: 800; margin-bottom: 8px; }
 .how-step p { color: var(--muted); font-size: 14.5px; }
 
+/* AVALIAÇÕES */
+.testimonials { padding: 64px 24px; background: var(--bg-soft); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
+.testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 1000px; margin: 40px auto 0; }
+.testimonial-card { background: #fff; border: 1px solid var(--border); border-radius: 16px; padding: 24px; box-shadow: var(--shadow-sm); }
+.testimonial-stars { color: #F59E0B; font-size: 18px; margin-bottom: 12px; }
+.testimonial-text { font-size: 14.5px; font-style: italic; color: var(--text); margin-bottom: 16px; line-height: 1.6; }
+.testimonial-author { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; }
+.testimonial-author img { width: 36px; height: 36px; border-radius: 50%; background: var(--green-soft); }
+
 /* Aviso A1 Mini */
 .a1-warning {
   background: #FFF4E0; border: 1px solid #FFD699; border-left: 4px solid #F59E0B;
@@ -85,7 +94,7 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);ba
 .filter-btn.active { background: var(--green); color: #fff; border-color: var(--green); }
 
 .product-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:24px}
-.product-card{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:#fff;display:flex;flex-direction:column;transition:.25s}
+.product-card{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;background:#fff;display:flex;flex-direction:column;transition:.25s; cursor:pointer;}
 .product-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);border-color:transparent}
 .product-img{aspect-ratio:1;background:var(--bg-soft);overflow:hidden;position:relative}
 .product-img img{width:100%;height:100%;object-fit:cover;transition:transform .45s}
@@ -98,6 +107,29 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);ba
 .product-bottom{margin-top:auto;display:flex;align-items:center;justify-content:space-between;gap:10px}
 .price{font-size:18px;font-weight:800;letter-spacing:-.02em}
 .empty{text-align:center;padding:60px 20px;color:var(--muted);border:1.5px dashed var(--border);border-radius:var(--radius)}
+
+/* MODAL DE PRODUTO */
+.modal-overlay { position: fixed; inset: 0; background: rgba(15,20,25,.6); z-index: 1000; display: flex; align-items: center; justify-content: center; padding: 20px; opacity: 0; pointer-events: none; transition: opacity 0.3s; backdrop-filter: blur(4px); }
+.modal-overlay.open { opacity: 1; pointer-events: auto; }
+.modal-content { background: #fff; border-radius: 20px; width: 100%; max-width: 800px; max-height: 90vh; overflow-y: auto; position: relative; box-shadow: var(--shadow-lg); display: grid; grid-template-columns: 1fr 1fr; }
+.modal-close { position: absolute; top: 16px; right: 16px; background: #fff; border: none; width: 36px; height: 36px; border-radius: 50%; font-size: 20px; cursor: pointer; box-shadow: var(--shadow-sm); z-index: 10; }
+.modal-img { width: 100%; height: 100%; min-height: 300px; object-fit: cover; border-radius: 20px 0 0 20px; background: var(--bg-soft); }
+.modal-info { padding: 40px 32px; display: flex; flex-direction: column; }
+.modal-info h2 { font-size: 26px; font-weight: 800; margin-bottom: 8px; }
+.modal-info .cat { font-size: 12px; font-weight: 700; color: var(--green-dark); text-transform: uppercase; margin-bottom: 16px; }
+.modal-info .desc { color: var(--muted); font-size: 15px; line-height: 1.6; margin-bottom: 24px; flex: 1; }
+.modal-info .price-tag { font-size: 28px; font-weight: 800; margin-bottom: 20px; }
+@media (max-width: 768px) { .modal-content { grid-template-columns: 1fr; } .modal-img { min-height: 200px; border-radius: 20px 20px 0 0; } .modal-info { padding: 24px; } }
+
+/* FAQ */
+.faq-section { padding: 64px 24px; background: #fff; }
+.faq-grid { max-width: 800px; margin: 40px auto 0; display: flex; flex-direction: column; gap: 12px; }
+.faq-item { border: 1px solid var(--border); border-radius: 12px; background: #fff; overflow: hidden; }
+.faq-question { padding: 18px 24px; font-weight: 600; font-size: 16px; cursor: pointer; display: flex; justify-content: space-between; align-items: center; background: #fff; transition: background 0.2s; }
+.faq-question:hover { background: var(--bg-soft); }
+.faq-answer { padding: 0 24px; max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out, padding 0.3s; color: var(--muted); font-size: 14.5px; line-height: 1.6; }
+.faq-item.active .faq-answer { max-height: 200px; padding: 0 24px 18px; }
+.faq-item.active .faq-question { background: var(--bg-soft); color: var(--green-dark); }
 
 /* MakerWorld Section */
 .makerworld-section { background: var(--bg-soft); padding: 64px 24px; border-top: 1px solid var(--border); }
@@ -266,7 +298,7 @@ textarea{resize:vertical;min-height:70px}
 </header>
 
 <!-- Botão Flutuante do WhatsApp -->
-<a href="https://wa.me/5541988896304?text=Ol%C3%A1!%20Gostaria%20de%20tirar%20uma%20d%C3%BAvida." target="_blank" class="wa-float" title="Fale comigo no WhatsApp">
+<a href="https://wa.me/5511999999999?text=Ol%C3%A1!%20Gostaria%20de%20tirar%20uma%20d%C3%BAvida." target="_blank" class="wa-float" title="Fale comigo no WhatsApp">
   <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
 </a>
 
@@ -316,9 +348,56 @@ textarea{resize:vertical;min-height:70px}
     </div>
   </section>
 
+  <!-- DEPOIMENTOS -->
+  <section class="testimonials">
+    <div class="container">
+      <div class="section-head fade-in" style="justify-content: center; text-align: center;">
+        <div>
+          <h2>Quem já comprou, amou</h2>
+          <p>A qualidade e o carinho com cada peça fazem a diferença.</p>
+        </div>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card fade-in">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">"A peça chegou super rápido e o acabamento é impecável. Dá pra ver o cuidado em cada detalhe. Super recomendo!"</p>
+          <div class="testimonial-author">
+            <div style="width:36px; height:36px; border-radius:50%; background:#E6F9EE; display:grid; place-items:center; font-size:18px;">👩</div>
+            <div>
+              <div style="color:var(--text);">Mariana S.</div>
+              <div style="font-size:12px; color:var(--muted); font-weight:400;">Comprou um Vaso Espiral</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card fade-in" style="transition-delay: 0.1s;">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">"Comprei um presente de última hora e o Arthur foi super atencioso. A peça ficou perfeita e a entrega foi antes do prazo!"</p>
+          <div class="testimonial-author">
+            <div style="width:36px; height:36px; border-radius:50%; background:#E6F9EE; display:grid; place-items:center; font-size:18px;">👨</div>
+            <div>
+              <div style="color:var(--text);">Carlos M.</div>
+              <div style="font-size:12px; color:var(--muted); font-weight:400;">Comprou um Chaveiro</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card fade-in" style="transition-delay: 0.2s;">
+          <div class="testimonial-stars">★★★★★</div>
+          <p class="testimonial-text">"Já é a terceira vez que compro. A qualidade do filamento é ótima e não tem aquelas rebarbas. Atendimento de primeira!"</p>
+          <div class="testimonial-author">
+            <div style="width:36px; height:36px; border-radius:50%; background:#E6F9EE; display:grid; place-items:center; font-size:18px;">👩‍🦰</div>
+            <div>
+              <div style="color:var(--text);">Juliana R.</div>
+              <div style="font-size:12px; color:var(--muted); font-weight:400;">Comprou Decorações</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
   <div class="container" id="produtos">
     <!-- AVISO A1 MINI -->
-    <div class="a1-warning fade-in">
+    <div class="a1-warning fade-in" style="margin-top: 64px;">
       <div class="a1-warning-icon">⚠️</div>
       <div class="a1-warning-text">
         <strong>Atenção ao tamanho da impressão</strong>
@@ -334,16 +413,39 @@ textarea{resize:vertical;min-height:70px}
         </div>
       </div>
 
-      <!-- FILTROS -->
-      <div class="filters-container fade-in" id="category-filters">
-        <!-- Os botões de filtro vão aparecer aqui via JS -->
-      </div>
+      <div class="filters-container fade-in" id="category-filters"></div>
 
       <div id="product-grid" class="product-grid">
         <div class="empty">Carregando produtos…</div>
       </div>
     </div>
   </div>
+
+  <!-- FAQ -->
+  <section class="faq-section">
+    <div class="container">
+      <div class="section-head fade-in" style="justify-content: center; text-align: center;">
+        <div>
+          <h2>Perguntas Frequentes</h2>
+          <p>Ficou com alguma dúvida? A resposta pode estar aqui.</p>
+        </div>
+      </div>
+      <div class="faq-grid">
+        <div class="faq-item fade-in">
+          <div class="faq-question" onclick="toggleFaq(this)">Qual é o prazo de produção e entrega? <span>+</span></div>
+          <div class="faq-answer">O prazo de produção varia de 2 a 5 dias úteis, dependendo da complexidade da peça. Após a postagem, o prazo de entrega depende dos Correios ou transportadora, geralmente de 3 a 10 dias úteis.</div>
+        </div>
+        <div class="faq-item fade-in" style="transition-delay: 0.1s;">
+          <div class="faq-question" onclick="toggleFaq(this)">Qual material você utiliza? <span>+</span></div>
+          <div class="faq-answer">Utilizo filamento PLA de alta qualidade, que é biodegradável, não tóxico e possui um excelente acabamento. É ideal para peças decorativas e utilidades do dia a dia.</div>
+        </div>
+        <div class="faq-item fade-in" style="transition-delay: 0.2s;">
+          <div class="faq-question" onclick="toggleFaq(this)">Posso encomendar um modelo personalizado? <span>+</span></div>
+          <div class="faq-answer">Com certeza! Basta me enviar o link do modelo (do MakerWorld, Thingiverse, etc.) no WhatsApp. Vou verificar se ele cabe na A1 mini e te passar o orçamento.</div>
+        </div>
+      </div>
+    </div>
+  </section>
 
   <!-- MAKERWORLD -->
   <div class="makerworld-section">
@@ -364,6 +466,21 @@ textarea{resize:vertical;min-height:70px}
     </div>
   </div>
 </main>
+
+<!-- MODAL DE PRODUTO -->
+<div class="modal-overlay" id="product-modal" onclick="closeModal(event)">
+  <div class="modal-content" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal(event)">✕</button>
+    <img id="modal-img" src="" class="modal-img" alt="">
+    <div class="modal-info">
+      <div class="cat" id="modal-cat"></div>
+      <h2 id="modal-title"></h2>
+      <p class="desc" id="modal-desc"></p>
+      <div class="price-tag" id="modal-price"></div>
+      <button class="btn btn-primary w-full" onclick="addToCartFromModal()" style="padding: 14px; font-size: 16px;">Adicionar ao Carrinho</button>
+    </div>
+  </div>
+</div>
 
 <main id="view-account" class="hidden">
   <div class="container admin-wrap">
@@ -523,10 +640,6 @@ textarea{resize:vertical;min-height:70px}
                   <input id="p-cat" placeholder="Ex: Decoração">
                 </label>
               </div>
-              <label class="field">
-                <span>Cores Disponíveis</span>
-                <input id="p-colors" placeholder="Ex: Preto, Branco, Azul">
-              </label>
               <div class="form-actions">
                 <button type="submit" class="btn btn-primary" id="p-save-btn">Salvar</button>
                 <button type="button" class="btn btn-ghost" onclick="resetProductForm()">Limpar</button>
@@ -592,7 +705,20 @@ textarea{resize:vertical;min-height:70px}
   
   <div class="cart-body hidden" id="cart-step-3"></div>
   <div class="cart-footer" id="cart-footer">
+    <!-- CUPOM DE DESCONTO -->
+    <div id="coupon-area" style="margin-bottom: 14px;">
+      <div style="display:flex; gap:8px;">
+        <input type="text" id="coupon-input" placeholder="Cupom de desconto" style="flex:1; font-size:13px; padding:8px 10px; text-transform:uppercase;">
+        <button class="btn btn-outline" onclick="applyCoupon()" style="padding:8px 12px; font-size:13px;">Aplicar</button>
+      </div>
+      <div id="coupon-message" style="font-size:12px; margin-top:6px;"></div>
+    </div>
+
+    <div class="total-row" id="discount-row" style="display:none; color:var(--green-dark);">
+      Desconto <span id="discount-val">- R$ 0,00</span>
+    </div>
     <div class="total-row">Total <strong id="cart-total">R$ 0,00</strong></div>
+    
     <button class="btn btn-primary w-full" id="cart-primary-btn" onclick="onPrimaryClick()">Continuar</button>
     <button class="btn btn-ghost w-full hidden" id="cart-back-btn" style="margin-top:6px" onclick="setCartStep(1)">Voltar ao carrinho</button>
   </div>
@@ -627,7 +753,9 @@ textarea{resize:vertical;min-height:70px}
     cloudinaryCloudName: 'saemfnk0', 
     cloudinaryPreset: 'Impressão 3D',
     pixKey: 'arthurnass@icloud.com',
-    whatsappAdmin: '5541988896304' // Coloque seu número aqui com 55 e DDD
+    whatsappAdmin: '5511999999999', // Coloque seu número aqui
+    couponCode: 'PRIMEIRACOMPRA',
+    couponDiscount: 0.10 // 10% de desconto
   };
 
   let products = [];
@@ -644,6 +772,8 @@ textarea{resize:vertical;min-height:70px}
   
   let currentUser = null;        
   let currentUserProfile = null; 
+  let appliedDiscount = 0;
+  let activeModalProductId = null;
 
   window.maskPhone = function(input) {
     let v = input.value.replace(/\D/g, "");
@@ -888,10 +1018,7 @@ textarea{resize:vertical;min-height:70px}
     onSnapshot(collection(db, 'products'),
       snap => {
         products = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-        
-        // Atualiza as categorias nos filtros
         renderCategories();
-        
         renderProducts(); 
         renderAdminProducts(); 
         renderCart(); 
@@ -963,7 +1090,7 @@ textarea{resize:vertical;min-height:70px}
       return;
     }
     grid.innerHTML = filtered.map(p => `
-      <article class="product-card fade-in">
+      <article class="product-card fade-in" onclick="openModal('${p.id}')">
         <div class="product-img">${p.image ? `<img src="${p.image}" alt="${esc(p.name)}">` : placeholderHTML()}</div>
         <div class="product-info">
           <span class="product-cat">${esc(p.category || 'Geral')}</span>
@@ -971,17 +1098,45 @@ textarea{resize:vertical;min-height:70px}
           <p>${esc(p.description || '')}</p>
           <div class="product-bottom">
             <span class="price">${fmt(p.price)}</span>
-            <button class="btn btn-primary btn-sm" onclick="addToCart('${p.id}')">Adicionar</button>
+            <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); addToCart('${p.id}')">Adicionar</button>
           </div>
         </div>
       </article>
     `).join('');
     
-    // Reaplica as animações nos novos cards
     setTimeout(() => {
       document.querySelectorAll('.product-card.fade-in').forEach(el => el.classList.add('visible'));
     }, 50);
   }
+
+  // MODAL LOGIC
+  window.openModal = function(id) {
+    const p = products.find(x => x.id === id);
+    if(!p) return;
+    activeModalProductId = id;
+    
+    document.getElementById('modal-img').src = p.image || '';
+    document.getElementById('modal-img').style.display = p.image ? 'block' : 'none';
+    document.getElementById('modal-cat').textContent = p.category || 'Geral';
+    document.getElementById('modal-title').textContent = p.name;
+    document.getElementById('modal-desc').textContent = p.description || 'Nenhuma descrição detalhada fornecida.';
+    document.getElementById('modal-price').textContent = fmt(p.price);
+    
+    document.getElementById('product-modal').classList.add('open');
+  };
+
+  window.closeModal = function(e) {
+    if(e && e.target !== e.currentTarget && !e.target.classList.contains('modal-close')) return;
+    document.getElementById('product-modal').classList.remove('open');
+    activeModalProductId = null;
+  };
+
+  window.addToCartFromModal = function() {
+    if(activeModalProductId) {
+      addToCart(activeModalProductId);
+      closeModal();
+    }
+  };
 
   function cartTotal(){
     return cart.reduce((s, ci) => {
@@ -1004,12 +1159,39 @@ textarea{resize:vertical;min-height:70px}
   };
   window.removeItem = function(id){ cart = cart.filter(x=>x.id!==id); saveCart(); renderCart(); };
 
+  window.applyCoupon = function() {
+    const code = document.getElementById('coupon-input').value.trim().toUpperCase();
+    const msg = document.getElementById('coupon-message');
+    
+    if (code === CONFIG.couponCode) {
+      appliedDiscount = CONFIG.couponDiscount;
+      msg.textContent = `Cupom aplicado! ${appliedDiscount * 100}% de desconto.`;
+      msg.style.color = 'var(--green-dark)';
+      document.getElementById('coupon-area').style.display = 'none';
+      document.getElementById('discount-row').style.display = 'flex';
+    } else {
+      appliedDiscount = 0;
+      msg.textContent = 'Cupom inválido ou expirado.';
+      msg.style.color = 'var(--danger)';
+    }
+    renderCart();
+  };
+
   function renderCart(){
     document.getElementById('cart-count').textContent = cart.reduce((s,i)=>s+i.qty,0);
-    document.getElementById('cart-total').textContent = fmt(cartTotal());
+    
+    let total = cartTotal();
+    let discountAmount = total * appliedDiscount;
+    let finalTotal = total - discountAmount;
+
+    document.getElementById('discount-val').textContent = `- ${fmt(discountAmount)}`;
+    document.getElementById('cart-total').textContent = fmt(finalTotal);
+
     const el = document.getElementById('cart-items');
     if(!cart.length){
       el.innerHTML = `<div class="empty" style="margin-top:30px">Seu carrinho está vazio.</div>`;
+      document.getElementById('coupon-area').style.display = 'none';
+      document.getElementById('discount-row').style.display = 'none';
     } else {
       el.innerHTML = cart.map(ci => {
         const p = products.find(x => x.id === ci.id);
@@ -1101,7 +1283,9 @@ textarea{resize:vertical;min-height:70px}
       const p = products.find(x => x.id === ci.id);
       return p ? { id:p.id, name:p.name, price:p.price, qty:ci.qty } : null;
     }).filter(Boolean);
-    const total = items.reduce((s,i) => s + i.price * i.qty, 0);
+    
+    let subtotal = items.reduce((s,i) => s + i.price * i.qty, 0);
+    let total = subtotal - (subtotal * appliedDiscount);
 
     const addressDetails = {
       cep: document.getElementById('c-cep').value.trim(),
@@ -1126,7 +1310,7 @@ textarea{resize:vertical;min-height:70px}
         payment:  document.getElementById('c-payment').value,
         notes:    document.getElementById('c-notes').value.trim()
       },
-      items, total, status: 'novo',
+      items, subtotal, discount: appliedDiscount, total, status: 'novo',
       createdAt: serverTimestamp()
     };
 
@@ -1135,9 +1319,14 @@ textarea{resize:vertical;min-height:70px}
       const orderId = 'PED-' + docRef.id.slice(-4).toUpperCase();
       await updateDoc(docRef, { orderId });
 
-      cart = []; saveCart(); renderCart(); form.reset();
+      cart = []; saveCart(); form.reset();
+      appliedDiscount = 0;
+      document.getElementById('coupon-input').value = '';
+      document.getElementById('coupon-area').style.display = 'block';
+      document.getElementById('discount-row').style.display = 'none';
+      renderCart();
 
-      const msgPagamento = `Olá! Acabei de realizar o pagamento do pedido *${orderId}* via Pix.\n\nSegue o comprovante em anexo. Aguardo as próximas etapas!`;
+      const msgPagamento = `Olá! Acabei de realizar o pagamento do pedido *${orderId}* no valor de ${fmt(total)} via Pix.\n\nSegue o comprovante em anexo. Aguardo as próximas etapas!`;
       const waPagamento = waLink(CONFIG.whatsappAdmin, msgPagamento);
 
       const pixHTML = `
@@ -1160,6 +1349,8 @@ textarea{resize:vertical;min-height:70px}
           <div style="background:var(--bg-soft);border-radius:12px;padding:16px;text-align:left;font-size:14px">
             ${items.map(i => `<div style="display:flex;justify-content:space-between;padding:3px 0">
               <span class="muted">${i.qty}× ${esc(i.name)}</span><span>${fmt(i.price*i.qty)}</span></div>`).join('')}
+            ${orderData.discount > 0 ? `<div style="display:flex;justify-content:space-between;padding:3px 0;color:var(--green-dark)">
+              <span>Desconto (${orderData.discount*100}%)</span><span>- ${fmt(subtotal * orderData.discount)}</span></div>` : ''}
             <div style="display:flex;justify-content:space-between;padding-top:10px;margin-top:8px;
                         border-top:1px solid var(--border);font-weight:800">
               <span>Total</span><span>${fmt(total)}</span>
@@ -1181,6 +1372,14 @@ textarea{resize:vertical;min-height:70px}
       btn.textContent = 'Continuar';
     }
   }
+
+  // FAQ Toggle
+  window.toggleFaq = function(el) {
+    const item = el.parentElement;
+    item.classList.toggle('active');
+    const icon = el.querySelector('span');
+    icon.textContent = item.classList.contains('active') ? '-' : '+';
+  };
 
   function checkAdminAuth(){
     const logged = sessionStorage.getItem('pl_auth') === '1';
@@ -1274,7 +1473,10 @@ textarea{resize:vertical;min-height:70px}
           </ul>
 
           <div class="order-foot">
-            <strong>Total: ${fmt(o.total)}</strong>
+            <div>
+              ${o.discount > 0 ? `<div style="font-size:12px; color:var(--green-dark); margin-bottom:2px;">Cupom de ${o.discount*100}% aplicado</div>` : ''}
+              <strong>Total: ${fmt(o.total)}</strong>
+            </div>
             <div class="order-actions">
               <select onchange="setOrderStatus('${o.id}', this.value)">
                 ${Object.entries(STATUS).map(([k,v]) =>
@@ -1455,13 +1657,12 @@ textarea{resize:vertical;min-height:70px}
     catch (e) { console.error(e); alert('Erro ao excluir produto: ' + e.message); }
   };
 
-  // Animação de Scroll (Fade In)
   function initScrollAnimations() {
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(entry => {
         if (entry.isIntersecting) {
           entry.target.classList.add('visible');
-          observer.unobserve(entry.target); // Para de observar depois que aparece
+          observer.unobserve(entry.target);
         }
       });
     }, { threshold: 0.1 });
@@ -1473,7 +1674,6 @@ textarea{resize:vertical;min-height:70px}
     document.title = CONFIG.storeName + ' — Impressão 3D sob medida';
     document.querySelectorAll('[data-store-name]').forEach(el => el.textContent = CONFIG.storeName);
     
-    // Atualiza o link do WhatsApp flutuante com o número do config
     const waFloat = document.querySelector('.wa-float');
     if(waFloat) {
       waFloat.href = `https://wa.me/${CONFIG.whatsappAdmin}?text=Ol%C3%A1!%20Gostaria%20de%20tirar%20uma%20d%C3%BAvida.`;

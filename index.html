@@ -1345,8 +1345,8 @@ textarea{resize:vertical;min-height:70px}
       const soldOutBadge = isSoldOut ? `<div class="badge-sold-out">Esgotado</div>` : '';
       
       const buttonHtml = isSoldOut 
-        ? `<button class="btn btn-outline btn-sm" disabled style="opacity:0.5; cursor:not-allowed;">Esgotado</button>`
-        : `<button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); addToCart('${p.id}')">Adicionar</button>`;
+        ? `<button type="button" class="btn btn-outline btn-sm" disabled style="opacity:0.5; cursor:not-allowed;">Esgotado</button>`
+        : `<button type="button" class="btn btn-primary btn-sm" onclick="event.stopPropagation(); addToCart('${p.id}')">Adicionar</button>`;
 
       const badgesHtml = `
         <div class="product-badges">
@@ -1537,26 +1537,26 @@ textarea{resize:vertical;min-height:70px}
     saveCart(); renderCart(); openCart();
   };
   
-  window.incQty = function(id, color, size){ 
-    const key = getCartItemKey(id, color, size);
-    const i = cart.find(x => getCartItemKey(x.id, x.color, x.size) === key); 
-    if(!i) return; 
-    i.qty++; saveCart(); renderCart(); 
+  window.incQty = function(index){ 
+    if (cart[index]) {
+      cart[index].qty++; 
+      saveCart(); renderCart(); 
+    }
   };
   
-  window.decQty = function(id, color, size){
-    const key = getCartItemKey(id, color, size);
-    const i = cart.find(x => getCartItemKey(x.id, x.color, x.size) === key); 
-    if(!i) return;
-    i.qty--; 
-    if(i.qty <= 0) cart = cart.filter(x => getCartItemKey(x.id, x.color, x.size) !== key);
-    saveCart(); renderCart();
+  window.decQty = function(index){
+    if (cart[index]) {
+      cart[index].qty--; 
+      if(cart[index].qty <= 0) cart.splice(index, 1);
+      saveCart(); renderCart();
+    }
   };
   
-  window.removeItem = function(id, color, size){ 
-    const key = getCartItemKey(id, color, size);
-    cart = cart.filter(x => getCartItemKey(x.id, x.color, x.size) !== key); 
-    saveCart(); renderCart(); 
+  window.removeItem = function(index){ 
+    if (cart[index]) {
+      cart.splice(index, 1); 
+      saveCart(); renderCart(); 
+    }
   };
 
   window.applyCoupon = function() {
@@ -1615,7 +1615,7 @@ textarea{resize:vertical;min-height:70px}
     } else {
       document.getElementById('express-box').style.display = 'flex';
       
-      el.innerHTML = cart.map(ci => {
+      el.innerHTML = cart.map((ci, index) => {
         const p = products.find(x => x.id === ci.id);
         if(!p) return '';
         
@@ -1634,11 +1634,11 @@ textarea{resize:vertical;min-height:70px}
               <span>${fmt(ci.price)}</span>
             </div>
             <div class="qty">
-              <button onclick="decQty('${p.id}', '${ci.color}', '${ci.size}')">−</button>
+              <button type="button" onclick="decQty(${index})">−</button>
               <span>${ci.qty}</span>
-              <button onclick="incQty('${p.id}', '${ci.color}', '${ci.size}')">+</button>
+              <button type="button" onclick="incQty(${index})">+</button>
             </div>
-            <button class="remove-btn" onclick="removeItem('${p.id}', '${ci.color}', '${ci.size}')">✕</button>
+            <button type="button" class="remove-btn" onclick="removeItem(${index})">✕</button>
           </div>`;
       }).join('');
     }
@@ -1775,8 +1775,8 @@ textarea{resize:vertical;min-height:70px}
           <span style="font-size:13px; color:var(--green-dark); font-weight:600; display:block; margin-bottom:4px;">Chave Pix para pagamento</span>
           <strong style="font-size:16px; color:var(--text);">${esc(CONFIG.pixKey)}</strong>
           <div style="display:flex; gap:8px; justify-content:center; margin-top:10px;">
-            <button class="btn btn-outline btn-sm" style="background:#fff;" onclick="navigator.clipboard.writeText('${CONFIG.pixKey}'); this.textContent='Copiado!'; setTimeout(()=>this.textContent='Copiar Chave', 2000)">Copiar Chave</button>
-            <button class="btn btn-outline btn-sm" style="background:#fff;" onclick="navigator.clipboard.writeText('${total}'); this.textContent='Copiado!'; setTimeout(()=>this.textContent='Copiar Valor', 2000)">Copiar Valor</button>
+            <button type="button" class="btn btn-outline btn-sm" style="background:#fff;" onclick="navigator.clipboard.writeText('${CONFIG.pixKey}'); this.textContent='Copiado!'; setTimeout(()=>this.textContent='Copiar Chave', 2000)">Copiar Chave</button>
+            <button type="button" class="btn btn-outline btn-sm" style="background:#fff;" onclick="navigator.clipboard.writeText('${total}'); this.textContent='Copiado!'; setTimeout(()=>this.textContent='Copiar Valor', 2000)">Copiar Valor</button>
           </div>
         </div>
       `;
@@ -1806,7 +1806,7 @@ textarea{resize:vertical;min-height:70px}
           ${pixHTML}
 
           ${waPagamento ? `<a href="${waPagamento}" target="_blank" class="btn btn-primary w-full" style="margin-top:18px; background:#25D366; box-shadow:0 6px 16px rgba(37,211,102,.3);">Já paguei / Enviar Comprovante</a>` : ''}
-          <button class="btn btn-ghost w-full" style="margin-top:8px"
+          <button type="button" class="btn btn-ghost w-full" style="margin-top:8px"
                   onclick="closeCart();setCartStep(1)">Continuar comprando</button>
         </div>`;
       setCartStep(3);

@@ -71,6 +71,10 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);ba
 .testimonial-author { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; }
 .testimonial-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--green-soft); display: grid; place-items: center; font-size: 18px; }
 
+/* MODAL DE AVALIAÇÃO */
+.star-rating { font-size: 32px; color: #d1d5db; cursor: pointer; display: flex; gap: 5px; justify-content: center; margin-bottom: 16px; }
+.star-rating .active { color: #F59E0B; }
+
 /* Aviso A1 Mini */
 .a1-warning { background: #FFF4E0; border: 1px solid #FFD699; border-left: 4px solid #F59E0B; padding: 16px; border-radius: 12px; display: flex; align-items: center; gap: 12px; margin-top: 24px; margin-bottom: -24px; }
 .a1-warning-icon { font-size: 24px; }
@@ -116,13 +120,17 @@ body{font-family:'Inter',system-ui,-apple-system,sans-serif;color:var(--text);ba
 .modal-info .desc { color: var(--muted); font-size: 15px; line-height: 1.6; margin-bottom: 24px; flex: 1; }
 .modal-info .price-tag { font-size: 28px; font-weight: 800; margin-bottom: 20px; }
 
+/* SELETOR DE CORES */
+.color-selector { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 20px; }
+.color-option { padding: 8px 16px; border: 1px solid var(--border); border-radius: 999px; font-size: 14px; font-weight: 600; cursor: pointer; background: #fff; transition: 0.2s; }
+.color-option:hover { border-color: var(--green); }
+.color-option.selected { background: var(--green-soft); border-color: var(--green); color: var(--green-dark); }
+
 /* MODAL AVALIAÇÃO */
 .review-modal-content { display: block !important; max-width: 500px !important; padding: 30px; text-align: center; }
 .review-modal-content h2 { font-size: 22px; margin-bottom: 8px; }
 .review-modal-content textarea { width: 100%; min-height: 100px; margin-bottom: 20px; padding: 12px; border: 1px solid var(--border); border-radius: 12px; font-family: inherit; resize: vertical; }
 .review-modal-content .btn { width: 100%; padding: 14px; }
-.star-rating { font-size: 32px; color: #d1d5db; cursor: pointer; display: flex; gap: 5px; justify-content: center; margin-bottom: 16px; }
-.star-rating .active { color: #F59E0B; }
 
 @media (max-width: 768px) { .modal-content { grid-template-columns: 1fr; } .modal-img { min-height: 200px; border-radius: 20px 20px 0 0; } .modal-info { padding: 24px; } }
 
@@ -205,6 +213,7 @@ textarea{resize:vertical;min-height:70px}
 .order-id{font-weight:800;font-size:15px;letter-spacing:-.01em;margin-right:10px}
 .order-date{font-size:12.5px;color:var(--muted)}
 .badge{font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px;text-transform:uppercase;letter-spacing:.05em;white-space:nowrap}
+.badge-express { background: #FEF3C7; color: #B45309; border: 1px solid #F59E0B; }
 .st-novo{background:#E6F9EE;color:#007A2F}
 .st-producao{background:#FFF4E0;color:#A85D00}
 .st-enviado{background:#E7F0FF;color:#1D4ED8}
@@ -251,6 +260,16 @@ textarea{resize:vertical;min-height:70px}
 .client-order-info p { font-size: 13px; color: var(--muted); }
 .status-line { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
 .status-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+/* Barra de Frete Grátis e Checkbox Express */
+.free-shipping-container { margin-bottom: 16px; }
+.free-shipping-text { font-size: 12.5px; font-weight: 600; color: var(--text); margin-bottom: 6px; text-align: center; }
+.free-shipping-bar { height: 6px; background: var(--bg-soft); border-radius: 999px; overflow: hidden; }
+.free-shipping-fill { height: 100%; background: var(--green); width: 0%; transition: width 0.4s ease; border-radius: 999px; }
+.express-box { background: #FFF4E0; border: 1px dashed #F59E0B; border-radius: 12px; padding: 12px; margin-bottom: 14px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+.express-box input { width: auto; cursor: pointer; transform: scale(1.2); }
+.express-box-text { font-size: 13px; color: #B45309; font-weight: 600; line-height: 1.3; }
+.express-box-text span { display: block; font-size: 11px; font-weight: 400; color: #D97706; }
 
 @media(max-width:860px){
   .admin-grid{grid-template-columns:1fr}
@@ -302,7 +321,6 @@ textarea{resize:vertical;min-height:70px}
   </div>
 </header>
 
-<!-- Botão Flutuante do WhatsApp -->
 <a href="https://wa.me/5541988896304?text=Ol%C3%A1!%20Gostaria%20de%20tirar%20uma%20d%C3%BAvida." target="_blank" class="wa-float" title="Fale comigo no WhatsApp">
   <svg viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/></svg>
 </a>
@@ -443,9 +461,18 @@ textarea{resize:vertical;min-height:70px}
     <button class="modal-close" onclick="closeModal(event)">✕</button>
     <img id="modal-img" src="" class="modal-img" alt="">
     <div class="modal-info">
-      <div class="cat" id="modal-cat"></div>
+      <div style="display:flex; justify-content:space-between; align-items:flex-start;">
+        <div class="cat" id="modal-cat"></div>
+      </div>
       <h2 id="modal-title"></h2>
       <p class="desc" id="modal-desc"></p>
+      
+      <!-- SELETOR DE CORES -->
+      <div id="modal-colors-container" class="hidden">
+        <span style="font-size:13px; font-weight:600; display:block; margin-bottom:8px;">Escolha a cor:</span>
+        <div class="color-selector" id="modal-colors"></div>
+      </div>
+
       <div class="price-tag" id="modal-price"></div>
       <button class="btn btn-primary w-full" onclick="addToCartFromModal()" style="padding: 14px; font-size: 16px;">Adicionar ao Carrinho</button>
     </div>
@@ -619,7 +646,7 @@ textarea{resize:vertical;min-height:70px}
               </label>
               <label class="field">
                 <span>Descrição</span>
-                <textarea id="p-desc" placeholder="Material, medidas, cores..."></textarea>
+                <textarea id="p-desc" placeholder="Material, medidas..."></textarea>
               </label>
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                 <label class="field">
@@ -631,6 +658,10 @@ textarea{resize:vertical;min-height:70px}
                   <input id="p-cat" placeholder="Ex: Decoração">
                 </label>
               </div>
+              <label class="field">
+                <span>Cores Disponíveis</span>
+                <input id="p-colors" placeholder="Ex: Preto, Branco, Azul (separados por vírgula)">
+              </label>
               <div class="form-actions">
                 <button type="submit" class="btn btn-primary" id="p-save-btn">Salvar</button>
                 <button type="button" class="btn btn-ghost" onclick="resetProductForm()">Limpar</button>
@@ -660,7 +691,24 @@ textarea{resize:vertical;min-height:70px}
     <h3 id="cart-title">Seu carrinho</h3>
     <button class="icon-btn" onclick="closeCart()" aria-label="Fechar">✕</button>
   </div>
-  <div class="cart-body" id="cart-step-1"><div id="cart-items"></div></div>
+  <div class="cart-body" id="cart-step-1">
+    <!-- Barra de Frete Grátis -->
+    <div class="free-shipping-container" id="free-shipping-container">
+      <div class="free-shipping-text" id="free-shipping-text">Faltam R$ 150,00 para Frete Grátis!</div>
+      <div class="free-shipping-bar"><div class="free-shipping-fill" id="free-shipping-fill"></div></div>
+    </div>
+
+    <!-- Checkbox Expresso -->
+    <label class="express-box" id="express-box">
+      <input type="checkbox" id="express-checkbox" onchange="toggleExpress(this)">
+      <div class="express-box-text">
+        ⚡ Produção Expressa (+ R$ 10,00)
+        <span>Fure a fila! Sua peça será impressa com prioridade.</span>
+      </div>
+    </label>
+
+    <div id="cart-items"></div>
+  </div>
   
   <div class="cart-body hidden" id="cart-step-2">
     <form id="checkout-form">
@@ -696,7 +744,24 @@ textarea{resize:vertical;min-height:70px}
   
   <div class="cart-body hidden" id="cart-step-3"></div>
   <div class="cart-footer" id="cart-footer">
+    
+    <!-- CUPOM DE DESCONTO -->
+    <div id="coupon-area" style="margin-bottom: 14px;">
+      <div style="display:flex; gap:8px;">
+        <input type="text" id="coupon-input" placeholder="Cupom de desconto" style="flex:1; font-size:13px; padding:8px 10px; text-transform:uppercase;">
+        <button class="btn btn-outline" onclick="applyCoupon()" style="padding:8px 12px; font-size:13px;">Aplicar</button>
+      </div>
+      <div id="coupon-message" style="font-size:12px; margin-top:6px;"></div>
+    </div>
+
+    <div class="total-row" id="discount-row" style="display:none; color:var(--green-dark);">
+      Desconto <span id="discount-val">- R$ 0,00</span>
+    </div>
+    <div class="total-row" id="express-row" style="display:none; color:#B45309;">
+      Produção Expressa <span>+ R$ 10,00</span>
+    </div>
     <div class="total-row">Total <strong id="cart-total">R$ 0,00</strong></div>
+    
     <button class="btn btn-primary w-full" id="cart-primary-btn" onclick="onPrimaryClick()">Continuar</button>
     <button class="btn btn-ghost w-full hidden" id="cart-back-btn" style="margin-top:6px" onclick="setCartStep(1)">Voltar ao carrinho</button>
   </div>
@@ -731,7 +796,11 @@ textarea{resize:vertical;min-height:70px}
     cloudinaryCloudName: 'saemfnk0', 
     cloudinaryPreset: 'Impressão 3D',
     pixKey: 'arthurnass@icloud.com',
-    whatsappAdmin: '5541988896304' 
+    whatsappAdmin: '5541988896304',
+    couponCode: 'PRIMEIRACOMPRA',
+    couponDiscount: 0.10,
+    freeShippingThreshold: 150.00,
+    expressFee: 10.00
   };
 
   let products = [];
@@ -751,9 +820,11 @@ textarea{resize:vertical;min-height:70px}
   let currentUser = null;        
   let currentUserProfile = null; 
   let activeModalProductId = null;
+  let activeModalColor = null;
   let reviewOrderId = null;
-  let reviewOrderDisplayId = null;
   let reviewRating = 5;
+  let appliedDiscount = 0;
+  let isExpress = false;
 
   window.maskPhone = function(input) {
     let v = input.value.replace(/\D/g, "");
@@ -981,7 +1052,6 @@ textarea{resize:vertical;min-height:70px}
 
   window.openReviewModal = function(orderId, displayId) {
     reviewOrderId = orderId;
-    reviewOrderDisplayId = displayId;
     reviewRating = 5;
     document.getElementById('rev-order-id').textContent = displayId;
     document.getElementById('rev-comment').value = '';
@@ -1076,10 +1146,12 @@ textarea{resize:vertical;min-height:70px}
         ? `<button class="btn btn-outline btn-sm" style="margin-top:12px; border-color:#F59E0B; color:#B45309;" onclick="openReviewModal('${o.id}', '${o.orderId || o.id}')">⭐ Avaliar Pedido</button>`
         : (o.reviewed ? `<div style="font-size:12px; color:var(--green-dark); margin-top:12px; font-weight:600;">✓ Avaliado</div>` : '');
 
+      const expressBadge = o.isExpress ? `<span class="badge badge-express" style="margin-left:10px;">⚡ EXPRESSO</span>` : '';
+
       return `
         <div class="client-order">
           <div class="client-order-info">
-            <h4>Pedido ${o.orderId || o.id}</h4>
+            <h4>Pedido ${o.orderId || o.id} ${expressBadge}</h4>
             <p>Realizado em ${date}</p>
             <div class="status-line">
               <div class="status-dot" style="background:${st.text}"></div>
@@ -1199,6 +1271,7 @@ textarea{resize:vertical;min-height:70px}
     const p = products.find(x => x.id === id);
     if(!p) return;
     activeModalProductId = id;
+    activeModalColor = null;
     
     document.getElementById('modal-img').src = p.image || '';
     document.getElementById('modal-img').style.display = p.image ? 'block' : 'none';
@@ -1206,8 +1279,33 @@ textarea{resize:vertical;min-height:70px}
     document.getElementById('modal-title').textContent = p.name;
     document.getElementById('modal-desc').textContent = p.description || 'Nenhuma descrição detalhada fornecida.';
     document.getElementById('modal-price').textContent = fmt(p.price);
+
+    // Renderizar cores
+    const colorsContainer = document.getElementById('modal-colors-container');
+    const colorsList = document.getElementById('modal-colors');
+    
+    if (p.colors && p.colors.trim() !== '') {
+      const colors = p.colors.split(',').map(c => c.trim()).filter(c => c !== '');
+      colorsContainer.classList.remove('hidden');
+      
+      colorsList.innerHTML = colors.map((c, index) => `
+        <div class="color-option ${index === 0 ? 'selected' : ''}" onclick="selectColor('${c}', this)">${c}</div>
+      `).join('');
+      
+      // Seleciona a primeira cor por padrão
+      activeModalColor = colors[0];
+    } else {
+      colorsContainer.classList.add('hidden');
+      activeModalColor = 'Padrão';
+    }
     
     document.getElementById('product-modal').classList.add('open');
+  };
+
+  window.selectColor = function(color, element) {
+    activeModalColor = color;
+    document.querySelectorAll('#modal-colors .color-option').forEach(el => el.classList.remove('selected'));
+    element.classList.add('selected');
   };
 
   window.closeModal = function(e) {
@@ -1218,10 +1316,15 @@ textarea{resize:vertical;min-height:70px}
 
   window.addToCartFromModal = function() {
     if(activeModalProductId) {
-      addToCart(activeModalProductId);
+      addToCart(activeModalProductId, activeModalColor);
       closeModal();
     }
   };
+
+  // Lógica do Carrinho com Cores
+  function getCartItemKey(id, color) {
+    return color ? `${id}_${color}` : id;
+  }
 
   function cartTotal(){
     return cart.reduce((s, ci) => {
@@ -1229,50 +1332,127 @@ textarea{resize:vertical;min-height:70px}
       return s + (p ? p.price * ci.qty : 0);
     }, 0);
   }
-  window.addToCart = function(id){
+
+  window.addToCart = function(id, color = null){
     const p = products.find(x => x.id === id);
     if(!p) return;
-    const item = cart.find(i => i.id === id);
-    if(item) item.qty++; else cart.push({ id, qty: 1 });
+    
+    // Se o produto tem cores e não foi passada cor (ex: clicou no card), força "Padrão"
+    const itemColor = color || (p.colors ? 'Padrão' : null);
+    const key = getCartItemKey(id, itemColor);
+    
+    const item = cart.find(i => getCartItemKey(i.id, i.color) === key);
+    if(item) item.qty++; 
+    else cart.push({ id, color: itemColor, qty: 1 });
+    
     saveCart(); renderCart(); openCart();
   };
-  window.incQty = function(id){ const i = cart.find(x=>x.id===id); if(!i) return; i.qty++; saveCart(); renderCart(); };
-  window.decQty = function(id){
-    const i = cart.find(x=>x.id===id); if(!i) return;
-    i.qty--; if(i.qty <= 0) cart = cart.filter(x=>x.id!==id);
+  
+  window.incQty = function(id, color){ 
+    const key = getCartItemKey(id, color);
+    const i = cart.find(x => getCartItemKey(x.id, x.color) === key); 
+    if(!i) return; 
+    i.qty++; saveCart(); renderCart(); 
+  };
+  
+  window.decQty = function(id, color){
+    const key = getCartItemKey(id, color);
+    const i = cart.find(x => getCartItemKey(x.id, x.color) === key); 
+    if(!i) return;
+    i.qty--; 
+    if(i.qty <= 0) cart = cart.filter(x => getCartItemKey(x.id, x.color) !== key);
     saveCart(); renderCart();
   };
-  window.removeItem = function(id){ cart = cart.filter(x=>x.id!==id); saveCart(); renderCart(); };
+  
+  window.removeItem = function(id, color){ 
+    const key = getCartItemKey(id, color);
+    cart = cart.filter(x => getCartItemKey(x.id, x.color) !== key); 
+    saveCart(); renderCart(); 
+  };
+
+  window.applyCoupon = function() {
+    const code = document.getElementById('coupon-input').value.trim().toUpperCase();
+    const msg = document.getElementById('coupon-message');
+    
+    if (code === CONFIG.couponCode) {
+      appliedDiscount = CONFIG.couponDiscount;
+      msg.textContent = `Cupom aplicado! ${appliedDiscount * 100}% de desconto.`;
+      msg.style.color = 'var(--green-dark)';
+      document.getElementById('coupon-area').style.display = 'none';
+      document.getElementById('discount-row').style.display = 'flex';
+    } else {
+      appliedDiscount = 0;
+      msg.textContent = 'Cupom inválido ou expirado.';
+      msg.style.color = 'var(--danger)';
+    }
+    renderCart();
+  };
+
+  window.toggleExpress = function(checkbox) {
+    isExpress = checkbox.checked;
+    document.getElementById('express-row').style.display = isExpress ? 'flex' : 'none';
+    renderCart();
+  };
 
   function renderCart(){
     document.getElementById('cart-count').textContent = cart.reduce((s,i)=>s+i.qty,0);
-    document.getElementById('cart-total').textContent = fmt(cartTotal());
+    
+    let subtotal = cartTotal();
+    let discountAmount = subtotal * appliedDiscount;
+    let total = subtotal - discountAmount + (isExpress ? CONFIG.expressFee : 0);
+
+    // Barra de Frete Grátis
+    const freeShippingFill = document.getElementById('free-shipping-fill');
+    const freeShippingText = document.getElementById('free-shipping-text');
+    
+    if (subtotal >= CONFIG.freeShippingThreshold) {
+      freeShippingFill.style.width = '100%';
+      freeShippingText.innerHTML = '🎉 Parabéns! Você ganhou <strong>Frete Grátis</strong>!';
+      freeShippingText.style.color = 'var(--green-dark)';
+    } else {
+      const percentage = (subtotal / CONFIG.freeShippingThreshold) * 100;
+      freeShippingFill.style.width = `${percentage}%`;
+      const remaining = CONFIG.freeShippingThreshold - subtotal;
+      freeShippingText.textContent = `Faltam ${fmt(remaining)} para Frete Grátis!`;
+      freeShippingText.style.color = 'var(--text)';
+    }
+
+    document.getElementById('discount-val').textContent = `- ${fmt(discountAmount)}`;
+    document.getElementById('cart-total').textContent = fmt(total);
 
     const el = document.getElementById('cart-items');
     if(!cart.length){
       el.innerHTML = `<div class="empty" style="margin-top:30px">Seu carrinho está vazio.</div>`;
+      document.getElementById('express-box').style.display = 'none';
     } else {
+      document.getElementById('express-box').style.display = 'flex';
+      
       el.innerHTML = cart.map(ci => {
         const p = products.find(x => x.id === ci.id);
         if(!p) return '';
+        
+        const colorLabel = ci.color && ci.color !== 'Padrão' ? `<span style="color:var(--muted); font-size:11px; display:block; margin-top:2px;">Cor: ${ci.color}</span>` : '';
+        
         return `
           <div class="cart-item">
             <div class="cart-item-img">${p.image ? `<img src="${p.image}" alt="">` : placeholderHTML()}</div>
             <div class="cart-item-info">
               <strong>${esc(p.name)}</strong>
+              ${colorLabel}
               <span>${fmt(p.price)}</span>
             </div>
             <div class="qty">
-              <button onclick="decQty('${p.id}')">−</button>
+              <button onclick="decQty('${p.id}', '${ci.color}')">−</button>
               <span>${ci.qty}</span>
-              <button onclick="incQty('${p.id}')">+</button>
+              <button onclick="incQty('${p.id}', '${ci.color}')">+</button>
             </div>
-            <button class="remove-btn" onclick="removeItem('${p.id}')">✕</button>
+            <button class="remove-btn" onclick="removeItem('${p.id}', '${ci.color}')">✕</button>
           </div>`;
       }).join('');
     }
     updateCartFooter();
   }
+
   function updateCartFooter(){
     const btn = document.getElementById('cart-primary-btn');
     const back = document.getElementById('cart-back-btn');
@@ -1286,6 +1466,7 @@ textarea{resize:vertical;min-height:70px}
       back.classList.remove('hidden');
     }
   }
+  
   window.setCartStep = function(n){
     cartStep = n;
     document.getElementById('cart-step-1').classList.toggle('hidden', n !== 1);
@@ -1301,7 +1482,6 @@ textarea{resize:vertical;min-height:70px}
     if(cartStep === 1){ 
       if(!cart.length) return; 
       
-      // CORREÇÃO: OBRIGAR LOGIN PARA EVITAR PEDIDOS FANTASMAS
       if(!currentUser) {
         alert("Para finalizar a compra e acompanhar seu pedido, por favor crie uma conta ou faça login.");
         closeCart();
@@ -1342,9 +1522,12 @@ textarea{resize:vertical;min-height:70px}
 
     const items = cart.map(ci => {
       const p = products.find(x => x.id === ci.id);
-      return p ? { id:p.id, name:p.name, price:p.price, qty:ci.qty } : null;
+      return p ? { id:p.id, name:p.name, color: ci.color, price:p.price, qty:ci.qty } : null;
     }).filter(Boolean);
-    const total = items.reduce((s,i) => s + i.price * i.qty, 0);
+    
+    let subtotal = items.reduce((s,i) => s + i.price * i.qty, 0);
+    let discountAmount = subtotal * appliedDiscount;
+    let total = subtotal - discountAmount + (isExpress ? CONFIG.expressFee : 0);
 
     const addressDetails = {
       cep: document.getElementById('c-cep').value.trim(),
@@ -1359,7 +1542,7 @@ textarea{resize:vertical;min-height:70px}
     const addressString = `${addressDetails.street}, ${addressDetails.number}${addressDetails.complement ? ' - ' + addressDetails.complement : ''} - ${addressDetails.neighborhood}, ${addressDetails.city} - ${addressDetails.state}, CEP: ${addressDetails.cep}`;
 
     const orderData = {
-      userId: currentUser.uid, // Garantido que não é nulo
+      userId: currentUser.uid,
       customer: {
         name:     document.getElementById('c-name').value.trim(),
         phone:    document.getElementById('c-phone').value.trim(),
@@ -1369,7 +1552,7 @@ textarea{resize:vertical;min-height:70px}
         payment:  document.getElementById('c-payment').value,
         notes:    document.getElementById('c-notes').value.trim()
       },
-      items, total, status: 'novo', reviewed: false,
+      items, subtotal, discount: appliedDiscount, isExpress, expressFee: CONFIG.expressFee, total, status: 'novo', reviewed: false,
       createdAt: serverTimestamp()
     };
 
@@ -1378,9 +1561,17 @@ textarea{resize:vertical;min-height:70px}
       const orderId = 'PED-' + docRef.id.slice(-4).toUpperCase();
       await updateDoc(docRef, { orderId });
 
-      cart = []; saveCart(); renderCart(); form.reset();
+      // Reset
+      cart = []; saveCart(); 
+      appliedDiscount = 0; isExpress = false;
+      document.getElementById('express-checkbox').checked = false;
+      document.getElementById('express-row').style.display = 'none';
+      document.getElementById('coupon-input').value = '';
+      document.getElementById('coupon-area').style.display = 'block';
+      document.getElementById('discount-row').style.display = 'none';
+      renderCart(); form.reset();
 
-      const msgPagamento = `Olá! Acabei de realizar o pagamento do pedido *${orderId}* no valor de ${fmt(total)} via Pix.\n\nSegue o comprovante em anexo. Aguardo as próximas etapas!`;
+      const msgPagamento = `Olá! Acabei de realizar o pagamento do pedido *${orderId}* no valor de ${fmt(total)} via Pix.\n\n${isExpress ? '⚡ (PEDIDO EXPRESSO)\n\n' : ''}Segue o comprovante em anexo. Aguardo as próximas etapas!`;
       const waPagamento = waLink(CONFIG.whatsappAdmin, msgPagamento);
 
       const pixHTML = `
@@ -1405,7 +1596,11 @@ textarea{resize:vertical;min-height:70px}
           
           <div style="background:var(--bg-soft);border-radius:12px;padding:16px;text-align:left;font-size:14px">
             ${items.map(i => `<div style="display:flex;justify-content:space-between;padding:3px 0">
-              <span class="muted">${i.qty}× ${esc(i.name)}</span><span>${fmt(i.price*i.qty)}</span></div>`).join('')}
+              <span class="muted">${i.qty}× ${esc(i.name)} ${i.color && i.color !== 'Padrão' ? `(${i.color})` : ''}</span><span>${fmt(i.price*i.qty)}</span></div>`).join('')}
+            ${orderData.discount > 0 ? `<div style="display:flex;justify-content:space-between;padding:3px 0;color:var(--green-dark)">
+              <span>Desconto (${orderData.discount*100}%)</span><span>- ${fmt(discountAmount)}</span></div>` : ''}
+            ${orderData.isExpress ? `<div style="display:flex;justify-content:space-between;padding:3px 0;color:#B45309">
+              <span>⚡ Produção Expressa</span><span>+ ${fmt(orderData.expressFee)}</span></div>` : ''}
             <div style="display:flex;justify-content:space-between;padding-top:10px;margin-top:8px;
                         border-top:1px solid var(--border);font-weight:800">
               <span>Total</span><span>${fmt(total)}</span>
@@ -1491,10 +1686,11 @@ textarea{resize:vertical;min-height:70px}
       const itemsHTML = o.items.map(i => {
         const prod = products.find(p => p.id === i.id);
         const imgUrl = prod ? prod.image : null;
+        const colorLabel = i.color && i.color !== 'Padrão' ? ` - ${i.color}` : '';
         return `
           <li style="display:flex; align-items:center; gap:10px; padding: 8px 0; border-bottom: 1px dashed var(--border);">
             ${imgUrl ? `<img src="${imgUrl}" style="width:44px; height:44px; border-radius:6px; object-fit:cover;">` : ''}
-            <span style="flex:1; font-weight:600; color:var(--text); font-size:14px;">${i.qty}× ${esc(i.name)}</span>
+            <span style="flex:1; font-weight:600; color:var(--text); font-size:14px;">${i.qty}× ${esc(i.name)}${colorLabel}</span>
             <span style="font-weight:600;">${fmt(i.price*i.qty)}</span>
           </li>`;
       }).join('');
@@ -1506,6 +1702,7 @@ textarea{resize:vertical;min-height:70px}
               <span class="order-id">${esc(o.orderId || o.id)}</span>
               <span class="order-date">${date}</span>
               ${o.userId ? `<span class="badge" style="background:#E6F9EE; color:#007A2F; margin-left:10px;">Cliente</span>` : ''}
+              ${o.isExpress ? `<span class="badge badge-express" style="margin-left:10px;">⚡ EXPRESSO</span>` : ''}
             </div>
             <span class="badge ${st.cls}">${st.label}</span>
           </div>
@@ -1527,7 +1724,11 @@ textarea{resize:vertical;min-height:70px}
           </ul>
 
           <div class="order-foot">
-            <strong>Total: ${fmt(o.total)}</strong>
+            <div>
+              ${o.discount > 0 ? `<div style="font-size:12px; color:var(--green-dark); margin-bottom:2px;">Cupom de ${o.discount*100}% aplicado</div>` : ''}
+              ${o.isExpress ? `<div style="font-size:12px; color:#B45309; margin-bottom:2px;">⚡ Taxa Expressa: +${fmt(o.expressFee)}</div>` : ''}
+              <strong>Total: ${fmt(o.total)}</strong>
+            </div>
             <div class="order-actions">
               <select onchange="setOrderStatus('${o.id}', this.value)">
                 ${Object.entries(STATUS).map(([k,v]) =>
@@ -1645,6 +1846,7 @@ textarea{resize:vertical;min-height:70px}
     document.getElementById('p-desc').value = p.description || '';
     document.getElementById('p-price').value = p.price;
     document.getElementById('p-cat').value = p.category || '';
+    document.getElementById('p-colors').value = p.colors || '';
     pendingImage = p.image || null;
     pendingImageFile = null;
     renderImagePreview();
@@ -1660,6 +1862,7 @@ textarea{resize:vertical;min-height:70px}
     const description = document.getElementById('p-desc').value.trim();
     const price = parseFloat(document.getElementById('p-price').value) || 0;
     const category = document.getElementById('p-cat').value.trim() || 'Geral';
+    const colors = document.getElementById('p-colors').value.trim();
     if(!name) return;
 
     const btn = document.getElementById('p-save-btn');
@@ -1687,7 +1890,7 @@ textarea{resize:vertical;min-height:70px}
         imageUrl = data.secure_url;
       }
 
-      const productData = { name, description, price, category, image: imageUrl };
+      const productData = { name, description, price, category, colors, image: imageUrl };
       
       if(id){ await updateDoc(doc(db, 'products', id), productData); } 
       else { await addDoc(collection(db, 'products'), productData); }

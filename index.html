@@ -795,8 +795,6 @@ textarea{resize:vertical;min-height:70px}
       <label class="field"><span>Forma de pagamento</span>
         <select id="c-payment">
           <option>Pix</option>
-          <option>Cartão de crédito</option>
-          <option>Dinheiro</option>
         </select>
       </label>
       <label class="field"><span>Observações</span><textarea id="c-notes" placeholder="Cor desejada, prazo, etc."></textarea></label>
@@ -1040,13 +1038,12 @@ textarea{resize:vertical;min-height:70px}
     showView('store');
   };
 
-  // CORRIGIDO: Garante que a lista é desenhada ao abrir a tela
   function checkClientAuthUI() {
     if (currentUser) {
       document.getElementById('client-auth-screen').classList.add('hidden');
       document.getElementById('client-dashboard').classList.remove('hidden');
       subscribeMyOrders();
-      renderClientOrders(); // Desenha os pedidos na hora, caso já estejam carregados
+      renderClientOrders();
     } else {
       document.getElementById('client-auth-screen').classList.remove('hidden');
       document.getElementById('client-dashboard').classList.add('hidden');
@@ -1085,9 +1082,6 @@ textarea{resize:vertical;min-height:70px}
     }
   });
 
-  /* =============================================================
-     SISTEMA DE AVALIAÇÕES
-  ============================================================= */
   function subscribeReviews() {
     const q = query(collection(db, 'reviews'), orderBy('createdAt', 'desc'), limit(6));
     unsubReviews = onSnapshot(q, (snap) => {
@@ -1181,7 +1175,6 @@ textarea{resize:vertical;min-height:70px}
     }
   };
 
-  // CORRIGIDO: Removido o orderBy do Firebase (evita erro de índice) e adicionado sort no JS
   function subscribeMyOrders() {
     if(!currentUser) return;
     
@@ -1191,7 +1184,6 @@ textarea{resize:vertical;min-height:70px}
       unsubMyOrders = onSnapshot(q, (snap) => {
         myOrders = snap.docs.map(d => ({ id: d.id, ...d.data() }));
         
-        // Ordena os pedidos manualmente no navegador (mais novo primeiro)
         myOrders.sort((a, b) => {
           const timeA = a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
           const timeB = b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
@@ -1272,9 +1264,6 @@ textarea{resize:vertical;min-height:70px}
     openCart();
   };
 
-  /* =============================================================
-     PRODUTOS E PEDIDOS
-  ============================================================= */
   function subscribeProducts(){
     onSnapshot(collection(db, 'products'),
       snap => {
@@ -1354,9 +1343,12 @@ textarea{resize:vertical;min-height:70px}
       const isSoldOut = p.soldOut === true;
       const soldOutBadge = isSoldOut ? `<div class="badge-sold-out">Esgotado</div>` : '';
       
+      const hasOptions = (p.colors && p.colors.trim() !== '') || (p.sizes && p.sizes.trim() !== '');
       const buttonHtml = isSoldOut 
         ? `<button type="button" class="btn btn-outline btn-sm" disabled style="opacity:0.5; cursor:not-allowed;">Esgotado</button>`
-        : `<button type="button" class="btn btn-primary btn-sm" onclick="event.stopPropagation(); addToCart('${p.id}')">Adicionar</button>`;
+        : hasOptions
+          ? `<button type="button" class="btn btn-primary btn-sm" onclick="event.stopPropagation(); openModal('${p.id}')">Escolher</button>`
+          : `<button type="button" class="btn btn-primary btn-sm" onclick="event.stopPropagation(); addToCart('${p.id}')">Adicionar</button>`;
 
       const badgesHtml = `
         <div class="product-badges">
@@ -1458,7 +1450,7 @@ textarea{resize:vertical;min-height:70px}
       activeModalColor = colors[0];
     } else {
       colorsContainer.classList.add('hidden');
-      activeModalColor = 'Padrão';
+      activeModalColor = null;
     }
 
     const sizesContainer = document.getElementById('modal-sizes-container');
@@ -1479,7 +1471,7 @@ textarea{resize:vertical;min-height:70px}
       document.getElementById('modal-price').textContent = fmt(activeModalPrice);
     } else {
       sizesContainer.classList.add('hidden');
-      activeModalSize = 'Padrão';
+      activeModalSize = null;
       activeModalPrice = p.price;
     }
     
@@ -1535,8 +1527,8 @@ textarea{resize:vertical;min-height:70px}
     const p = products.find(x => x.id === id);
     if(!p || p.soldOut) return;
     
-    const itemColor = color || (p.colors ? 'Padrão' : null);
-    const itemSize = size || (p.sizes ? 'Padrão' : null);
+    const itemColor = color || null;
+    const itemSize = size || null;
     const itemPrice = price || p.price;
     const key = getCartItemKey(id, itemColor, itemSize);
     

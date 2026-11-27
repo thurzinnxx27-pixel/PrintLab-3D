@@ -1,14 +1,20 @@
+
+
+
+
+
+
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PrintLab 3D — Impressão 3D sob medida</title>
-<!-- Versão revisada: reCAPTCHA com contêiner novo por tentativa e correções de contraste. -->
+<!-- PrintLab 3D: cadastro e login por e-mail e senha, sem autenticação por SMS. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 
 <style>
 /* =========================================
@@ -358,29 +364,8 @@ body.dark-theme .express-box-text { color: #F59E0B; }
 .profile-pic-upload:hover { background: #eef0f3; }
 .profile-pic-upload input { display: none; }
 
-/* OTP */
-#otp-fullscreen-overlay { position: fixed; inset: 0; background-color: rgba(10, 10, 12, 0.9); backdrop-filter: blur(8px); z-index: 99999; display: none; align-items: center; justify-content: center; }
-#otp-fullscreen-overlay.active { display: flex; }
-.otp-card { background-color: #1a1a20; border: 1px solid #2a2a35; border-radius: 24px; padding: 40px 30px; width: 100%; max-width: 400px; text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.5); position: relative; overflow: hidden; color: #fff; font-family: 'Inter', sans-serif; }
-#confetti-canvas { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 10; }
-.otp-screen { display: none; animation: otpFadeIn 0.4s ease forwards; position: relative; z-index: 2; }
-.otp-screen.active { display: block; }
-@keyframes otpFadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-.otp-icon-header { width: 60px; height: 60px; background-color: rgba(255,255,255,0.05); border-radius: 50%; display: flex; justify-content: center; align-items: center; margin: 0 auto 20px; font-size: 24px; }
-.otp-card h1 { font-size: 24px; font-weight: 700; margin-bottom: 8px; }
-.otp-card p { font-size: 14px; color: #888899; margin-bottom: 30px; line-height: 1.5; }
-.otp-inputs { display: flex; justify-content: center; gap: 8px; margin-bottom: 24px; }
-.otp-box { width: 44px; height: 56px; background-color: #0a0a0c; border: 2px solid #333; border-radius: 14px; color: white; font-size: 28px; font-weight: 700; text-align: center; outline: none; transition: all 0.3s ease; }
-.otp-box:focus, .otp-box.filled { border-color: var(--green); box-shadow: 0 0 20px rgba(0, 174, 66, 0.3); }
-.otp-shake { animation: otpShake 0.4s ease-in-out; border-color: var(--danger) !important; box-shadow: 0 0 20px rgba(229, 72, 77, 0.3) !important; }
-@keyframes otpShake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
-#recaptcha-host { min-height: 1px; }
-#recaptcha-host > div { min-height: 1px; }
-@media(max-width:420px) { .otp-card { padding: 30px 16px; } .otp-inputs { gap: 5px; } .otp-box { width: 40px; height: 52px; font-size: 24px; } }
-.otp-success-icon { width: 80px; height: 80px; background-color: rgba(0, 174, 66, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: var(--green); font-size: 40px; animation: otpPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-@keyframes otpPopIn { 0% { transform: scale(0); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
-.otp-btn { width: 100%; background-color: var(--green); color: white; border: none; padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600; cursor: pointer; transition: 0.3s; box-shadow: 0 8px 20px rgba(0, 174, 66, 0.3); }
-.otp-btn:hover { background-color: var(--green-dark); transform: translateY(-2px); }
+/* Cadastro sem verificação por SMS */
+.auth-note { font-size: 13px; color: var(--muted); margin: 4px 0 14px; }
 
 /* Botão Dark Mode */
 .theme-toggle { background: none; border: none; font-size: 20px; cursor: pointer; color: var(--text); padding: 8px; border-radius: 50%; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
@@ -420,38 +405,6 @@ body.dark-theme select:-webkit-autofill {
 </style>
 </head>
 <body>
-
-<div id="recaptcha-host" aria-hidden="true"></div>
-
-<!-- OTP OVERLAY -->
-<div id="otp-fullscreen-overlay">
-  <div class="otp-card">
-    <canvas id="confetti-canvas"></canvas>
-    <div class="otp-screen active" id="screen-otp">
-      <div class="otp-icon-header">✉️</div>
-      <h1>Verifique seu telefone</h1>
-      <p id="otp-description">Enviaremos um código real por SMS para o número informado.</p>
-      <div class="otp-inputs" id="otp-container">
-        <input type="text" class="otp-box" maxlength="1" inputmode="numeric" autocomplete="one-time-code" oninput="avancarInput(this, 0)" onkeydown="voltarInput(event, this, 0)" aria-label="Primeiro dígito">
-        <input type="text" class="otp-box" maxlength="1" inputmode="numeric" oninput="avancarInput(this, 1)" onkeydown="voltarInput(event, this, 1)" aria-label="Segundo dígito">
-        <input type="text" class="otp-box" maxlength="1" inputmode="numeric" oninput="avancarInput(this, 2)" onkeydown="voltarInput(event, this, 2)" aria-label="Terceiro dígito">
-        <input type="text" class="otp-box" maxlength="1" inputmode="numeric" oninput="avancarInput(this, 3)" onkeydown="voltarInput(event, this, 3)" aria-label="Quarto dígito">
-        <input type="text" class="otp-box" maxlength="1" inputmode="numeric" oninput="avancarInput(this, 4)" onkeydown="voltarInput(event, this, 4)" aria-label="Quinto dígito">
-        <input type="text" class="otp-box" maxlength="1" inputmode="numeric" oninput="avancarInput(this, 5)" onkeydown="voltarInput(event, this, 5)" aria-label="Sexto dígito">
-      </div>
-      <button class="otp-btn" onclick="verificarCodigo()">Verificar telefone</button>
-      <p class="error" id="otp-error" style="margin:12px 0 0"></p>
-      <div style="font-size:13px;color:#888899;margin-top:16px">Não recebeu? Confira o número ou tente novamente.</div>
-      <div style="font-size:13px;color:var(--green);font-weight:600;cursor:pointer;text-decoration:underline;margin-top:14px" onclick="cancelarCadastroOTP()">Cancelar cadastro</div>
-    </div>
-    <div class="otp-screen" id="screen-success">
-      <div class="otp-success-icon">✓</div>
-      <h1>Telefone verificado!</h1>
-      <p>Seu número foi confirmado. Vamos continuar.</p>
-      <button class="otp-btn" onclick="concluirCadastro()">Continuar</button>
-    </div>
-  </div>
-</div>
 
 <div id="toast" class="toast">
   <div class="toast-icon">🔔</div>
@@ -687,15 +640,16 @@ body.dark-theme select:-webkit-autofill {
         </div>
         <p class="error" id="login-error" style="margin-top:15px;"></p>
       </form>
-      <form id="form-register" class="hidden" onsubmit="iniciarCadastroComOTP(event)">
+      <form id="form-register" class="hidden" onsubmit="handleRegister(event)">
         <h2>Crie sua conta</h2>
-        <p class="muted">Preencha seus dados. O Firebase enviará um código real por SMS para confirmar seu telefone.</p>
+        <p class="muted">Crie sua conta com e-mail e senha. Seu WhatsApp será usado apenas para contato sobre seus pedidos.</p>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
           <label class="field" style="grid-column: 1 / -1;"><span>Nome completo *</span><input type="text" id="reg-name" required placeholder="João Silva"></label>
           <label class="field" style="grid-column: 1 / -1;"><span>E-mail *</span><input type="email" id="reg-email" required placeholder="seu@email.com"></label>
-          <label class="field"><span>Senha *</span><input type="password" id="reg-pass" required placeholder="Mínimo 6 caracteres"></label>
-          <label class="field"><span>WhatsApp *</span><input id="reg-phone" required placeholder="(11) 99999-9999" oninput="maskPhone(this)"></label>
+          <label class="field"><span>Senha *</span><input type="password" id="reg-pass" required minlength="6" autocomplete="new-password" placeholder="Mínimo 6 caracteres"></label>
+          <label class="field"><span>WhatsApp para contato *</span><input id="reg-phone" type="tel" required inputmode="tel" autocomplete="tel" placeholder="(11) 99999-9999" oninput="maskPhone(this)"></label>
         </div>
+        <p class="auth-note">Não enviaremos SMS. Usaremos este número somente para falar com você sobre seus pedidos.</p>
         <h3 style="font-size:15px; font-weight:800; margin: 20px 0 10px;">Endereço de Entrega</h3>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
           <label class="field"><span>CEP *</span><input id="reg-cep" required placeholder="00000-000" oninput="maskCEP(this)"></label>
@@ -710,7 +664,7 @@ body.dark-theme select:-webkit-autofill {
           <label class="field"><span>Bairro *</span><input id="reg-neighborhood" required placeholder="Centro"></label>
           <label class="field"><span>Cidade *</span><input id="reg-city" required placeholder="São Paulo"></label>
         </div>
-        <button type="submit" class="btn btn-primary w-full" id="btn-do-register" style="margin-top:10px;">Criar conta e enviar código</button>
+        <button type="submit" class="btn btn-primary w-full" id="btn-do-register" style="margin-top:10px;">Criar conta</button>
         <p class="error" id="register-error"></p>
       </form>
     </div>
@@ -739,7 +693,7 @@ body.dark-theme select:-webkit-autofill {
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
               <label class="field" style="grid-column: 1 / -1;"><span>Nome completo *</span><input type="text" id="edit-name" required></label>
               <label class="field" style="grid-column: 1 / -1;"><span>E-mail (Não editável)</span><input type="email" id="edit-email" disabled style="background-color: var(--bg-soft); cursor: not-allowed;"></label>
-              <label class="field" style="grid-column: 1 / -1;"><span>WhatsApp verificado</span><input id="edit-phone" readonly style="background-color:var(--bg-soft);cursor:not-allowed"><small class="muted">A troca do número exige uma nova verificação por SMS.</small></label>
+              <label class="field" style="grid-column: 1 / -1;"><span>WhatsApp para contato *</span><input id="edit-phone" type="tel" required inputmode="tel" autocomplete="tel" oninput="maskPhone(this)" placeholder="(11) 99999-9999"><small class="muted">Usado somente para contato sobre seus pedidos. Não enviamos SMS.</small></label>
             </div>
             <h3 style="font-size:15px; font-weight:800; margin: 20px 0 10px;">Endereço de Entrega</h3>
             <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
@@ -859,7 +813,7 @@ body.dark-theme select:-webkit-autofill {
   <div class="cart-body hidden" id="cart-step-2">
     <form id="checkout-form">
       <label class="field"><span>Nome completo *</span><input id="c-name" required placeholder="João Silva"></label>
-      <label class="field"><span>WhatsApp *</span><input id="c-phone" required placeholder="(11) 99999-9999" oninput="maskPhone(this)"></label>
+      <label class="field"><span>WhatsApp para contato *</span><input id="c-phone" type="tel" required inputmode="tel" autocomplete="tel" placeholder="(11) 99999-9999" oninput="maskPhone(this)"></label>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
         <label class="field"><span>CEP *</span><input id="c-cep" required placeholder="00000-000" oninput="maskCEP(this)"></label>
         <label class="field"><span>Estado (UF) *</span><input id="c-state" required placeholder="SP" maxlength="2" style="text-transform:uppercase"></label>
@@ -904,8 +858,7 @@ import {
 import {
   getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
   signOut, onAuthStateChanged, updateProfile, GoogleAuthProvider,
-  signInWithPopup, RecaptchaVerifier, PhoneAuthProvider, updatePhoneNumber,
-  deleteUser
+  signInWithPopup
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
 
@@ -967,13 +920,7 @@ let reviewRating = 5;
 let appliedCouponCode = "";
 let appliedDiscount = 0;
 let isExpress = false;
-let pendingRegistration = null;
-let pendingCheckoutCustomer = null;
-let phoneVerificationPurpose = null;
-let phoneVerificationId = null;
-let recaptchaVerifier = null;
-let recaptchaContainer = null;
-let recaptchaInstanceCounter = 0;
+let registrationInProgress = false;
 let pendingReceipt = null;
 
 const STATUS = {
@@ -1040,11 +987,6 @@ function firebaseMessage(error) {
     "auth/user-not-found": "E-mail ou senha incorretos.",
     "auth/wrong-password": "E-mail ou senha incorretos.",
     "auth/too-many-requests": "Muitas tentativas. Aguarde um pouco e tente novamente.",
-    "auth/invalid-phone-number": "O número de WhatsApp informado é inválido.",
-    "auth/quota-exceeded": "O limite de SMS do Firebase foi atingido. Tente mais tarde.",
-    "auth/captcha-check-failed": "A verificação de segurança falhou. Atualize a página e tente novamente.",
-    "auth/invalid-app-credential": "O reCAPTCHA não foi aceito. Confira o domínio autorizado no Firebase e tente novamente.",
-    "auth/missing-app-credential": "A verificação reCAPTCHA não foi carregada. Atualize a página e tente novamente.",
     "auth/unauthorized-domain": "Este domínio não está autorizado no Firebase Authentication. Adicione o domínio do GitHub Pages em Configurações > Domínios autorizados.",
     "auth/operation-not-allowed": "Ative este método de autenticação no Firebase Console.",
     "auth/phone-number-already-exists": "Este telefone já está vinculado a outra conta.",
@@ -1125,88 +1067,17 @@ window.toggleFav = function (id, event) {
   if (navigator.vibrate) navigator.vibrate(35);
 };
 
-// Verificação real do telefone por SMS. Cada tentativa recebe um elemento
-// DOM novo; isso impede que o SDK do reCAPTCHA tente renderizar duas vezes
-// no mesmo elemento após cancelar, falhar ou iniciar outro cadastro.
-function clearRecaptcha() {
-  const previousVerifier = recaptchaVerifier;
-  recaptchaVerifier = null;
-
-  if (previousVerifier) {
-    try {
-      previousVerifier.clear();
-    } catch (error) {
-      console.warn("Não foi possível limpar o reCAPTCHA anterior:", error);
-    }
-  }
-
-  const host = byId("recaptcha-host");
-  if (host) host.replaceChildren();
-  recaptchaContainer = null;
-}
-
-function createFreshRecaptchaVerifier() {
-  const host = byId("recaptcha-host");
-  if (!host) throw new Error("Área de verificação reCAPTCHA não encontrada. Atualize a página.");
-
-  // Nunca reutiliza o nó anterior nem seu ID.
-  const container = document.createElement("div");
-  container.id = `printlab-recaptcha-${++recaptchaInstanceCounter}`;
-  host.replaceChildren(container);
-  recaptchaContainer = container;
-
-  const verifier = new RecaptchaVerifier(auth, container, {
-    size: "invisible",
-    "expired-callback": () => {
-      phoneVerificationId = null;
-      showError("otp-error", "A verificação de segurança expirou. Solicite um novo código.");
-    }
-  });
-  recaptchaVerifier = verifier;
-  return verifier;
-}
-
-async function startPhoneVerification(phone, purpose) {
-  clearRecaptcha();
-  phoneVerificationPurpose = purpose;
-  phoneVerificationId = null;
-
-  const verifier = createFreshRecaptchaVerifier();
-  try {
-    // Renderiza uma única vez e aguarda o SDK antes de pedir o SMS.
-    await verifier.render();
-    const provider = new PhoneAuthProvider(auth);
-    phoneVerificationId = await provider.verifyPhoneNumber(phone, verifier);
-  } catch (error) {
-    clearRecaptcha();
-    phoneVerificationId = null;
-    throw error;
-  }
-
-  byId("otp-description").textContent = `Enviamos um código de 6 dígitos por SMS para ${phone}.`;
-  byId("screen-success").querySelector("p").textContent = purpose === "checkout"
-    ? "Seu telefone foi confirmado. Vamos continuar seu pedido."
-    : "Seu número foi confirmado. Vamos finalizar sua conta.";
-  document.querySelectorAll(".otp-screen").forEach(screen => screen.classList.remove("active"));
-  byId("screen-otp").classList.add("active");
-  byId("otp-fullscreen-overlay").classList.add("active");
-  document.querySelectorAll(".otp-box").forEach(input => { input.value = ""; input.classList.remove("filled"); });
-  byId("otp-error").textContent = "";
-  const cancelLink = document.querySelector("#screen-otp [onclick='cancelarCadastroOTP()']");
-  if (cancelLink) cancelLink.textContent = purpose === "checkout" ? "Cancelar verificação" : "Cancelar cadastro";
-  document.querySelectorAll(".otp-box")[0]?.focus();
-}
-window.iniciarCadastroComOTP = async function (event) {
+// Cadastro de cliente: autenticação somente por e-mail e senha.
+// O WhatsApp é guardado no perfil como informação de contato; não é verificado por SMS.
+window.handleRegister = async function (event) {
   event.preventDefault();
   showError("register-error", "");
-  let normalizedPhone;
-  try { normalizedPhone = normalizeBRPhone(byId("reg-phone").value); }
-  catch (error) { showError("register-error", error.message); return; }
+
   const data = {
     name: byId("reg-name").value.trim(),
     email: byId("reg-email").value.trim().toLowerCase(),
-    pass: byId("reg-pass").value,
-    phone: normalizedPhone,
+    password: byId("reg-pass").value,
+    phone: "",
     cep: byId("reg-cep").value.trim(),
     state: byId("reg-state").value.trim().toUpperCase(),
     street: byId("reg-street").value.trim(),
@@ -1215,160 +1086,66 @@ window.iniciarCadastroComOTP = async function (event) {
     neighborhood: byId("reg-neighborhood").value.trim(),
     city: byId("reg-city").value.trim()
   };
-  if (data.pass.length < 6) { showError("register-error", "A senha precisa ter pelo menos 6 caracteres."); return; }
+
+  try {
+    data.phone = normalizeBRPhone(byId("reg-phone").value);
+  } catch (error) {
+    showError("register-error", error.message);
+    return;
+  }
+
+  if (data.password.length < 6) {
+    showError("register-error", "A senha precisa ter pelo menos 6 caracteres.");
+    return;
+  }
+  if (!data.name || !data.email || !data.cep || !data.state || !data.street || !data.number || !data.neighborhood || !data.city) {
+    showError("register-error", "Preencha todos os campos obrigatórios.");
+    return;
+  }
+
   const button = byId("btn-do-register");
   button.disabled = true;
-  button.innerHTML = '<span class="spinner"></span> Enviando código...';
-  let createdUser = null;
-  try {
-    pendingRegistration = data;
-    const userCredential = await createUserWithEmailAndPassword(auth, data.email, data.pass);
-    createdUser = userCredential.user;
-    await updateProfile(createdUser, { displayName: data.name });
-    await startPhoneVerification(data.phone, "register");
-  } catch (error) {
-    if (createdUser) {
-      try { await deleteUser(createdUser); } catch { try { await signOut(auth); } catch { /* noop */ } }
-    }
-    pendingRegistration = null;
-    pendingCheckoutCustomer = null;
-    phoneVerificationPurpose = null;
-    phoneVerificationId = null;
-    await clearRecaptcha();
-    showError("register-error", firebaseMessage(error));
-  } finally {
-    button.disabled = false;
-    button.textContent = "Criar conta e enviar código";
-  }
-};
-window.avancarInput = function (input, index) {
-  const fields = [...document.querySelectorAll(".otp-box")];
-  const digits = input.value.replace(/\D/g, "");
-  if (digits.length > 1) {
-    digits.slice(0, fields.length - index).split("").forEach((digit, offset) => {
-      fields[index + offset].value = digit;
-      fields[index + offset].classList.add("filled");
-    });
-    fields[Math.min(index + digits.length, fields.length - 1)].focus();
-    return;
-  }
-  input.value = digits;
-  input.classList.toggle("filled", Boolean(digits));
-  if (digits && fields[index + 1]) fields[index + 1].focus();
-};
-window.voltarInput = function (event, input, index) {
-  if (event.key === "Backspace" && !input.value) {
-    const previous = document.querySelectorAll(".otp-box")[index - 1];
-    if (previous) { previous.focus(); previous.value = ""; previous.classList.remove("filled"); }
-  }
-};
-window.verificarCodigo = async function () {
-  showError("otp-error", "");
-  const code = [...document.querySelectorAll(".otp-box")].map(input => input.value).join("");
-  if (code.length !== 6) { showError("otp-error", "Digite os 6 números recebidos por SMS."); return; }
-  if (!phoneVerificationId || !auth.currentUser) { showError("otp-error", "A verificação expirou. Cancele e comece novamente."); return; }
-  const button = document.querySelector("#screen-otp .otp-btn");
-  button.disabled = true;
-  button.textContent = "Verificando...";
-  try {
-    const credential = PhoneAuthProvider.credential(phoneVerificationId, code);
-    await updatePhoneNumber(auth.currentUser, credential);
-    await auth.currentUser.getIdToken(true);
-    document.querySelectorAll(".otp-screen").forEach(screen => screen.classList.remove("active"));
-    byId("screen-success").classList.add("active");
-    if (typeof window.confetti === "function") window.confetti({ particleCount: 55, spread: 70, origin: { y: 0.6 } });
-  } catch (error) {
-    showError("otp-error", firebaseMessage(error));
-    document.querySelectorAll(".otp-box").forEach(input => { input.value = ""; input.classList.remove("filled"); });
-    document.querySelectorAll(".otp-box")[0].focus();
-  } finally {
-    button.disabled = false;
-    button.textContent = "Verificar telefone";
-  }
-};
-window.concluirCadastro = async function () {
-  const button = document.querySelector("#screen-success .otp-btn");
-  if (!auth.currentUser || !auth.currentUser.phoneNumber) {
-    showError("otp-error", "Não foi possível confirmar seu telefone. Tente novamente.");
-    return;
-  }
-  button.disabled = true;
-  button.innerHTML = '<span class="spinner"></span> Finalizando...';
-  try {
-    if (phoneVerificationPurpose === "checkout") {
-      const verifiedPhone = auth.currentUser.phoneNumber;
-      if (!pendingCheckoutCustomer || normalizeBRPhone(byId("c-phone").value) !== verifiedPhone) {
-        throw new Error("O telefone do pedido mudou. Inicie a verificação novamente.");
-      }
-      await setDoc(doc(db, "users", auth.currentUser.uid), {
-        phone: verifiedPhone,
-        phoneVerified: true
-      }, { merge: true });
-      currentUserProfile = { ...(currentUserProfile || {}), phone: verifiedPhone, phoneVerified: true };
-      pendingCheckoutCustomer = null;
-      phoneVerificationPurpose = null;
-      phoneVerificationId = null;
-      await clearRecaptcha();
-      byId("otp-fullscreen-overlay").classList.remove("active");
-      showToast("Telefone verificado. Finalizando pedido...");
-      await submitOrder(true);
-      return;
-    }
+  button.innerHTML = '<span class="spinner"></span> Criando conta...';
+  registrationInProgress = true;
 
-    if (phoneVerificationPurpose !== "register" || !pendingRegistration) {
-      throw new Error("Esta verificação expirou. Inicie o processo novamente.");
-    }
-    const completedProfile = {
-      name: pendingRegistration.name,
-      email: pendingRegistration.email,
-      phone: auth.currentUser.phoneNumber,
-      phoneVerified: true,
-      cep: pendingRegistration.cep,
-      state: pendingRegistration.state,
-      street: pendingRegistration.street,
-      number: pendingRegistration.number,
-      complement: pendingRegistration.complement,
-      neighborhood: pendingRegistration.neighborhood,
-      city: pendingRegistration.city,
+  try {
+    const credential = await createUserWithEmailAndPassword(auth, data.email, data.password);
+    const user = credential.user;
+    await updateProfile(user, { displayName: data.name });
+
+    const profile = {
+      name: data.name,
+      email: data.email,
+      phone: data.phone,
+      cep: data.cep,
+      state: data.state,
+      street: data.street,
+      number: data.number,
+      complement: data.complement,
+      neighborhood: data.neighborhood,
+      city: data.city,
       avatar: "",
       createdAt: serverTimestamp()
     };
-    await setDoc(doc(db, "users", auth.currentUser.uid), completedProfile, { merge: true });
-    currentUserProfile = { ...completedProfile, phone: auth.currentUser.phoneNumber, createdAt: new Date() };
+
+    await setDoc(doc(db, "users", user.uid), profile, { merge: true });
+    currentUserProfile = { ...profile, createdAt: new Date() };
+    registrationInProgress = false;
     byId("form-register").reset();
-    pendingRegistration = null;
-    phoneVerificationPurpose = null;
-    phoneVerificationId = null;
-    await clearRecaptcha();
-    byId("otp-fullscreen-overlay").classList.remove("active");
-    showToast("Conta criada e telefone verificado!");
+    showError("register-error", "");
+    showToast("Conta criada com sucesso!");
     showView("account");
     switchClientTab("orders");
   } catch (error) {
-    showError("otp-error", firebaseMessage(error));
+    console.error("Erro ao criar conta:", error);
+    registrationInProgress = false;
+    showError("register-error", firebaseMessage(error));
   } finally {
+    registrationInProgress = false;
     button.disabled = false;
-    button.textContent = "Continuar";
+    button.textContent = "Criar conta";
   }
 };
-window.cancelarCadastroOTP = async function () {
-  const user = auth.currentUser;
-  const purpose = phoneVerificationPurpose;
-  pendingRegistration = null;
-  pendingCheckoutCustomer = null;
-  phoneVerificationPurpose = null;
-  phoneVerificationId = null;
-  await clearRecaptcha();
-  byId("otp-fullscreen-overlay").classList.remove("active");
-  if (purpose === "register" && user && !user.phoneNumber) {
-    try { await deleteUser(user); }
-    catch { try { await signOut(auth); } catch { /* noop */ } }
-    showError("register-error", "Cadastro cancelado. Seus dados ainda não foram concluídos.");
-  } else {
-    showToast("Verificação cancelada. Seu pedido ainda não foi enviado.");
-  }
-};
-window.fecharOTP = window.cancelarCadastroOTP;
 
 // Customer authentication
 window.handleLogin = async function (event) {
@@ -1399,12 +1176,11 @@ async function ensureUserProfile(user) {
   const profileRef = doc(db, "users", user.uid);
   const snapshot = await getDoc(profileRef);
   if (snapshot.exists()) return snapshot.data();
-  if (pendingRegistration) return null;
+  if (registrationInProgress) return null;
   const profile = {
     name: user.displayName || "Cliente",
     email: user.email || "",
     phone: user.phoneNumber || "",
-    phoneVerified: Boolean(user.phoneNumber),
     cep: "", state: "", street: "", number: "", complement: "",
     neighborhood: "", city: "", avatar: "", createdAt: serverTimestamp()
   };
@@ -1465,6 +1241,7 @@ function populateEditForm() {
   byId("edit-name").value = currentUserProfile.name || "";
   byId("edit-email").value = currentUserProfile.email || currentUser.email || "";
   byId("edit-phone").value = currentUserProfile.phone || "";
+  window.maskPhone(byId("edit-phone"));
   byId("edit-cep").value = currentUserProfile.cep || "";
   byId("edit-state").value = currentUserProfile.state || "";
   byId("edit-street").value = currentUserProfile.street || "";
@@ -1511,9 +1288,16 @@ window.saveProfileChanges = async function (event) {
   if (!currentUser) return;
   const button = byId("btn-save-profile");
   showError("edit-profile-error", "");
+  let normalizedPhone;
+  try {
+    normalizedPhone = normalizeBRPhone(byId("edit-phone").value);
+  } catch (error) {
+    showError("edit-profile-error", error.message);
+    return;
+  }
   const data = {
     name: byId("edit-name").value.trim(),
-    phone: currentUserProfile?.phone || currentUser.phoneNumber || "",
+    phone: normalizedPhone,
     cep: byId("edit-cep").value.trim(),
     state: byId("edit-state").value.trim().toUpperCase(),
     street: byId("edit-street").value.trim(),
@@ -1795,7 +1579,7 @@ window.onPrimaryClick = function () {
     }
   } else if (cartStep === 2) submitOrder();
 };
-async function submitOrder(phoneVerified = false) {
+async function submitOrder() {
   if (!currentUser || !cart.length) return;
   const form = byId("checkout-form");
   if (!form.checkValidity()) { form.reportValidity(); return; }
@@ -1815,11 +1599,6 @@ async function submitOrder(phoneVerified = false) {
       city: byId("c-city").value.trim(),
       notes: byId("c-notes").value.trim()
     };
-    if (!phoneVerified && auth.currentUser?.phoneNumber !== customer.phone) {
-      pendingCheckoutCustomer = customer;
-      await startPhoneVerification(customer.phone, "checkout");
-      return;
-    }
     const payload = {
       items: cart.map(item => ({ productId: item.id, color: item.color || null, size: item.size || null, quantity: Number(item.qty) })),
       customer,
@@ -2331,20 +2110,13 @@ function init() {
   initScrollAnimations();
   if (byId("admin-email")) byId("admin-email").addEventListener("keydown", event => { if (event.key === "Enter") tryLogin(); });
   if (byId("admin-pass")) byId("admin-pass").addEventListener("keydown", event => { if (event.key === "Enter") tryLogin(); });
-  byId("otp-container")?.addEventListener("paste", event => {
-    const pasted = (event.clipboardData || window.clipboardData)?.getData("text") || "";
-    const digits = pasted.replace(/\D/g, "").slice(0, 6);
-    if (!digits) return;
-    event.preventDefault();
-    const fields = [...document.querySelectorAll(".otp-box")];
-    fields.forEach((field, index) => {
-      field.value = digits[index] || "";
-      field.classList.toggle("filled", Boolean(field.value));
-    });
-    fields[Math.min(digits.length, 5)].focus();
-  });
+
 }
 init();
 </script>
 </body>
 </html>
+
+
+
+

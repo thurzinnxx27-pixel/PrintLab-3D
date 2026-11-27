@@ -145,14 +145,42 @@ body.dark-theme .btn-fav { background: rgba(26,31,38,0.9); }
 .about-text p { font-size: 16px; color: var(--muted); line-height: 1.7; margin-bottom: 16px; }
 @media(max-width: 768px) { .about-grid { grid-template-columns: 1fr; gap: 24px; } .about-img { max-width: 300px; margin: 0 auto; } }
 .testimonials { padding: 64px 24px; background: var(--bg-soft); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-.testimonials-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 1000px; margin: 40px auto 0; }
-.testimonial-card { background: var(--bg); border: 1px solid var(--border); border-radius: 16px; padding: 24px; box-shadow: var(--shadow-sm); }
-.testimonial-stars { color: #F59E0B; font-size: 18px; margin-bottom: 12px; }
-.testimonial-text { font-size: 14.5px; font-style: italic; color: var(--text); margin-bottom: 16px; line-height: 1.6; }
-.testimonial-author { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; }
-.testimonial-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--green-soft); display: grid; place-items: center; font-size: 18px; }
+.testimonials-carousel { display: flex; align-items: center; gap: 12px; max-width: 1120px; margin: 36px auto 0; }
+.testimonials-viewport { flex: 1; min-width: 0; overflow: hidden; border-radius: 16px; }
+.testimonials-grid { display: flex; align-items: stretch; gap: 20px; max-width: none; margin: 0; transition: transform .55s cubic-bezier(.22,.75,.25,1); will-change: transform; }
+.testimonial-card { flex: 0 0 calc((100% - 40px) / 3); min-width: 0; background: var(--bg); border: 1px solid var(--border); border-radius: 16px; padding: 22px; box-shadow: var(--shadow-sm); display: flex; flex-direction: column; }
+.testimonial-stars { color: #F59E0B; font-size: 18px; margin-bottom: 12px; letter-spacing: 2px; }
+.testimonial-text { font-size: 14.5px; font-style: italic; color: var(--text); margin-bottom: 18px; line-height: 1.6; overflow-wrap: anywhere; }
+.testimonial-author { display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 600; margin-top: auto; }
+.testimonial-avatar { width: 36px; height: 36px; flex: 0 0 36px; border-radius: 50%; background: var(--green-soft); display: grid; place-items: center; font-size: 18px; }
+.testimonial-nav { width: 42px; height: 42px; flex: 0 0 42px; border-radius: 50%; border: 1px solid var(--border); background: var(--bg); color: var(--text); font-size: 26px; line-height: 1; display: grid; place-items: center; cursor: pointer; box-shadow: var(--shadow-sm); transition: .2s; }
+.testimonial-nav:hover:not(:disabled) { color: var(--green-dark); border-color: var(--green); transform: scale(1.05); }
+.testimonial-nav:disabled { opacity: .35; cursor: default; }
+.testimonials-dots { display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 22px; min-height: 12px; }
+.testimonial-dot { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 999px; background: #C7CDD4; cursor: pointer; transition: width .2s, background .2s; }
+.testimonial-dot.active { width: 24px; background: var(--green); }
+.testimonial-photos { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 0 0 16px; }
+.testimonial-photos.count-1 { grid-template-columns: minmax(0, 1fr); }
+.testimonial-photos.count-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.testimonial-photos img { display: block; width: 100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 10px; border: 1px solid var(--border); background: var(--bg-soft); }
+.testimonial-photos.count-1 img { aspect-ratio: 16 / 10; max-height: 220px; }
 .star-rating { font-size: 32px; color: #d1d5db; cursor: pointer; display: flex; gap: 5px; justify-content: center; margin-bottom: 16px; }
 .star-rating .active { color: #F59E0B; }
+.review-upload-field { text-align: left; margin: 4px 0 16px; }
+.review-upload-field label { display: block; color: var(--text); font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+.review-upload-field input[type="file"] { width: 100%; padding: 10px; font-size: 13px; background: var(--bg-soft); }
+.review-upload-field small { display: block; color: var(--muted); font-size: 12px; margin-top: 6px; }
+.review-image-previews { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 10px; }
+.review-image-preview { position: relative; aspect-ratio: 1 / 1; min-width: 0; }
+.review-image-preview img { width: 100%; height: 100%; display: block; object-fit: cover; border-radius: 9px; border: 1px solid var(--border); }
+.review-image-preview button { position: absolute; top: 5px; right: 5px; width: 26px; height: 26px; border: 0; border-radius: 50%; color: #fff; background: rgba(20, 20, 20, .78); cursor: pointer; font-size: 17px; line-height: 1; }
+@media (max-width: 900px) { .testimonial-card { flex-basis: calc((100% - 20px) / 2); } }
+@media (max-width: 620px) {
+  .testimonials-carousel { gap: 6px; margin-top: 28px; }
+  .testimonial-nav { width: 34px; height: 34px; flex-basis: 34px; font-size: 22px; }
+  .testimonial-card { flex-basis: 100%; padding: 20px; }
+}
+@media (prefers-reduced-motion: reduce) { .testimonials-grid, .testimonial-nav, .testimonial-dot { transition: none !important; } }
 .a1-warning { background: #FFF4E0; border: 1px solid #FFD699; border-left: 4px solid #F59E0B; padding: 16px; border-radius: 12px; display: flex; align-items: center; gap: 12px; margin-top: 24px; margin-bottom: -24px; }
 .a1-warning-icon { font-size: 24px; }
 .a1-warning-text strong { color: #B45309; display: block; margin-bottom: 2px; }
@@ -516,9 +544,16 @@ body.dark-theme select:-webkit-autofill {
       <div class="section-head fade-in" style="justify-content: center; text-align: center;">
         <div><h2>O que dizem meus clientes</h2><p>A opinião de quem já recebeu a peça em casa.</p></div>
       </div>
-      <div class="testimonials-grid" id="testimonials-grid">
-        <div class="empty fade-in" style="grid-column: 1 / -1;">Nenhuma avaliação ainda. Seja o primeiro a comprar e avaliar! 💚</div>
+      <div class="testimonials-carousel" id="testimonials-carousel">
+        <button type="button" class="testimonial-nav" id="testimonials-prev" onclick="moveTestimonials(-1)" aria-label="Avaliações anteriores">‹</button>
+        <div class="testimonials-viewport" id="testimonials-viewport">
+          <div class="testimonials-grid" id="testimonials-grid">
+            <div class="empty fade-in" style="width:100%;">Nenhuma avaliação ainda. Seja o primeiro a comprar e avaliar! 💚</div>
+          </div>
+        </div>
+        <button type="button" class="testimonial-nav" id="testimonials-next" onclick="moveTestimonials(1)" aria-label="Próximas avaliações">›</button>
       </div>
+      <div class="testimonials-dots" id="testimonials-dots" aria-label="Navegação das avaliações"></div>
     </div>
   </section>
 
@@ -621,6 +656,12 @@ body.dark-theme select:-webkit-autofill {
       <span onclick="setRating(1)">★</span><span onclick="setRating(2)">★</span><span onclick="setRating(3)">★</span><span onclick="setRating(4)">★</span><span onclick="setRating(5)">★</span>
     </div>
     <textarea id="rev-comment" placeholder="O que você achou do acabamento, da entrega? Conte pra gente!"></textarea>
+    <div class="review-upload-field">
+      <label for="rev-images">Adicionar fotos do produto (opcional)</label>
+      <input type="file" id="rev-images" accept="image/jpeg,image/png,image/webp" multiple onchange="handleReviewImages(event)">
+      <small>Escolha até 3 fotos. Cada imagem pode ter no máximo 5 MB.</small>
+      <div class="review-image-previews" id="rev-image-previews"></div>
+    </div>
     <button class="btn btn-primary" onclick="submitReview()" id="btn-submit-review">Enviar Avaliação</button>
     <p class="error" id="rev-error" style="text-align:center;"></p>
   </div>
@@ -816,7 +857,7 @@ body.dark-theme select:-webkit-autofill {
   <div class="cart-header"><h3 id="cart-title">Seu carrinho</h3><button class="icon-btn" onclick="closeCart()" aria-label="Fechar">✕</button></div>
   <div class="cart-body" id="cart-step-1">
     <div class="free-shipping-container" id="free-shipping-container">
-      <div class="free-shipping-text" id="free-shipping-text">Faltam R$ 150,00 para Frete Grátis!</div>
+      <div class="free-shipping-text" id="free-shipping-text">Frete calculado após o envio do pedido</div>
       <div class="free-shipping-bar"><div class="free-shipping-fill" id="free-shipping-fill"></div></div>
     </div>
     <label class="express-box" id="express-box">
@@ -834,11 +875,9 @@ body.dark-theme select:-webkit-autofill {
         <label class="field"><span>Estado (UF) *</span><input id="c-state" required placeholder="PR" maxlength="2" style="text-transform:uppercase"></label>
       </div>
       <div class="shipping-quote-box" id="shipping-quote-box">
-        <h4>🚚 Calcular frete</h4>
-        <p>Entrega saindo do CEP <strong>80310-260</strong>. Digite o CEP de destino para consultar as transportadoras e os prazos disponíveis.</p>
-        <button type="button" class="btn btn-outline btn-sm" id="shipping-quote-button" onclick="calculateShipping()">Calcular frete pelo CEP</button>
-        <div class="shipping-quote-status" id="shipping-quote-status" aria-live="polite">O cálculo será feito automaticamente quando você terminar de digitar um CEP válido.</div>
-        <div class="shipping-options" id="shipping-options"></div>
+        <h4>🚚 Frete a combinar</h4>
+        <p>Após receber seu pedido, vamos calcular o frete com base no CEP e nas dimensões da embalagem. Você receberá o valor total pelo WhatsApp antes de realizar o pagamento.</p>
+        <div class="shipping-quote-status" aria-live="polite">Origem do envio: CEP 80310-260. Nenhum pagamento será solicitado nesta etapa.</div>
       </div>
       <label class="field"><span>Rua / Avenida *</span><input id="c-street" required placeholder="Ex: Av. Paulista"></label>
       <div style="display:grid; grid-template-columns:1fr 2fr; gap:10px;">
@@ -883,7 +922,6 @@ import {
   signOut, onAuthStateChanged, updateProfile, GoogleAuthProvider,
   signInWithPopup
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFunctions, httpsCallable } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-functions.js";
 
 // Firebase client configuration. These values identify the project; access is
 // protected by Authentication + Firestore Rules, never by hiding this object.
@@ -900,9 +938,6 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 auth.languageCode = "pt-BR";
-const functions = getFunctions(app, "southamerica-east1");
-const createOrderCallable = httpsCallable(functions, "createOrder");
-const quoteShippingCallable = httpsCallable(functions, "quoteShipping");
 
 const CONFIG = Object.freeze({
   storeName: "PrintLab 3D",
@@ -912,7 +947,6 @@ const CONFIG = Object.freeze({
   whatsappAdmin: "5541988896304",
   couponCode: "PRIMEIRACOMPRA",
   couponDiscount: 0.10,
-  freeShippingThreshold: 150.00,
   expressFee: 10.00,
   originCep: "80310-260",
   maxImageBytes: 5 * 1024 * 1024
@@ -942,17 +976,17 @@ let activeModalSize = null;
 let activeModalPrice = 0;
 let reviewOrderId = null;
 let reviewRating = 5;
+let pendingReviewFiles = [];
+let reviewCarouselIndex = 0;
+let reviewCarouselTimer = null;
+let reviewCarouselPaused = false;
+let reviewCarouselTouchStartX = null;
+let reviewSubmissionInProgress = false;
 let appliedCouponCode = "";
 let appliedDiscount = 0;
 let isExpress = false;
 let registrationInProgress = false;
 let pendingReceipt = null;
-let shippingQuoteId = null;
-let shippingOptions = [];
-let selectedShippingOptionIndex = null;
-let shippingQuoteTimer = null;
-let lastShippingCepRequested = "";
-let shippingQuoteRequestId = 0;
 
 const STATUS = {
   novo: { label: "Novo / aguardando pagamento", cls: "st-novo" },
@@ -1486,16 +1520,7 @@ window.addToCartFromModal = function () {
 
 // Cart
 function getCartItemKey(id, color, size) { return `${id}_${color || "padrao"}_${size || "padrao"}`; }
-function invalidateShippingQuote() {
-  shippingQuoteRequestId += 1;
-  shippingQuoteId = null;
-  shippingOptions = [];
-  selectedShippingOptionIndex = null;
-  lastShippingCepRequested = "";
-  if (byId("shipping-options")) byId("shipping-options").innerHTML = "";
-  if (byId("shipping-quote-status")) byId("shipping-quote-status").textContent = "O carrinho mudou. Calcule novamente o frete para atualizar o valor.";
-  if (byId("shipping-summary-row")) byId("shipping-summary-row").classList.add("hidden");
-}
+
 function cartTotal() { return roundMoney(cart.reduce((sum, item) => sum + (Number(item.price) || 0) * (Number(item.qty) || 0), 0)); }
 window.addToCart = function (id, color = null, size = null, price = null) {
   const product = products.find(item => item.id === id);
@@ -1505,15 +1530,14 @@ window.addToCart = function (id, color = null, size = null, price = null) {
   const existing = cart.find(item => getCartItemKey(item.id, item.color, item.size) === key);
   if (existing) existing.qty = Math.min(50, existing.qty + 1);
   else cart.push({ id, color, size, price: chosenPrice, qty: 1 });
-  invalidateShippingQuote();
   saveCart(); renderCart(); openCart();
   if (navigator.vibrate) navigator.vibrate(35);
   byId("cart-btn-header").classList.add("cart-bump");
   window.setTimeout(() => byId("cart-btn-header").classList.remove("cart-bump"), 300);
 };
-window.incQty = function (index) { if (cart[index]) { cart[index].qty = Math.min(50, Number(cart[index].qty) + 1); invalidateShippingQuote(); saveCart(); renderCart(); } };
-window.decQty = function (index) { if (!cart[index]) return; cart[index].qty -= 1; if (cart[index].qty <= 0) cart.splice(index, 1); invalidateShippingQuote(); saveCart(); renderCart(); };
-window.removeItem = function (index) { cart.splice(index, 1); invalidateShippingQuote(); saveCart(); renderCart(); };
+window.incQty = function (index) { if (cart[index]) { cart[index].qty = Math.min(50, Number(cart[index].qty) + 1); saveCart(); renderCart(); } };
+window.decQty = function (index) { if (!cart[index]) return; cart[index].qty -= 1; if (cart[index].qty <= 0) cart.splice(index, 1); saveCart(); renderCart(); };
+window.removeItem = function (index) { cart.splice(index, 1); saveCart(); renderCart(); };
 window.applyCoupon = function () {
   const entered = byId("coupon-input").value.trim().toUpperCase();
   const message = byId("coupon-message");
@@ -1544,31 +1568,18 @@ function renderCart() {
   const totalBeforeShipping = roundMoney(subtotal - discount + (isExpress ? CONFIG.expressFee : 0));
   const bar = byId("free-shipping-fill");
   const message = byId("free-shipping-text");
-  if (subtotal >= CONFIG.freeShippingThreshold) {
-    bar.style.width = "100%";
-    message.innerHTML = "🎉 Seu pedido atingiu a condição de frete grátis!";
-    message.style.color = "var(--green-dark)";
-    if (byId("shipping-quote-box")) byId("shipping-quote-box").classList.add("hidden");
-  } else {
-    if (byId("shipping-quote-box")) byId("shipping-quote-box").classList.remove("hidden");
-    const progress = Math.min(100, subtotal / CONFIG.freeShippingThreshold * 100);
-    bar.style.width = `${progress}%`;
-    message.textContent = `Faltam ${fmt(CONFIG.freeShippingThreshold - subtotal)} para a condição de frete grátis. O frete será calculado automaticamente pelo CEP.`;
+  if (bar) bar.style.width = "0%";
+  if (message) {
+    message.textContent = "O frete será calculado depois que você enviar o pedido.";
     message.style.color = "var(--text)";
   }
+  if (byId("shipping-quote-box")) byId("shipping-quote-box").classList.remove("hidden");
   byId("discount-val").textContent = `- ${fmt(discount)}`;
   byId("discount-row").style.display = discount > 0 ? "flex" : "none";
   byId("express-row").style.display = isExpress ? "flex" : "none";
-  const isFreeShipping = subtotal >= CONFIG.freeShippingThreshold;
-  const selectedShipping = selectedShippingOptionIndex !== null ? shippingOptions[selectedShippingOptionIndex] : null;
   const shippingRow = byId("shipping-summary-row");
-  shippingRow.classList.toggle("hidden", isFreeShipping || !selectedShipping);
-  if (selectedShipping) {
-    byId("shipping-summary-label").textContent = `Frete · ${selectedShipping.carrier || selectedShipping.serviceDescription}`;
-    byId("shipping-summary-value").textContent = fmt(selectedShipping.shippingPrice);
-  }
-  const displayedTotal = isFreeShipping ? totalBeforeShipping : selectedShipping ? roundMoney(totalBeforeShipping + selectedShipping.shippingPrice) : null;
-  byId("cart-total").textContent = displayedTotal === null ? `${fmt(totalBeforeShipping)} + frete` : fmt(displayedTotal);
+  if (shippingRow) shippingRow.classList.add("hidden");
+  byId("cart-total").textContent = `${fmt(totalBeforeShipping)} + frete a combinar`;
   const container = byId("cart-items");
   if (!cart.length) {
     container.innerHTML = '<div class="empty" style="margin-top:30px">Seu carrinho está vazio.</div>';
@@ -1630,88 +1641,16 @@ window.onPrimaryClick = function () {
       byId("c-neighborhood").value = currentUserProfile.neighborhood || "";
       byId("c-city").value = currentUserProfile.city || "";
     }
-    if (normalizeCep(byId("c-cep").value).length === 8 && cartTotal() < CONFIG.freeShippingThreshold) scheduleShippingQuote();
   } else if (cartStep === 2) submitOrder();
 };
 function normalizeCep(value) { return String(value || "").replace(/\D/g, ""); }
 window.scheduleShippingQuote = function () {
-  if (shippingQuoteTimer) window.clearTimeout(shippingQuoteTimer);
-  const cep = normalizeCep(byId("c-cep").value);
-  if (cep !== lastShippingCepRequested) {
-    invalidateShippingQuote();
-    byId("shipping-quote-button").disabled = false;
-    byId("shipping-quote-button").textContent = "Calcular frete pelo CEP";
-  }
-  if (cep.length !== 8 || cartTotal() >= CONFIG.freeShippingThreshold) return;
-  shippingQuoteTimer = window.setTimeout(() => calculateShipping(), 700);
+  // O frete é calculado manualmente pela loja após o recebimento do pedido.
 };
-window.calculateShipping = async function () {
-  if (!currentUser || !cart.length) return;
-  const requestId = ++shippingQuoteRequestId;
-  const recipientCep = normalizeCep(byId("c-cep").value);
-  if (!/^\d{8}$/.test(recipientCep)) {
-    byId("shipping-quote-status").textContent = "Digite um CEP de destino válido com 8 números.";
-    return;
-  }
-  if (cartTotal() >= CONFIG.freeShippingThreshold) {
-    byId("shipping-quote-status").textContent = "Este pedido atingiu a condição de frete grátis.";
-    shippingQuoteId = null;
-    return;
-  }
-  if (lastShippingCepRequested === recipientCep && shippingQuoteId && shippingOptions.length) return;
-  const button = byId("shipping-quote-button");
-  const status = byId("shipping-quote-status");
-  button.disabled = true;
-  button.innerHTML = '<span class="spinner"></span> Consultando transportadoras...';
-  status.textContent = `Consultando fretes de ${CONFIG.originCep} para ${byId("c-cep").value}...`;
-  byId("shipping-options").innerHTML = "";
-  shippingQuoteId = null;
-  shippingOptions = [];
-  selectedShippingOptionIndex = null;
-  try {
-    const response = await quoteShippingCallable({
-      recipientCep,
-      items: cart.map(item => ({ productId: item.id, quantity: Number(item.qty) }))
-    });
-    if (requestId !== shippingQuoteRequestId || recipientCep !== normalizeCep(byId("c-cep").value)) return;
-    const data = response.data || {};
-    shippingQuoteId = data.quoteId || null;
-    shippingOptions = Array.isArray(data.options) ? data.options : [];
-    lastShippingCepRequested = recipientCep;
-    renderShippingOptions();
-    if (!shippingOptions.length) status.textContent = "Nenhuma opção de frete foi encontrada para este CEP.";
-    else status.textContent = `Fretes calculados a partir do CEP ${CONFIG.originCep}. Escolha uma opção para continuar.`;
-    renderCart();
-  } catch (error) {
-    if (requestId !== shippingQuoteRequestId) return;
-    lastShippingCepRequested = "";
-    const message = firebaseMessage(error);
-    status.textContent = message || "Não foi possível calcular o frete. Confira o CEP e tente novamente.";
-    byId("shipping-options").innerHTML = "";
-  } finally {
-    if (requestId === shippingQuoteRequestId) {
-      button.disabled = false;
-      button.textContent = "Calcular novamente";
-    }
-  }
+window.calculateShipping = function () {
+  showToast("O frete será calculado pela PrintLab 3D após o envio do pedido.");
 };
-function renderShippingOptions() {
-  const container = byId("shipping-options");
-  container.innerHTML = shippingOptions.map((option, index) => {
-    const selected = index === selectedShippingOptionIndex;
-    const carrier = esc(option.carrier || "Transportadora");
-    const service = esc(option.serviceDescription || "Entrega");
-    const days = Number(option.deliveryTimeDays);
-    const deadline = Number.isFinite(days) && days >= 0 ? `${days} dia(s) útil(eis)` : "Prazo não informado";
-    return `<button type="button" class="shipping-option ${selected ? "selected" : ""}" onclick="selectShippingOption(${index})" aria-pressed="${selected}"><span><strong>${carrier} · ${service}</strong><small>Prazo estimado: ${deadline}</small></span><span class="shipping-option-price">${fmt(option.shippingPrice)}</span></button>`;
-  }).join("");
-}
-window.selectShippingOption = function (index) {
-  if (!Number.isInteger(index) || !shippingOptions[index]) return;
-  selectedShippingOptionIndex = index;
-  renderShippingOptions();
-  renderCart();
-};
+window.selectShippingOption = function () {};
 
 async function submitOrder() {
   if (!currentUser || !cart.length) return;
@@ -1719,7 +1658,7 @@ async function submitOrder() {
   if (!form.checkValidity()) { form.reportValidity(); return; }
   const button = byId("cart-primary-btn");
   button.disabled = true;
-  button.innerHTML = '<span class="spinner"></span> Validando pedido...';
+  button.innerHTML = '<span class="spinner"></span> Enviando pedido...';
   try {
     const customer = {
       name: byId("c-name").value.trim(),
@@ -1733,24 +1672,45 @@ async function submitOrder() {
       city: byId("c-city").value.trim(),
       notes: byId("c-notes").value.trim()
     };
-    const isFreeShipping = cartTotal() >= CONFIG.freeShippingThreshold;
-    const selectedShipping = selectedShippingOptionIndex !== null ? shippingOptions[selectedShippingOptionIndex] : null;
-    if (!isFreeShipping && (!shippingQuoteId || !selectedShipping)) {
-      throw new Error("Calcule o frete pelo CEP e selecione uma transportadora antes de confirmar o pedido.");
-    }
-    const payload = {
-      items: cart.map(item => ({ productId: item.id, color: item.color || null, size: item.size || null, quantity: Number(item.qty) })),
+    const subtotal = cartTotal();
+    const discountAmount = roundMoney(subtotal * appliedDiscount);
+    const amountBeforeShipping = roundMoney(subtotal - discountAmount + (isExpress ? CONFIG.expressFee : 0));
+    const orderId = `PL-${Date.now().toString().slice(-8)}`;
+    const orderItems = cart.map(item => {
+      const product = products.find(entry => entry.id === item.id);
+      return {
+        productId: item.id,
+        name: product?.name || "Produto",
+        price: roundMoney(Number(item.price) || 0),
+        qty: Number(item.qty) || 1,
+        color: item.color || null,
+        size: item.size || null
+      };
+    });
+    const orderData = {
+      orderId,
+      userId: currentUser.uid,
       customer,
-      couponCode: appliedCouponCode,
+      items: orderItems,
+      subtotal: roundMoney(subtotal),
+      discountAmount,
+      couponCode: appliedCouponCode || null,
+      expressFee: isExpress ? CONFIG.expressFee : 0,
       isExpress,
-      shippingQuoteId: isFreeShipping ? null : shippingQuoteId,
-      shippingServiceCode: isFreeShipping ? null : selectedShipping.serviceCode
+      amountBeforeShipping,
+      shippingFee: null,
+      total: null,
+      shippingStatus: "awaiting_quote",
+      paymentStatus: "awaiting_shipping_quote",
+      status: "novo",
+      reviewed: false,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
     };
-    const response = await createOrderCallable(payload);
-    const result = response.data;
+    const orderRef = await addDoc(collection(db, "orders"), orderData);
+    const result = { ...orderData, id: orderRef.id };
     pendingReceipt = result;
     cart = [];
-    invalidateShippingQuote();
     saveCart();
     appliedCouponCode = "";
     appliedDiscount = 0;
@@ -1767,6 +1727,7 @@ async function submitOrder() {
     if (unsubMyOrders) { unsubMyOrders(); unsubMyOrders = null; }
     subscribeMyOrders();
   } catch (error) {
+    console.error("Erro ao criar pedido:", error);
     alert(`Não foi possível enviar o pedido. ${firebaseMessage(error)}`);
   } finally {
     button.disabled = false;
@@ -1781,9 +1742,9 @@ function renderReceipt(order, customer) {
     : `<div style="background:var(--green-soft);border:1px dashed var(--green);border-radius:12px;padding:16px;margin-top:16px;text-align:center"><span style="font-size:13px;color:var(--green-dark);font-weight:600;display:block;margin-bottom:4px">Chave Pix</span><strong style="font-size:16px;color:var(--text)">${esc(CONFIG.pixKey)}</strong><p style="font-size:13px;margin-top:8px">Total com frete: <strong>${fmt(total)}</strong></p><div style="display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap"><button type="button" class="btn btn-outline btn-sm" id="copy-pix-key">Copiar chave</button><button type="button" class="btn btn-outline btn-sm" id="copy-pix-total">Copiar valor</button></div></div>`;
   const selectedServiceText = order.shippingService ? `<div style="display:flex;justify-content:space-between;gap:10px;margin-top:8px"><span class="muted">Transportadora</span><strong style="text-align:right">${esc(order.shippingCarrier || "")}${order.shippingService ? ` · ${esc(order.shippingService)}` : ""}</strong></div>` : "";
   const deliveryText = Number.isFinite(Number(order.shippingDeliveryTimeDays)) ? `<div style="display:flex;justify-content:space-between;margin-top:6px"><span class="muted">Prazo estimado</span><strong>${Number(order.shippingDeliveryTimeDays)} dia(s) útil(eis)</strong></div>` : "";
-  const message = `Olá! Recebi o pedido *${order.orderId}* na PrintLab 3D. O frete já foi cotado pelo CEP.`;
+  const message = `Olá! Enviei o pedido *${order.orderId}* na PrintLab 3D. Aguardo o orçamento do frete.`;
   const whatsapp = waLink(CONFIG.whatsappAdmin, message);
-  byId("cart-step-3").innerHTML = `<div style="text-align:center;padding:24px 0"><div style="width:64px;height:64px;border-radius:50%;background:var(--green-soft);color:var(--green-dark);display:grid;place-items:center;margin:0 auto 18px;font-size:30px">✓</div><h3 style="font-size:20px;margin-bottom:8px">Pedido ${esc(order.orderId)} recebido!</h3><p class="muted" style="font-size:14px;margin-bottom:18px">Obrigado, ${esc(customer.name.split(" ")[0])}.</p><div style="background:var(--bg-soft);border-radius:12px;padding:16px;text-align:left;font-size:14px"><div style="display:flex;justify-content:space-between"><span class="muted">Produtos, desconto e produção</span><strong>${fmt(order.amountBeforeShipping)}</strong></div><div style="display:flex;justify-content:space-between;margin-top:8px"><span class="muted">Frete</span><strong>${shippingPending ? "A confirmar" : order.shippingFee === 0 ? "Grátis" : fmt(order.shippingFee)}</strong></div>${selectedServiceText}${deliveryText}${!shippingPending ? `<div style="display:flex;justify-content:space-between;padding-top:10px;margin-top:8px;border-top:1px solid var(--border);font-weight:800"><span>Total</span><span>${fmt(total)}</span></div>` : ""}</div>${paymentBlock}${whatsapp ? `<a href="${whatsapp}" target="_blank" rel="noopener noreferrer" class="btn btn-primary w-full" style="margin-top:16px;background:#25D366">Falar pelo WhatsApp</a>` : ""}<button type="button" class="btn btn-ghost w-full" style="margin-top:8px" onclick="closeCart();setCartStep(1)">Continuar comprando</button></div>`;
+  byId("cart-step-3").innerHTML = `<div style="text-align:center;padding:24px 0"><div style="width:64px;height:64px;border-radius:50%;background:var(--green-soft);color:var(--green-dark);display:grid;place-items:center;margin:0 auto 18px;font-size:30px">✓</div><h3 style="font-size:20px;margin-bottom:8px">Pedido ${esc(order.orderId)} recebido!</h3><p class="muted" style="font-size:14px;margin-bottom:18px">Obrigado, ${esc((customer.name || "Cliente").split(" ")[0])}.</p><div style="background:var(--bg-soft);border-radius:12px;padding:16px;text-align:left;font-size:14px"><div style="display:flex;justify-content:space-between"><span class="muted">Produtos, desconto e produção</span><strong>${fmt(order.amountBeforeShipping)}</strong></div><div style="display:flex;justify-content:space-between;margin-top:8px"><span class="muted">Frete</span><strong>${shippingPending ? "A confirmar" : order.shippingFee === 0 ? "Grátis" : fmt(order.shippingFee)}</strong></div>${selectedServiceText}${deliveryText}${!shippingPending ? `<div style="display:flex;justify-content:space-between;padding-top:10px;margin-top:8px;border-top:1px solid var(--border);font-weight:800"><span>Total</span><span>${fmt(total)}</span></div>` : ""}</div>${paymentBlock}${whatsapp ? `<a href="${whatsapp}" target="_blank" rel="noopener noreferrer" class="btn btn-primary w-full" style="margin-top:16px;background:#25D366">Falar pelo WhatsApp</a>` : ""}<button type="button" class="btn btn-ghost w-full" style="margin-top:8px" onclick="closeCart();setCartStep(1)">Continuar comprando</button></div>`;
   if (!shippingPending) {
     byId("copy-pix-key").addEventListener("click", () => copyText(CONFIG.pixKey, "Chave Pix copiada."));
     byId("copy-pix-total").addEventListener("click", () => copyText(Number(total).toFixed(2), "Valor copiado."));
@@ -1801,69 +1762,258 @@ window.toggleFaq = function (element) {
   const indicator = element.querySelector("span");
   if (indicator) indicator.textContent = item.classList.contains("active") ? "−" : "+";
 };
+
+function getReviewCarouselElements() {
+  return {
+    viewport: byId("testimonials-viewport"),
+    track: byId("testimonials-grid"),
+    previous: byId("testimonials-prev"),
+    next: byId("testimonials-next"),
+    dots: byId("testimonials-dots")
+  };
+}
+
+function getReviewCarouselMetrics() {
+  const { viewport, track } = getReviewCarouselElements();
+  const cards = [...track.querySelectorAll(".testimonial-card")];
+  if (!cards.length || !viewport.clientWidth) return { cards, visible: 1, maxIndex: 0, step: 0 };
+  const cardWidth = cards[0].getBoundingClientRect().width;
+  const gap = Number.parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap) || 0;
+  const step = cardWidth + gap;
+  const visible = Math.max(1, Math.floor((viewport.clientWidth + gap) / Math.max(step, 1)));
+  return { cards, visible, maxIndex: Math.max(0, cards.length - visible), step };
+}
+
+function updateTestimonialsCarousel() {
+  const { viewport, track, previous, next, dots } = getReviewCarouselElements();
+  if (!viewport || !track) return;
+  let metrics = getReviewCarouselMetrics();
+  // Quando há menos avaliações do que cabem na tela, os cartões ocupam
+  // o espaço disponível em vez de ficarem pequenos e desalinhados.
+  if (metrics.cards.length > 0 && metrics.cards.length < metrics.visible) {
+    const gap = Number.parseFloat(getComputedStyle(track).columnGap || getComputedStyle(track).gap) || 0;
+    const basis = `calc((100% - ${gap * (metrics.cards.length - 1)}px) / ${metrics.cards.length})`;
+    metrics.cards.forEach(card => { card.style.flexBasis = basis; });
+  } else {
+    metrics.cards.forEach(card => { card.style.flexBasis = ""; });
+  }
+  metrics = getReviewCarouselMetrics();
+  reviewCarouselIndex = Math.max(0, Math.min(reviewCarouselIndex, metrics.maxIndex));
+  track.style.transform = `translate3d(${-reviewCarouselIndex * metrics.step}px, 0, 0)`;
+  const canMove = metrics.maxIndex > 0;
+  previous.hidden = !canMove;
+  next.hidden = !canMove;
+  previous.disabled = !canMove;
+  next.disabled = !canMove;
+  dots.innerHTML = canMove
+    ? Array.from({ length: metrics.maxIndex + 1 }, (_, index) =>
+        `<button type="button" class="testimonial-dot ${index === reviewCarouselIndex ? "active" : ""}" aria-label="Ir para o grupo de avaliações ${index + 1}" aria-current="${index === reviewCarouselIndex ? "true" : "false"}" onclick="goToTestimonial(${index})"></button>`
+      ).join("")
+    : "";
+}
+
+window.moveTestimonials = function (direction) {
+  const { maxIndex } = getReviewCarouselMetrics();
+  if (maxIndex <= 0) return;
+  reviewCarouselIndex += Number(direction) < 0 ? -1 : 1;
+  if (reviewCarouselIndex > maxIndex) reviewCarouselIndex = 0;
+  if (reviewCarouselIndex < 0) reviewCarouselIndex = maxIndex;
+  updateTestimonialsCarousel();
+};
+
+window.goToTestimonial = function (index) {
+  const { maxIndex } = getReviewCarouselMetrics();
+  reviewCarouselIndex = Math.max(0, Math.min(Number(index) || 0, maxIndex));
+  updateTestimonialsCarousel();
+};
+
+function initTestimonialsCarousel() {
+  const { viewport } = getReviewCarouselElements();
+  if (!viewport || viewport.dataset.carouselInitialized === "true") return;
+  viewport.dataset.carouselInitialized = "true";
+  viewport.addEventListener("mouseenter", () => { reviewCarouselPaused = true; });
+  viewport.addEventListener("mouseleave", () => { reviewCarouselPaused = false; });
+  viewport.addEventListener("focusin", () => { reviewCarouselPaused = true; });
+  viewport.addEventListener("focusout", event => {
+    if (!viewport.contains(event.relatedTarget)) reviewCarouselPaused = false;
+  });
+  viewport.addEventListener("touchstart", event => {
+    reviewCarouselTouchStartX = event.changedTouches?.[0]?.clientX ?? null;
+    reviewCarouselPaused = true;
+  }, { passive: true });
+  viewport.addEventListener("touchend", event => {
+    const endX = event.changedTouches?.[0]?.clientX;
+    if (Number.isFinite(reviewCarouselTouchStartX) && Number.isFinite(endX)) {
+      const distance = endX - reviewCarouselTouchStartX;
+      if (Math.abs(distance) > 45) window.moveTestimonials(distance < 0 ? 1 : -1);
+    }
+    reviewCarouselTouchStartX = null;
+    reviewCarouselPaused = false;
+  }, { passive: true });
+  window.addEventListener("resize", updateTestimonialsCarousel);
+  document.addEventListener("visibilitychange", () => {
+    if (document.hidden) reviewCarouselPaused = true;
+    else reviewCarouselPaused = false;
+  });
+  if (reviewCarouselTimer) window.clearInterval(reviewCarouselTimer);
+  reviewCarouselTimer = window.setInterval(() => {
+    if (!reviewCarouselPaused && !document.hidden) window.moveTestimonials(1);
+  }, 5000);
+  updateTestimonialsCarousel();
+}
+
 function subscribeReviews() {
   if (unsubReviews) unsubReviews();
-  unsubReviews = onSnapshot(query(collection(db, "reviews"), orderBy("createdAt", "desc"), limit(6)), snapshot => {
+  unsubReviews = onSnapshot(query(collection(db, "reviews"), orderBy("createdAt", "desc"), limit(12)), snapshot => {
     reviews = snapshot.docs.map(item => ({ id: item.id, ...item.data() }));
     renderTestimonials();
   }, error => console.error("Erro ao carregar avaliações:", error));
 }
+
 function renderTestimonials() {
-  const grid = byId("testimonials-grid");
-  if (!reviews.length) { grid.innerHTML = '<div class="empty fade-in visible" style="grid-column:1/-1">Nenhuma avaliação ainda. 💚</div>'; return; }
-  grid.innerHTML = reviews.map(review => {
+  const track = byId("testimonials-grid");
+  if (!reviews.length) {
+    track.innerHTML = '<div class="empty fade-in visible" style="width:100%;">Nenhuma avaliação ainda. Seja o primeiro a comprar e avaliar! 💚</div>';
+    reviewCarouselIndex = 0;
+    updateTestimonialsCarousel();
+    return;
+  }
+  track.innerHTML = reviews.map(review => {
     const rating = Math.max(0, Math.min(5, Number(review.rating) || 0));
-    const name = String(review.name || "Cliente");
-    return `<div class="testimonial-card fade-in visible"><div class="testimonial-stars">${"★".repeat(rating)}${"☆".repeat(5 - rating)}</div><p class="testimonial-text">“${esc(review.comment)}”</p><div class="testimonial-author"><div class="testimonial-avatar">${esc(name.charAt(0).toUpperCase())}</div><div><div style="color:var(--text)">${esc(name)}</div><div style="font-size:12px;color:var(--muted);font-weight:400">Compra verificada</div></div></div></div>`;
+    const name = String(review.name || "Cliente").slice(0, 100);
+    const images = Array.isArray(review.images) ? review.images.map(safeImageURL).filter(Boolean).slice(0, 3) : [];
+    const photosHTML = images.length
+      ? `<div class="testimonial-photos count-${images.length}">${images.map((url, index) => `<img src="${esc(url)}" alt="Foto ${index + 1} enviada por ${esc(name)}" loading="lazy" decoding="async">`).join("")}</div>`
+      : "";
+    return `<article class="testimonial-card"><div class="testimonial-stars" aria-label="Nota ${rating} de 5">${"★".repeat(rating)}${"☆".repeat(5 - rating)}</div>${photosHTML}<p class="testimonial-text">“${esc(review.comment)}”</p><div class="testimonial-author"><div class="testimonial-avatar">${esc(name.charAt(0).toUpperCase())}</div><div><div style="color:var(--text)">${esc(name)}</div><div style="font-size:12px;color:var(--muted);font-weight:400">Compra verificada</div></div></div></article>`;
   }).join("");
+  reviewCarouselIndex = 0;
+  updateTestimonialsCarousel();
 }
+
+function clearReviewImages() {
+  pendingReviewFiles.forEach(item => URL.revokeObjectURL(item.previewUrl));
+  pendingReviewFiles = [];
+  const previews = byId("rev-image-previews");
+  if (previews) previews.innerHTML = "";
+  const input = byId("rev-images");
+  if (input) input.value = "";
+}
+
+function renderReviewImagePreviews() {
+  const container = byId("rev-image-previews");
+  if (!container) return;
+  container.innerHTML = pendingReviewFiles.map((item, index) =>
+    `<div class="review-image-preview"><img src="${esc(item.previewUrl)}" alt="Prévia da foto ${index + 1}"><button type="button" onclick="removeReviewImage(${index})" aria-label="Remover foto ${index + 1}">×</button></div>`
+  ).join("");
+}
+
+window.handleReviewImages = function (event) {
+  clearReviewImages();
+  const chosenFiles = Array.from(event.target.files || []);
+  const accepted = [];
+  const problems = [];
+  for (const file of chosenFiles) {
+    if (accepted.length >= 3) {
+      problems.push("Você pode enviar no máximo 3 fotos por avaliação.");
+      break;
+    }
+    if (!/^image\/(jpeg|png|webp)$/i.test(file.type)) {
+      problems.push(`O arquivo "${file.name}" não é JPG, PNG ou WEBP.`);
+      continue;
+    }
+    if (file.size > CONFIG.maxImageBytes) {
+      problems.push(`A foto "${file.name}" ultrapassa 5 MB.`);
+      continue;
+    }
+    accepted.push({ file, previewUrl: URL.createObjectURL(file) });
+  }
+  pendingReviewFiles = accepted;
+  renderReviewImagePreviews();
+  if (problems.length) showError("rev-error", problems.join(" "));
+  else showError("rev-error", "");
+  event.target.value = "";
+};
+
+window.removeReviewImage = function (index) {
+  const removed = pendingReviewFiles.splice(Number(index), 1)[0];
+  if (removed) URL.revokeObjectURL(removed.previewUrl);
+  renderReviewImagePreviews();
+};
+
 window.openReviewModal = function (id, displayId) {
   reviewOrderId = id;
   reviewRating = 5;
   byId("rev-order-id").textContent = displayId;
   byId("rev-comment").value = "";
   byId("rev-error").textContent = "";
+  clearReviewImages();
   updateStarsUI();
   byId("review-modal").classList.add("open");
 };
 window.closeReviewModal = function (event) {
   if (event && event.target !== event.currentTarget && !event.target.classList.contains("modal-close")) return;
+  if (reviewSubmissionInProgress) {
+    showToast("Aguarde o envio da avaliação terminar.");
+    return;
+  }
   byId("review-modal").classList.remove("open");
+  clearReviewImages();
 };
 window.setRating = function (value) { reviewRating = Math.max(1, Math.min(5, Number(value))); updateStarsUI(); };
 function updateStarsUI() {
   [...byId("rev-stars").children].forEach((star, index) => star.classList.toggle("active", index < reviewRating));
 }
 window.submitReview = async function () {
-  if (!currentUser || !reviewOrderId) return;
+  if (!currentUser || !reviewOrderId || reviewSubmissionInProgress) return;
   const comment = byId("rev-comment").value.trim();
   if (!comment) { showError("rev-error", "Escreva um comentário."); return; }
   if (comment.length > 1500) { showError("rev-error", "A avaliação deve ter até 1.500 caracteres."); return; }
+  if (pendingReviewFiles.length > 3) { showError("rev-error", "Escolha no máximo 3 fotos."); return; }
   const button = byId("btn-submit-review");
+  reviewSubmissionInProgress = true;
   button.disabled = true;
-  button.textContent = "Enviando...";
+  button.textContent = "Enviando fotos e avaliação...";
   try {
     const orderRef = doc(db, "orders", reviewOrderId);
+    const orderBeforeUpload = await getDoc(orderRef);
+    if (!orderBeforeUpload.exists()) throw new Error("Pedido não encontrado.");
+    const existingOrder = orderBeforeUpload.data();
+    if (existingOrder.userId !== currentUser.uid || existingOrder.status !== "concluido" || existingOrder.reviewed) {
+      throw new Error("Este pedido não está disponível para avaliação.");
+    }
+
+    const uploadedImages = [];
+    for (const item of pendingReviewFiles) uploadedImages.push(await uploadCloudinaryImage(item.file));
+
     const reviewRef = doc(collection(db, "reviews"));
     await runTransaction(db, async transaction => {
       const orderSnapshot = await transaction.get(orderRef);
       if (!orderSnapshot.exists()) throw new Error("Pedido não encontrado.");
       const order = orderSnapshot.data();
-      if (order.userId !== currentUser.uid || order.status !== "concluido" || order.reviewed) throw new Error("Este pedido não está disponível para avaliação.");
+      if (order.userId !== currentUser.uid || order.status !== "concluido" || order.reviewed) {
+        throw new Error("Este pedido não está disponível para avaliação.");
+      }
       transaction.set(reviewRef, {
         orderId: reviewOrderId,
         userId: currentUser.uid,
         name: currentUserProfile?.name || currentUser.displayName || "Cliente",
         rating: reviewRating,
         comment,
+        images: uploadedImages,
         createdAt: serverTimestamp()
       });
       transaction.update(orderRef, { reviewed: true });
     });
     byId("review-modal").classList.remove("open");
+    clearReviewImages();
     showToast("Avaliação enviada! Obrigado.");
   } catch (error) { showError("rev-error", firebaseMessage(error)); }
-  finally { button.disabled = false; button.textContent = "Enviar Avaliação"; }
+  finally {
+    reviewSubmissionInProgress = false;
+    button.disabled = false;
+    button.textContent = "Enviar Avaliação";
+  }
 };
 
 // Customer order history
@@ -2267,6 +2417,7 @@ function init() {
   renderCart();
   subscribeProducts();
   subscribeReviews();
+  initTestimonialsCarousel();
   listenStoreSettings();
   initScrollAnimations();
   if (byId("admin-email")) byId("admin-email").addEventListener("keydown", event => { if (event.key === "Enter") tryLogin(); });

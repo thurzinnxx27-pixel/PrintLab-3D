@@ -395,6 +395,21 @@ body.dark-theme select:-webkit-autofill {
   caret-color: #fff !important;
 }
 
+/* COTAÇÃO AUTOMÁTICA DE FRETE */
+.shipping-quote-box { margin: 14px 0; padding: 14px; border: 1px solid var(--border); border-radius: 12px; background: var(--bg-soft); }
+.shipping-quote-box h4 { font-size: 14px; margin-bottom: 5px; }
+.shipping-quote-box p { color: var(--muted); font-size: 12.5px; margin-bottom: 10px; }
+.shipping-quote-status { font-size: 13px; color: var(--muted); margin-top: 9px; }
+.shipping-options { display: grid; gap: 8px; margin-top: 10px; }
+.shipping-option { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 10px; background: var(--bg); color: var(--text); cursor: pointer; text-align: left; font: inherit; }
+.shipping-option:hover { border-color: var(--green); }
+.shipping-option.selected { border: 2px solid var(--green); background: var(--green-soft); padding: 11px; }
+.shipping-option strong { display: block; font-size: 14px; }
+.shipping-option small { display: block; color: var(--muted); font-size: 12px; }
+.shipping-option-price { white-space: nowrap; font-weight: 800; font-size: 15px; }
+.shipping-admin-note { padding: 10px; border-radius: 9px; background: var(--bg-soft); color: var(--muted); font-size: 12px; margin: 10px 0 14px; }
+.shipping-summary-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 14px; color: var(--muted); margin-bottom: 10px; }
+@media(max-width:520px){ .shipping-option { align-items: flex-start; } .shipping-option-price { font-size: 14px; } }
 </style>
 </head>
 <body>
@@ -762,6 +777,13 @@ body.dark-theme select:-webkit-autofill {
               </div>
               <label class="field"><span>Cores (separadas por vírgula)</span><input id="p-colors" placeholder="Ex: Preto, Branco, Azul"></label>
               <label class="field"><span>Tamanhos e Preços (opcional)</span><input id="p-sizes" placeholder="Ex: P: 50.00, M: 80.00, G: 100.00"></label>
+              <div class="shipping-admin-note"><strong>Dados para o frete:</strong> informe o peso e as medidas do produto já embalado para envio. Peso em kg; medidas em cm. Para produtos com tamanhos diferentes, use as medidas da embalagem maior.</div>
+              <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px">
+                <label class="field"><span>Peso embalado (kg) *</span><input id="p-shipping-weight" type="number" min="0.001" step="0.001" required placeholder="0.250"></label>
+                <label class="field"><span>Comprimento (cm) *</span><input id="p-shipping-length" type="number" min="1" step="0.1" required placeholder="20"></label>
+                <label class="field"><span>Largura (cm) *</span><input id="p-shipping-width" type="number" min="1" step="0.1" required placeholder="15"></label>
+                <label class="field"><span>Altura (cm) *</span><input id="p-shipping-height" type="number" min="1" step="0.1" required placeholder="10"></label>
+              </div>
               <div style="display:flex; gap:16px; margin-bottom:14px; flex-wrap:wrap;">
                 <label class="field" style="display:flex; align-items:center; gap:8px; cursor:pointer; margin-bottom:0;"><input type="checkbox" id="p-eco" style="width:auto; transform:scale(1.2);"><span style="margin-bottom:0;">🌱 Eco-Friendly</span></label>
                 <label class="field" style="display:flex; align-items:center; gap:8px; cursor:pointer; margin-bottom:0;"><input type="checkbox" id="p-handmade" style="width:auto; transform:scale(1.2);"><span style="margin-bottom:0;">✋ Feito à Mão</span></label>
@@ -808,8 +830,15 @@ body.dark-theme select:-webkit-autofill {
       <label class="field"><span>Nome completo *</span><input id="c-name" required placeholder="João Silva"></label>
       <label class="field"><span>WhatsApp para contato *</span><input id="c-phone" type="tel" required inputmode="tel" autocomplete="tel" placeholder="(11) 99999-9999" oninput="maskPhone(this)"></label>
       <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
-        <label class="field"><span>CEP *</span><input id="c-cep" required placeholder="00000-000" oninput="maskCEP(this)"></label>
-        <label class="field"><span>Estado (UF) *</span><input id="c-state" required placeholder="SP" maxlength="2" style="text-transform:uppercase"></label>
+        <label class="field"><span>CEP *</span><input id="c-cep" required placeholder="00000-000" oninput="maskCEP(this); scheduleShippingQuote()" autocomplete="postal-code"></label>
+        <label class="field"><span>Estado (UF) *</span><input id="c-state" required placeholder="PR" maxlength="2" style="text-transform:uppercase"></label>
+      </div>
+      <div class="shipping-quote-box" id="shipping-quote-box">
+        <h4>🚚 Calcular frete</h4>
+        <p>Entrega saindo do CEP <strong>80310-260</strong>. Digite o CEP de destino para consultar as transportadoras e os prazos disponíveis.</p>
+        <button type="button" class="btn btn-outline btn-sm" id="shipping-quote-button" onclick="calculateShipping()">Calcular frete pelo CEP</button>
+        <div class="shipping-quote-status" id="shipping-quote-status" aria-live="polite">O cálculo será feito automaticamente quando você terminar de digitar um CEP válido.</div>
+        <div class="shipping-options" id="shipping-options"></div>
       </div>
       <label class="field"><span>Rua / Avenida *</span><input id="c-street" required placeholder="Ex: Av. Paulista"></label>
       <div style="display:grid; grid-template-columns:1fr 2fr; gap:10px;">
@@ -836,6 +865,7 @@ body.dark-theme select:-webkit-autofill {
     </div>
     <div class="total-row" id="discount-row" style="display:none; color:var(--green-dark);">Desconto <span id="discount-val">- R$ 0,00</span></div>
     <div class="total-row" id="express-row" style="display:none; color:#B45309;">Produção Expressa <span>+ R$ 10,00</span></div>
+    <div class="shipping-summary-row hidden" id="shipping-summary-row"><span id="shipping-summary-label">Frete</span><strong id="shipping-summary-value">A calcular</strong></div>
     <div class="total-row">Total <strong id="cart-total">R$ 0,00</strong></div>
     <button class="btn btn-primary w-full" id="cart-primary-btn" onclick="onPrimaryClick()">Continuar</button>
     <button class="btn btn-ghost w-full hidden" id="cart-back-btn" style="margin-top:6px" onclick="setCartStep(1)">Voltar ao carrinho</button>
@@ -872,6 +902,7 @@ const auth = getAuth(app);
 auth.languageCode = "pt-BR";
 const functions = getFunctions(app, "southamerica-east1");
 const createOrderCallable = httpsCallable(functions, "createOrder");
+const quoteShippingCallable = httpsCallable(functions, "quoteShipping");
 
 const CONFIG = Object.freeze({
   storeName: "PrintLab 3D",
@@ -883,6 +914,7 @@ const CONFIG = Object.freeze({
   couponDiscount: 0.10,
   freeShippingThreshold: 150.00,
   expressFee: 10.00,
+  originCep: "80310-260",
   maxImageBytes: 5 * 1024 * 1024
 });
 
@@ -915,6 +947,12 @@ let appliedDiscount = 0;
 let isExpress = false;
 let registrationInProgress = false;
 let pendingReceipt = null;
+let shippingQuoteId = null;
+let shippingOptions = [];
+let selectedShippingOptionIndex = null;
+let shippingQuoteTimer = null;
+let lastShippingCepRequested = "";
+let shippingQuoteRequestId = 0;
 
 const STATUS = {
   novo: { label: "Novo / aguardando pagamento", cls: "st-novo" },
@@ -983,8 +1021,8 @@ function firebaseMessage(error) {
     "auth/unauthorized-domain": "Este domínio não está autorizado no Firebase Authentication. Adicione o domínio do GitHub Pages em Configurações > Domínios autorizados.",
     "auth/operation-not-allowed": "Ative este método de autenticação no Firebase Console.",
     "auth/phone-number-already-exists": "Este telefone já está vinculado a outra conta.",
-    "functions/not-found": "A função de pedidos ainda não foi publicada no Firebase.",
-    "functions/failed-precondition": "A loja não está pronta para receber pedidos. Verifique a configuração do Firebase."
+    "functions/not-found": error?.message || "A função de frete/pedidos não encontrou uma opção. Confira a integração.",
+    "functions/failed-precondition": error?.message || "A loja não está pronta para receber pedidos. Verifique a configuração do Firebase."
   };
   return messages[code] || error?.message || "Ocorreu um erro. Tente novamente.";
 }
@@ -1448,6 +1486,16 @@ window.addToCartFromModal = function () {
 
 // Cart
 function getCartItemKey(id, color, size) { return `${id}_${color || "padrao"}_${size || "padrao"}`; }
+function invalidateShippingQuote() {
+  shippingQuoteRequestId += 1;
+  shippingQuoteId = null;
+  shippingOptions = [];
+  selectedShippingOptionIndex = null;
+  lastShippingCepRequested = "";
+  if (byId("shipping-options")) byId("shipping-options").innerHTML = "";
+  if (byId("shipping-quote-status")) byId("shipping-quote-status").textContent = "O carrinho mudou. Calcule novamente o frete para atualizar o valor.";
+  if (byId("shipping-summary-row")) byId("shipping-summary-row").classList.add("hidden");
+}
 function cartTotal() { return roundMoney(cart.reduce((sum, item) => sum + (Number(item.price) || 0) * (Number(item.qty) || 0), 0)); }
 window.addToCart = function (id, color = null, size = null, price = null) {
   const product = products.find(item => item.id === id);
@@ -1457,14 +1505,15 @@ window.addToCart = function (id, color = null, size = null, price = null) {
   const existing = cart.find(item => getCartItemKey(item.id, item.color, item.size) === key);
   if (existing) existing.qty = Math.min(50, existing.qty + 1);
   else cart.push({ id, color, size, price: chosenPrice, qty: 1 });
+  invalidateShippingQuote();
   saveCart(); renderCart(); openCart();
   if (navigator.vibrate) navigator.vibrate(35);
   byId("cart-btn-header").classList.add("cart-bump");
   window.setTimeout(() => byId("cart-btn-header").classList.remove("cart-bump"), 300);
 };
-window.incQty = function (index) { if (cart[index]) { cart[index].qty = Math.min(50, Number(cart[index].qty) + 1); saveCart(); renderCart(); } };
-window.decQty = function (index) { if (!cart[index]) return; cart[index].qty -= 1; if (cart[index].qty <= 0) cart.splice(index, 1); saveCart(); renderCart(); };
-window.removeItem = function (index) { cart.splice(index, 1); saveCart(); renderCart(); };
+window.incQty = function (index) { if (cart[index]) { cart[index].qty = Math.min(50, Number(cart[index].qty) + 1); invalidateShippingQuote(); saveCart(); renderCart(); } };
+window.decQty = function (index) { if (!cart[index]) return; cart[index].qty -= 1; if (cart[index].qty <= 0) cart.splice(index, 1); invalidateShippingQuote(); saveCart(); renderCart(); };
+window.removeItem = function (index) { cart.splice(index, 1); invalidateShippingQuote(); saveCart(); renderCart(); };
 window.applyCoupon = function () {
   const entered = byId("coupon-input").value.trim().toUpperCase();
   const message = byId("coupon-message");
@@ -1499,16 +1548,27 @@ function renderCart() {
     bar.style.width = "100%";
     message.innerHTML = "🎉 Seu pedido atingiu a condição de frete grátis!";
     message.style.color = "var(--green-dark)";
+    if (byId("shipping-quote-box")) byId("shipping-quote-box").classList.add("hidden");
   } else {
+    if (byId("shipping-quote-box")) byId("shipping-quote-box").classList.remove("hidden");
     const progress = Math.min(100, subtotal / CONFIG.freeShippingThreshold * 100);
     bar.style.width = `${progress}%`;
-    message.textContent = `Faltam ${fmt(CONFIG.freeShippingThreshold - subtotal)} para a condição de frete grátis. Abaixo disso, o frete será cotado antes do pagamento.`;
+    message.textContent = `Faltam ${fmt(CONFIG.freeShippingThreshold - subtotal)} para a condição de frete grátis. O frete será calculado automaticamente pelo CEP.`;
     message.style.color = "var(--text)";
   }
   byId("discount-val").textContent = `- ${fmt(discount)}`;
   byId("discount-row").style.display = discount > 0 ? "flex" : "none";
   byId("express-row").style.display = isExpress ? "flex" : "none";
-  byId("cart-total").textContent = fmt(totalBeforeShipping) + (subtotal >= CONFIG.freeShippingThreshold ? "" : " + frete a cotar");
+  const isFreeShipping = subtotal >= CONFIG.freeShippingThreshold;
+  const selectedShipping = selectedShippingOptionIndex !== null ? shippingOptions[selectedShippingOptionIndex] : null;
+  const shippingRow = byId("shipping-summary-row");
+  shippingRow.classList.toggle("hidden", isFreeShipping || !selectedShipping);
+  if (selectedShipping) {
+    byId("shipping-summary-label").textContent = `Frete · ${selectedShipping.carrier || selectedShipping.serviceDescription}`;
+    byId("shipping-summary-value").textContent = fmt(selectedShipping.shippingPrice);
+  }
+  const displayedTotal = isFreeShipping ? totalBeforeShipping : selectedShipping ? roundMoney(totalBeforeShipping + selectedShipping.shippingPrice) : null;
+  byId("cart-total").textContent = displayedTotal === null ? `${fmt(totalBeforeShipping)} + frete` : fmt(displayedTotal);
   const container = byId("cart-items");
   if (!cart.length) {
     container.innerHTML = '<div class="empty" style="margin-top:30px">Seu carrinho está vazio.</div>';
@@ -1570,8 +1630,89 @@ window.onPrimaryClick = function () {
       byId("c-neighborhood").value = currentUserProfile.neighborhood || "";
       byId("c-city").value = currentUserProfile.city || "";
     }
+    if (normalizeCep(byId("c-cep").value).length === 8 && cartTotal() < CONFIG.freeShippingThreshold) scheduleShippingQuote();
   } else if (cartStep === 2) submitOrder();
 };
+function normalizeCep(value) { return String(value || "").replace(/\D/g, ""); }
+window.scheduleShippingQuote = function () {
+  if (shippingQuoteTimer) window.clearTimeout(shippingQuoteTimer);
+  const cep = normalizeCep(byId("c-cep").value);
+  if (cep !== lastShippingCepRequested) {
+    invalidateShippingQuote();
+    byId("shipping-quote-button").disabled = false;
+    byId("shipping-quote-button").textContent = "Calcular frete pelo CEP";
+  }
+  if (cep.length !== 8 || cartTotal() >= CONFIG.freeShippingThreshold) return;
+  shippingQuoteTimer = window.setTimeout(() => calculateShipping(), 700);
+};
+window.calculateShipping = async function () {
+  if (!currentUser || !cart.length) return;
+  const requestId = ++shippingQuoteRequestId;
+  const recipientCep = normalizeCep(byId("c-cep").value);
+  if (!/^\d{8}$/.test(recipientCep)) {
+    byId("shipping-quote-status").textContent = "Digite um CEP de destino válido com 8 números.";
+    return;
+  }
+  if (cartTotal() >= CONFIG.freeShippingThreshold) {
+    byId("shipping-quote-status").textContent = "Este pedido atingiu a condição de frete grátis.";
+    shippingQuoteId = null;
+    return;
+  }
+  if (lastShippingCepRequested === recipientCep && shippingQuoteId && shippingOptions.length) return;
+  const button = byId("shipping-quote-button");
+  const status = byId("shipping-quote-status");
+  button.disabled = true;
+  button.innerHTML = '<span class="spinner"></span> Consultando transportadoras...';
+  status.textContent = `Consultando fretes de ${CONFIG.originCep} para ${byId("c-cep").value}...`;
+  byId("shipping-options").innerHTML = "";
+  shippingQuoteId = null;
+  shippingOptions = [];
+  selectedShippingOptionIndex = null;
+  try {
+    const response = await quoteShippingCallable({
+      recipientCep,
+      items: cart.map(item => ({ productId: item.id, quantity: Number(item.qty) }))
+    });
+    if (requestId !== shippingQuoteRequestId || recipientCep !== normalizeCep(byId("c-cep").value)) return;
+    const data = response.data || {};
+    shippingQuoteId = data.quoteId || null;
+    shippingOptions = Array.isArray(data.options) ? data.options : [];
+    lastShippingCepRequested = recipientCep;
+    renderShippingOptions();
+    if (!shippingOptions.length) status.textContent = "Nenhuma opção de frete foi encontrada para este CEP.";
+    else status.textContent = `Fretes calculados a partir do CEP ${CONFIG.originCep}. Escolha uma opção para continuar.`;
+    renderCart();
+  } catch (error) {
+    if (requestId !== shippingQuoteRequestId) return;
+    lastShippingCepRequested = "";
+    const message = firebaseMessage(error);
+    status.textContent = message || "Não foi possível calcular o frete. Confira o CEP e tente novamente.";
+    byId("shipping-options").innerHTML = "";
+  } finally {
+    if (requestId === shippingQuoteRequestId) {
+      button.disabled = false;
+      button.textContent = "Calcular novamente";
+    }
+  }
+};
+function renderShippingOptions() {
+  const container = byId("shipping-options");
+  container.innerHTML = shippingOptions.map((option, index) => {
+    const selected = index === selectedShippingOptionIndex;
+    const carrier = esc(option.carrier || "Transportadora");
+    const service = esc(option.serviceDescription || "Entrega");
+    const days = Number(option.deliveryTimeDays);
+    const deadline = Number.isFinite(days) && days >= 0 ? `${days} dia(s) útil(eis)` : "Prazo não informado";
+    return `<button type="button" class="shipping-option ${selected ? "selected" : ""}" onclick="selectShippingOption(${index})" aria-pressed="${selected}"><span><strong>${carrier} · ${service}</strong><small>Prazo estimado: ${deadline}</small></span><span class="shipping-option-price">${fmt(option.shippingPrice)}</span></button>`;
+  }).join("");
+}
+window.selectShippingOption = function (index) {
+  if (!Number.isInteger(index) || !shippingOptions[index]) return;
+  selectedShippingOptionIndex = index;
+  renderShippingOptions();
+  renderCart();
+};
+
 async function submitOrder() {
   if (!currentUser || !cart.length) return;
   const form = byId("checkout-form");
@@ -1592,16 +1733,24 @@ async function submitOrder() {
       city: byId("c-city").value.trim(),
       notes: byId("c-notes").value.trim()
     };
+    const isFreeShipping = cartTotal() >= CONFIG.freeShippingThreshold;
+    const selectedShipping = selectedShippingOptionIndex !== null ? shippingOptions[selectedShippingOptionIndex] : null;
+    if (!isFreeShipping && (!shippingQuoteId || !selectedShipping)) {
+      throw new Error("Calcule o frete pelo CEP e selecione uma transportadora antes de confirmar o pedido.");
+    }
     const payload = {
       items: cart.map(item => ({ productId: item.id, color: item.color || null, size: item.size || null, quantity: Number(item.qty) })),
       customer,
       couponCode: appliedCouponCode,
-      isExpress
+      isExpress,
+      shippingQuoteId: isFreeShipping ? null : shippingQuoteId,
+      shippingServiceCode: isFreeShipping ? null : selectedShipping.serviceCode
     };
     const response = await createOrderCallable(payload);
     const result = response.data;
     pendingReceipt = result;
     cart = [];
+    invalidateShippingQuote();
     saveCart();
     appliedCouponCode = "";
     appliedDiscount = 0;
@@ -1628,11 +1777,13 @@ function renderReceipt(order, customer) {
   const total = order.total;
   const shippingPending = order.shippingFee === null || order.shippingFee === undefined;
   const paymentBlock = shippingPending
-    ? `<p style="margin-top:16px;background:#FFF4E0;border:1px solid #FFD699;border-radius:12px;padding:14px;color:#92400E;font-size:13px"><strong>Atenção:</strong> o frete será calculado pelo CEP e confirmado pelo WhatsApp. Aguarde o valor final antes de fazer o Pix.</p>`
+    ? `<p style="margin-top:16px;background:#FFF4E0;border:1px solid #FFD699;border-radius:12px;padding:14px;color:#92400E;font-size:13px"><strong>Atenção:</strong> o frete ainda precisa ser confirmado. Aguarde o contato da loja antes de fazer o Pix.</p>`
     : `<div style="background:var(--green-soft);border:1px dashed var(--green);border-radius:12px;padding:16px;margin-top:16px;text-align:center"><span style="font-size:13px;color:var(--green-dark);font-weight:600;display:block;margin-bottom:4px">Chave Pix</span><strong style="font-size:16px;color:var(--text)">${esc(CONFIG.pixKey)}</strong><p style="font-size:13px;margin-top:8px">Total com frete: <strong>${fmt(total)}</strong></p><div style="display:flex;gap:8px;justify-content:center;margin-top:10px;flex-wrap:wrap"><button type="button" class="btn btn-outline btn-sm" id="copy-pix-key">Copiar chave</button><button type="button" class="btn btn-outline btn-sm" id="copy-pix-total">Copiar valor</button></div></div>`;
-  const message = `Olá! Recebi o pedido *${order.orderId}* na PrintLab 3D. Gostaria de confirmar o frete e o valor final.`;
+  const selectedServiceText = order.shippingService ? `<div style="display:flex;justify-content:space-between;gap:10px;margin-top:8px"><span class="muted">Transportadora</span><strong style="text-align:right">${esc(order.shippingCarrier || "")}${order.shippingService ? ` · ${esc(order.shippingService)}` : ""}</strong></div>` : "";
+  const deliveryText = Number.isFinite(Number(order.shippingDeliveryTimeDays)) ? `<div style="display:flex;justify-content:space-between;margin-top:6px"><span class="muted">Prazo estimado</span><strong>${Number(order.shippingDeliveryTimeDays)} dia(s) útil(eis)</strong></div>` : "";
+  const message = `Olá! Recebi o pedido *${order.orderId}* na PrintLab 3D. O frete já foi cotado pelo CEP.`;
   const whatsapp = waLink(CONFIG.whatsappAdmin, message);
-  byId("cart-step-3").innerHTML = `<div style="text-align:center;padding:24px 0"><div style="width:64px;height:64px;border-radius:50%;background:var(--green-soft);color:var(--green-dark);display:grid;place-items:center;margin:0 auto 18px;font-size:30px">✓</div><h3 style="font-size:20px;margin-bottom:8px">Pedido ${esc(order.orderId)} recebido!</h3><p class="muted" style="font-size:14px;margin-bottom:18px">Obrigado, ${esc(customer.name.split(" ")[0])}.</p><div style="background:var(--bg-soft);border-radius:12px;padding:16px;text-align:left;font-size:14px"><div style="display:flex;justify-content:space-between"><span class="muted">Produtos, desconto e produção</span><strong>${fmt(order.amountBeforeShipping)}</strong></div><div style="display:flex;justify-content:space-between;margin-top:8px"><span class="muted">Frete</span><strong>${shippingPending ? "A confirmar" : order.shippingFee === 0 ? "Grátis" : fmt(order.shippingFee)}</strong></div>${!shippingPending ? `<div style="display:flex;justify-content:space-between;padding-top:10px;margin-top:8px;border-top:1px solid var(--border);font-weight:800"><span>Total</span><span>${fmt(total)}</span></div>` : ""}</div>${paymentBlock}${whatsapp ? `<a href="${whatsapp}" target="_blank" rel="noopener noreferrer" class="btn btn-primary w-full" style="margin-top:16px;background:#25D366">Falar pelo WhatsApp</a>` : ""}<button type="button" class="btn btn-ghost w-full" style="margin-top:8px" onclick="closeCart();setCartStep(1)">Continuar comprando</button></div>`;
+  byId("cart-step-3").innerHTML = `<div style="text-align:center;padding:24px 0"><div style="width:64px;height:64px;border-radius:50%;background:var(--green-soft);color:var(--green-dark);display:grid;place-items:center;margin:0 auto 18px;font-size:30px">✓</div><h3 style="font-size:20px;margin-bottom:8px">Pedido ${esc(order.orderId)} recebido!</h3><p class="muted" style="font-size:14px;margin-bottom:18px">Obrigado, ${esc(customer.name.split(" ")[0])}.</p><div style="background:var(--bg-soft);border-radius:12px;padding:16px;text-align:left;font-size:14px"><div style="display:flex;justify-content:space-between"><span class="muted">Produtos, desconto e produção</span><strong>${fmt(order.amountBeforeShipping)}</strong></div><div style="display:flex;justify-content:space-between;margin-top:8px"><span class="muted">Frete</span><strong>${shippingPending ? "A confirmar" : order.shippingFee === 0 ? "Grátis" : fmt(order.shippingFee)}</strong></div>${selectedServiceText}${deliveryText}${!shippingPending ? `<div style="display:flex;justify-content:space-between;padding-top:10px;margin-top:8px;border-top:1px solid var(--border);font-weight:800"><span>Total</span><span>${fmt(total)}</span></div>` : ""}</div>${paymentBlock}${whatsapp ? `<a href="${whatsapp}" target="_blank" rel="noopener noreferrer" class="btn btn-primary w-full" style="margin-top:16px;background:#25D366">Falar pelo WhatsApp</a>` : ""}<button type="button" class="btn btn-ghost w-full" style="margin-top:8px" onclick="closeCart();setCartStep(1)">Continuar comprando</button></div>`;
   if (!shippingPending) {
     byId("copy-pix-key").addEventListener("click", () => copyText(CONFIG.pixKey, "Chave Pix copiada."));
     byId("copy-pix-total").addEventListener("click", () => copyText(Number(total).toFixed(2), "Valor copiado."));
@@ -1887,6 +2038,8 @@ function renderAdminOrders() {
     const shippingPending = order.shippingFee === null || order.shippingFee === undefined;
     const totalLabel = shippingPending ? `${fmt(order.amountBeforeShipping ?? order.total)} + frete a cotar` : fmt(order.total);
     const paymentLabel = order.paymentStatus === "paid" ? "Pagamento confirmado" : order.paymentStatus === "awaiting_shipping_quote" ? "Aguardando cotação do frete" : "Aguardando Pix";
+    const shippingLabel = order.shippingCarrier ? `${order.shippingCarrier}${order.shippingService ? ` · ${order.shippingService}` : ""}` : "";
+    const shippingTimeLabel = Number.isFinite(Number(order.shippingDeliveryTimeDays)) ? ` · Prazo estimado: ${Number(order.shippingDeliveryTimeDays)} dia(s) útil(eis)` : "";
     const wa = waLink(customer.phone, `Olá, ${customer.name || "tudo bem"}! Sobre seu pedido ${order.orderId || order.id} na PrintLab 3D.`);
     const itemHTML = (order.items || []).map(item => `<li><span>${Number(item.qty || item.quantity || 0)}× ${esc(item.name)}</span><span>${fmt(Number(item.price) * Number(item.qty || item.quantity || 0))}</span></li>`).join("");
     const shippingButton = shippingPending
@@ -1894,7 +2047,7 @@ function renderAdminOrders() {
     const paidButton = !shippingPending && order.paymentStatus !== "paid" && order.total !== null && order.total !== undefined
       ? `<button class="btn btn-outline btn-sm" onclick="confirmPayment('${esc(order.id)}')">Confirmar Pix</button>` : "";
     return `<article class="order-card"><div class="order-top"><div><span class="order-id">${esc(order.orderId || order.id)}</span><span class="order-date">${date}</span></div><span class="badge ${status.cls}">${status.label}</span></div>
-      <div class="order-customer"><strong>${esc(customer.name || "Cliente")}</strong> · ${esc(customer.phone || "Sem telefone")}<div class="muted" style="margin-top:4px;font-size:13px;color:var(--text)">Endereço: ${esc(address || "Não informado")}</div><div class="muted" style="margin-top:4px;font-size:12px">${paymentLabel}</div></div>
+      <div class="order-customer"><strong>${esc(customer.name || "Cliente")}</strong> · ${esc(customer.phone || "Sem telefone")}<div class="muted" style="margin-top:4px;font-size:13px;color:var(--text)">Endereço: ${esc(address || "Não informado")}</div>${shippingLabel ? `<div class="muted" style="margin-top:4px;font-size:12px">Frete: ${esc(shippingLabel)}${shippingTimeLabel}</div>` : ""}<div class="muted" style="margin-top:4px;font-size:12px">${paymentLabel}</div></div>
       <ul class="order-items">${itemHTML}</ul><div class="order-foot"><div><strong>Total: ${totalLabel}</strong><div style="margin-top:6px">${shippingButton}</div></div>
       <div class="order-actions"><select aria-label="Status do pedido" onchange="setOrderStatus('${esc(order.id)}', this.value)">${Object.entries(STATUS).map(([key, value]) => `<option value="${key}" ${order.status === key ? "selected" : ""}>${value.label}</option>`).join("")}</select>${paidButton}${wa ? `<a class="wa-btn" href="${wa}" target="_blank" rel="noopener noreferrer">WhatsApp</a>` : ""}<button class="icon-btn danger" onclick="deleteOrder('${esc(order.id)}')" aria-label="Excluir pedido">🗑</button></div></div></article>`;
   }).join("");
@@ -2029,6 +2182,10 @@ window.editProduct = function (id) {
   byId("p-cat").value = product.category || "";
   byId("p-colors").value = product.colors || "";
   byId("p-sizes").value = product.sizes || "";
+  byId("p-shipping-weight").value = product.shippingWeightKg ?? "";
+  byId("p-shipping-length").value = product.shippingLengthCm ?? "";
+  byId("p-shipping-width").value = product.shippingWidthCm ?? "";
+  byId("p-shipping-height").value = product.shippingHeightCm ?? "";
   byId("p-eco").checked = Boolean(product.isEco);
   byId("p-handmade").checked = Boolean(product.isHandmade);
   byId("p-sold-out").checked = Boolean(product.soldOut);
@@ -2047,7 +2204,15 @@ window.saveProduct = async function (event) {
   const category = byId("p-cat").value.trim() || "Geral";
   const colors = byId("p-colors").value.trim();
   const sizes = byId("p-sizes").value.trim();
+  const shippingWeightKg = Number(byId("p-shipping-weight").value);
+  const shippingLengthCm = Number(byId("p-shipping-length").value);
+  const shippingWidthCm = Number(byId("p-shipping-width").value);
+  const shippingHeightCm = Number(byId("p-shipping-height").value);
   if (!name || !Number.isFinite(price) || price <= 0) { alert("Informe nome e preço válido maior que zero."); return; }
+  if (![shippingWeightKg, shippingLengthCm, shippingWidthCm, shippingHeightCm].every(Number.isFinite) || shippingWeightKg <= 0 || shippingLengthCm <= 0 || shippingWidthCm <= 0 || shippingHeightCm <= 0) {
+    alert("Informe o peso embalado em kg e as três medidas da embalagem em cm para calcular o frete.");
+    return;
+  }
   const button = byId("p-save-btn");
   button.disabled = true;
   button.innerHTML = '<span class="spinner"></span> Salvando...';
@@ -2056,6 +2221,7 @@ window.saveProduct = async function (event) {
     for (const item of pendingImages) imageURLs.push(item.file ? await uploadCloudinaryImage(item.file) : item.url);
     const productData = {
       name, description, price: roundMoney(price), category, colors, sizes,
+      shippingWeightKg, shippingLengthCm, shippingWidthCm, shippingHeightCm,
       isEco: byId("p-eco").checked,
       isHandmade: byId("p-handmade").checked,
       soldOut: byId("p-sold-out").checked,

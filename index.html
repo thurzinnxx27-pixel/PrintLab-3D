@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PrintLab 3D — Impressão 3D sob medida</title>
+<!-- Versão revisada: reCAPTCHA com contêiner novo por tentativa e correções de contraste. -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -373,7 +374,8 @@ body.dark-theme .express-box-text { color: #F59E0B; }
 .otp-box:focus, .otp-box.filled { border-color: var(--green); box-shadow: 0 0 20px rgba(0, 174, 66, 0.3); }
 .otp-shake { animation: otpShake 0.4s ease-in-out; border-color: var(--danger) !important; box-shadow: 0 0 20px rgba(229, 72, 77, 0.3) !important; }
 @keyframes otpShake { 0%, 100% { transform: translateX(0); } 20%, 60% { transform: translateX(-8px); } 40%, 80% { transform: translateX(8px); } }
-#recaptcha-container { min-height: 1px; }
+#recaptcha-host { min-height: 1px; }
+#recaptcha-host > div { min-height: 1px; }
 @media(max-width:420px) { .otp-card { padding: 30px 16px; } .otp-inputs { gap: 5px; } .otp-box { width: 40px; height: 52px; font-size: 24px; } }
 .otp-success-icon { width: 80px; height: 80px; background-color: rgba(0, 174, 66, 0.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; color: var(--green); font-size: 40px; animation: otpPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
 @keyframes otpPopIn { 0% { transform: scale(0); } 80% { transform: scale(1.1); } 100% { transform: scale(1); } }
@@ -386,11 +388,40 @@ body.dark-theme .express-box-text { color: #F59E0B; }
 
 @media(max-width:860px){ .admin-grid{grid-template-columns:1fr} .hero{padding:64px 20px 60px} .nav-link{padding:9px 10px;font-size:14px} .brand span:last-child{display:none} .header-inner { flex-wrap: wrap; justify-content: center; } }
 @media(max-width:520px){ .header-inner{padding:12px 16px} .container{padding:0 16px} .cart-btn{padding:9px 14px;font-size:14px} .stats{grid-template-columns:repeat(2,1fr)} .toast { top: 10px; right: 10px; left: 10px; transform: translateY(-120%); } .toast.show { transform: translateY(0); } .client-order { flex-direction: column; align-items: flex-start; gap: 12px; } .a1-warning { flex-direction: column; align-items: flex-start; text-align: center; } .a1-warning-icon { margin: 0 auto; } .profile-pic-container { flex-direction: column; align-items: flex-start; } }
+
+
+/* Autofill do navegador: preserva contraste no tema claro e escuro */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill {
+  -webkit-text-fill-color: var(--text) !important;
+  -webkit-box-shadow: 0 0 0 1000px var(--bg) inset !important;
+  box-shadow: 0 0 0 1000px var(--bg) inset !important;
+  caret-color: var(--text) !important;
+  transition: background-color 99999s ease-out 0s;
+}
+body.dark-theme input:-webkit-autofill,
+body.dark-theme input:-webkit-autofill:hover,
+body.dark-theme input:-webkit-autofill:focus,
+body.dark-theme textarea:-webkit-autofill,
+body.dark-theme textarea:-webkit-autofill:hover,
+body.dark-theme textarea:-webkit-autofill:focus,
+body.dark-theme select:-webkit-autofill {
+  -webkit-text-fill-color: #fff !important;
+  -webkit-box-shadow: 0 0 0 1000px #121212 inset !important;
+  box-shadow: 0 0 0 1000px #121212 inset !important;
+  caret-color: #fff !important;
+}
+
 </style>
 </head>
 <body>
 
-<div id="recaptcha-container" aria-hidden="true"></div>
+<div id="recaptcha-host" aria-hidden="true"></div>
 
 <!-- OTP OVERLAY -->
 <div id="otp-fullscreen-overlay">
@@ -941,6 +972,8 @@ let pendingCheckoutCustomer = null;
 let phoneVerificationPurpose = null;
 let phoneVerificationId = null;
 let recaptchaVerifier = null;
+let recaptchaContainer = null;
+let recaptchaInstanceCounter = 0;
 let pendingReceipt = null;
 
 const STATUS = {
@@ -1010,6 +1043,9 @@ function firebaseMessage(error) {
     "auth/invalid-phone-number": "O número de WhatsApp informado é inválido.",
     "auth/quota-exceeded": "O limite de SMS do Firebase foi atingido. Tente mais tarde.",
     "auth/captcha-check-failed": "A verificação de segurança falhou. Atualize a página e tente novamente.",
+    "auth/invalid-app-credential": "O reCAPTCHA não foi aceito. Confira o domínio autorizado no Firebase e tente novamente.",
+    "auth/missing-app-credential": "A verificação reCAPTCHA não foi carregada. Atualize a página e tente novamente.",
+    "auth/unauthorized-domain": "Este domínio não está autorizado no Firebase Authentication. Adicione o domínio do GitHub Pages em Configurações > Domínios autorizados.",
     "auth/operation-not-allowed": "Ative este método de autenticação no Firebase Console.",
     "auth/phone-number-already-exists": "Este telefone já está vinculado a outra conta.",
     "functions/not-found": "A função de pedidos ainda não foi publicada no Firebase.",
@@ -1089,24 +1125,64 @@ window.toggleFav = function (id, event) {
   if (navigator.vibrate) navigator.vibrate(35);
 };
 
-// Real phone verification: Firebase sends the OTP via SMS after reCAPTCHA.
-async function clearRecaptcha() {
-  if (recaptchaVerifier) {
-    try { recaptchaVerifier.clear(); } catch { /* já encerrado */ }
-    recaptchaVerifier = null;
+// Verificação real do telefone por SMS. Cada tentativa recebe um elemento
+// DOM novo; isso impede que o SDK do reCAPTCHA tente renderizar duas vezes
+// no mesmo elemento após cancelar, falhar ou iniciar outro cadastro.
+function clearRecaptcha() {
+  const previousVerifier = recaptchaVerifier;
+  recaptchaVerifier = null;
+
+  if (previousVerifier) {
+    try {
+      previousVerifier.clear();
+    } catch (error) {
+      console.warn("Não foi possível limpar o reCAPTCHA anterior:", error);
+    }
   }
-  const container = byId("recaptcha-container");
-  if (container) container.innerHTML = "";
+
+  const host = byId("recaptcha-host");
+  if (host) host.replaceChildren();
+  recaptchaContainer = null;
 }
-async function startPhoneVerification(phone, purpose) {
-  await clearRecaptcha();
-  phoneVerificationPurpose = purpose;
-  recaptchaVerifier = new RecaptchaVerifier(auth, "recaptcha-container", {
+
+function createFreshRecaptchaVerifier() {
+  const host = byId("recaptcha-host");
+  if (!host) throw new Error("Área de verificação reCAPTCHA não encontrada. Atualize a página.");
+
+  // Nunca reutiliza o nó anterior nem seu ID.
+  const container = document.createElement("div");
+  container.id = `printlab-recaptcha-${++recaptchaInstanceCounter}`;
+  host.replaceChildren(container);
+  recaptchaContainer = container;
+
+  const verifier = new RecaptchaVerifier(auth, container, {
     size: "invisible",
-    "expired-callback": () => showError("otp-error", "A verificação expirou. Tente novamente.")
+    "expired-callback": () => {
+      phoneVerificationId = null;
+      showError("otp-error", "A verificação de segurança expirou. Solicite um novo código.");
+    }
   });
-  const provider = new PhoneAuthProvider(auth);
-  phoneVerificationId = await provider.verifyPhoneNumber(phone, recaptchaVerifier);
+  recaptchaVerifier = verifier;
+  return verifier;
+}
+
+async function startPhoneVerification(phone, purpose) {
+  clearRecaptcha();
+  phoneVerificationPurpose = purpose;
+  phoneVerificationId = null;
+
+  const verifier = createFreshRecaptchaVerifier();
+  try {
+    // Renderiza uma única vez e aguarda o SDK antes de pedir o SMS.
+    await verifier.render();
+    const provider = new PhoneAuthProvider(auth);
+    phoneVerificationId = await provider.verifyPhoneNumber(phone, verifier);
+  } catch (error) {
+    clearRecaptcha();
+    phoneVerificationId = null;
+    throw error;
+  }
+
   byId("otp-description").textContent = `Enviamos um código de 6 dígitos por SMS para ${phone}.`;
   byId("screen-success").querySelector("p").textContent = purpose === "checkout"
     ? "Seu telefone foi confirmado. Vamos continuar seu pedido."
@@ -1116,8 +1192,9 @@ async function startPhoneVerification(phone, purpose) {
   byId("otp-fullscreen-overlay").classList.add("active");
   document.querySelectorAll(".otp-box").forEach(input => { input.value = ""; input.classList.remove("filled"); });
   byId("otp-error").textContent = "";
-  document.querySelector("#screen-otp [onclick='cancelarCadastroOTP()']").textContent = purpose === "checkout" ? "Cancelar verificação" : "Cancelar cadastro";
-  document.querySelectorAll(".otp-box")[0].focus();
+  const cancelLink = document.querySelector("#screen-otp [onclick='cancelarCadastroOTP()']");
+  if (cancelLink) cancelLink.textContent = purpose === "checkout" ? "Cancelar verificação" : "Cancelar cadastro";
+  document.querySelectorAll(".otp-box")[0]?.focus();
 }
 window.iniciarCadastroComOTP = async function (event) {
   event.preventDefault();
@@ -2048,6 +2125,7 @@ function renderAdminOrders() {
       <div class="order-actions"><select aria-label="Status do pedido" onchange="setOrderStatus('${esc(order.id)}', this.value)">${Object.entries(STATUS).map(([key, value]) => `<option value="${key}" ${order.status === key ? "selected" : ""}>${value.label}</option>`).join("")}</select>${paidButton}${wa ? `<a class="wa-btn" href="${wa}" target="_blank" rel="noopener noreferrer">WhatsApp</a>` : ""}<button class="icon-btn danger" onclick="deleteOrder('${esc(order.id)}')" aria-label="Excluir pedido">🗑</button></div></div></article>`;
   }).join("");
 }
+window.renderAdminOrders = renderAdminOrders;
 window.setOrderStatus = async function (id, status) {
   if (!STATUS[status] || !(await userIsAdmin())) return;
   try {

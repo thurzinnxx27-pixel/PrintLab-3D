@@ -716,7 +716,7 @@ body.dark-theme select:-webkit-autofill {
     <div id="admin-login" class="auth-card">
       <div style="margin-bottom: 20px;"><button class="btn btn-ghost btn-sm" onclick="showView('store')" style="padding-left:0; color:var(--green-dark)">← Voltar para a Loja</button></div>
       <h2>Área do administrador</h2>
-      <p class="muted">Entre com a conta Firebase que recebeu a permissão administrativa.</p>
+      <p class="muted">Entre com a conta cadastrada na coleção admins do Firestore.</p>
       <label class="field"><span>E-mail</span><input type="email" id="admin-email" autocomplete="username" placeholder="seu@email.com" required></label>
       <label class="field"><span>Senha</span><input type="password" id="admin-pass" autocomplete="current-password" placeholder="Sua senha" required></label>
       <button type="button" class="btn btn-primary w-full" id="admin-login-btn" onclick="tryLogin()">Entrar</button>
@@ -1781,12 +1781,14 @@ function listenStoreSettings() {
   }, error => console.error("Erro nas configurações da loja:", error));
 }
 
-// Admin access. The admin claim must be assigned with Firebase Admin SDK on a
-// trusted server; a password stored in front-end code is not protection.
+// Admin access. A trusted project owner creates admins/{uid} manually in
+// Firestore Console. Client-side users cannot create, edit, or delete these
+// records because Firestore Rules deny all client writes to /admins.
 async function userIsAdmin(user = currentUser) {
   if (!user) return false;
-  const token = await user.getIdTokenResult(true);
-  return token.claims.admin === true;
+  const adminRef = doc(db, "admins", user.uid);
+  const adminSnapshot = await getDoc(adminRef);
+  return adminSnapshot.exists() && adminSnapshot.data().active === true;
 }
 async function checkAdminAuth() {
   const login = byId("admin-login");
@@ -1822,7 +1824,7 @@ window.tryLogin = async function () {
     const admin = await userIsAdmin(credential.user);
     if (!admin) {
       await signOut(auth);
-      throw new Error("A conta autenticada não possui a permissão administrativa. Configure a declaração admin no Firebase.");
+      throw new Error("Esta conta ainda não foi autorizada como administradora. O responsável pelo projeto precisa ativar seu UID na coleção admins do Firestore.");
     }
     byId("admin-pass").value = "";
     await checkAdminAuth();

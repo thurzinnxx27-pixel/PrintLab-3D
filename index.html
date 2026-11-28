@@ -100,6 +100,23 @@ body.dark-theme .user-menu-btn:hover { background: #2A303A; }
 .user-dropdown button { background: none; border: none; padding: 10px 16px; text-align: left; font-size: 14px; font-weight: 500; color: var(--text); cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px; }
 .user-dropdown button:hover { background: var(--bg-soft); color: var(--green-dark); }
 
+/* LINHA DO TEMPO DOS PEDIDOS */
+.order-timeline{display:flex;align-items:flex-start;gap:0;margin:16px 0 4px;padding:12px 10px;background:var(--bg-soft);border:1px solid var(--border);border-radius:12px;overflow-x:auto}
+.timeline-step{flex:1;min-width:72px;position:relative;text-align:center;font-size:10px;color:var(--muted);padding:0 3px}
+.timeline-step:not(:last-child)::after{content:"";position:absolute;height:3px;background:var(--border);top:10px;left:calc(50% + 12px);right:calc(-50% + 12px);z-index:0}
+.timeline-step.done:not(:last-child)::after{background:var(--green)}
+.timeline-dot{width:22px;height:22px;border-radius:50%;border:2px solid var(--border);background:var(--bg);display:grid;place-items:center;margin:0 auto 6px;position:relative;z-index:1;font-size:11px}
+.timeline-step.done .timeline-dot{background:var(--green);border-color:var(--green);color:#fff}
+.timeline-step.current .timeline-dot{border-color:var(--green);box-shadow:0 0 0 4px var(--green-soft)}
+.timeline-step.done,.timeline-step.current{color:var(--text);font-weight:700}
+.report-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin:16px 0}
+.report-stat{padding:16px;border:1px solid var(--border);border-radius:14px;background:var(--bg)}
+.report-stat span{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
+.report-stat strong{font-size:22px;font-weight:800}
+.report-table{width:100%;border-collapse:collapse;font-size:13px}
+.report-table th,.report-table td{padding:10px 8px;border-bottom:1px solid var(--border);text-align:left}
+.report-table th:last-child,.report-table td:last-child{text-align:right}
+.report-note{font-size:12px;color:var(--muted);margin-top:10px}
 /* FAVORITOS (CORAÇÃO) */
 .btn-fav {
   position: absolute;
@@ -354,7 +371,7 @@ textarea{resize:vertical;min-height:70px}
 .toast-icon { font-size: 24px; }
 .toast-text strong { display: block; font-size: 15px; color: var(--text); margin-bottom: 2px;}
 .toast-text span { font-size: 13.5px; color: var(--muted); }
-.client-order { display: flex; align-items: flex-start; justify-content: space-between; padding: 16px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; background: var(--bg); gap: 10px; }
+.client-order-info{flex:1;min-width:0}.client-order { display: flex; align-items: flex-start; justify-content: space-between; padding: 16px; border: 1px solid var(--border); border-radius: 12px; margin-bottom: 12px; background: var(--bg); gap: 10px; }
 .client-order-info h4 { font-size: 15px; font-weight: 800; margin-bottom: 4px; }
 .client-order-info p { font-size: 13px; color: var(--muted); }
 .status-line { display: flex; align-items: center; gap: 10px; margin-top: 10px; }
@@ -437,7 +454,26 @@ body.dark-theme select:-webkit-autofill {
 .shipping-option-price { white-space: nowrap; font-weight: 800; font-size: 15px; }
 .shipping-admin-note { padding: 10px; border-radius: 9px; background: var(--bg-soft); color: var(--muted); font-size: 12px; margin: 10px 0 14px; }
 .shipping-summary-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-size: 14px; color: var(--muted); margin-bottom: 10px; }
-@media(max-width:520px){ .shipping-option { align-items: flex-start; } .shipping-option-price { font-size: 14px; } }
+@media(max-width:520px){ .shipping-option { align-items: flex-start; } .shipping-option-price { font-size: 14px; } .timeline-step{min-width:62px;font-size:9px}.order-timeline{padding:10px 4px} }
+
+/* POP-UP DE ADESÃO AO PRINTLAB REWARDS */
+.loyalty-promo-overlay{position:fixed;inset:0;z-index:3000;background:rgba(8,18,12,.68);display:flex;align-items:center;justify-content:center;padding:18px;opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
+.loyalty-promo-overlay.open{opacity:1;visibility:visible}
+.loyalty-promo-card{position:relative;width:min(100%,440px);overflow:hidden;border-radius:24px;background:linear-gradient(145deg,#102b20,#174b32 65%,#087c3a);color:#fff;box-shadow:0 28px 90px rgba(0,0,0,.35);padding:30px 24px 24px;text-align:center;transform:translateY(14px) scale(.98);transition:transform .25s}
+.loyalty-promo-overlay.open .loyalty-promo-card{transform:translateY(0) scale(1)}
+.loyalty-promo-close{position:absolute;right:13px;top:13px;width:34px;height:34px;border:0;border-radius:50%;background:rgba(255,255,255,.14);color:#fff;font-size:22px;cursor:pointer}
+.loyalty-promo-kicker{display:inline-block;border:1px solid rgba(255,255,255,.3);border-radius:99px;padding:6px 12px;font-size:10px;font-weight:800;letter-spacing:1.5px;color:#c9f7d9}
+.loyalty-promo-gift{font-size:54px;line-height:1.2;margin:18px 0 10px;filter:drop-shadow(0 8px 12px rgba(0,0,0,.2))}
+.loyalty-promo-card h2{font-size:27px;line-height:1.15;margin:0 0 10px;letter-spacing:-.7px}
+.loyalty-promo-card p{font-size:14px;line-height:1.55;color:#e0f2e7;margin:0 auto 18px;max-width:340px}
+.loyalty-promo-reward{background:#fff;color:#153b27;border-radius:15px;padding:13px 12px;margin:0 auto 18px;max-width:290px}
+.loyalty-promo-reward strong{display:block;font-size:23px;line-height:1.25}
+.loyalty-promo-reward span{font-size:11px;color:#52715e}
+.loyalty-promo-join{width:100%;border:0;border-radius:13px;padding:15px 18px;background:#27c66b;color:#062b16;font-size:15px;font-weight:800;font-family:inherit;cursor:pointer;box-shadow:0 8px 20px rgba(0,0,0,.18);transition:transform .2s,background .2s}
+.loyalty-promo-join:hover{background:#49df88;transform:translateY(-1px)}
+.loyalty-promo-foot{display:block;color:#c8e7d2;font-size:11px;margin-top:12px}
+@media(max-width:420px){.loyalty-promo-card{padding:27px 19px 21px}.loyalty-promo-card h2{font-size:24px}}
+
 </style>
 </head>
 <body>
@@ -473,6 +509,9 @@ body.dark-theme select:-webkit-autofill {
           <span style="font-size: 10px; color: var(--muted);">▼</span>
         </button>
         <div class="user-dropdown" id="user-dropdown">
+          <button onclick="showView('account'); switchClientTab('favorites'); closeUserMenu();">
+            ♡ Favoritos
+          </button>
           <button onclick="showView('account'); switchClientTab('orders'); closeUserMenu();">
             <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
             Meus Pedidos
@@ -720,14 +759,23 @@ body.dark-theme select:-webkit-autofill {
 
     <div id="client-dashboard" class="hidden">
       <div class="admin-head">
-        <div><h2>Minha Conta</h2><p class="muted">Acompanhe seus pedidos ou edite seus dados.</p></div>
+        <div><h2>Minha Conta</h2><p class="muted">Acompanhe seus pedidos, pontos e dados cadastrais.</p></div>
         <div style="display:flex; gap:10px;"><button class="btn btn-ghost" onclick="showView('store')">Ir para a Loja</button></div>
       </div>
       <div class="tabs">
         <button class="tab active" id="client-tab-orders" onclick="switchClientTab('orders')">Meus Pedidos</button>
+        <button class="tab" id="client-tab-favorites" onclick="switchClientTab('favorites')">♡ Favoritos</button>
+        <button class="tab" id="client-tab-loyalty" onclick="switchClientTab('loyalty')">⭐ Fidelidade</button>
         <button class="tab" id="client-tab-edit" onclick="switchClientTab('edit')">Editar Perfil</button>
       </div>
       <section id="client-content-orders"><div id="client-orders-list"></div></section>
+      <section id="client-content-favorites" class="hidden">
+        <div class="section-head" style="margin:0 0 18px"><div><h3>Meus produtos favoritos</h3><p class="muted">Produtos que você salvou para ver depois.</p></div></div>
+        <div id="favorites-grid" class="product-grid"></div>
+      </section>
+      <section id="client-content-loyalty" class="hidden">
+        <div id="loyalty-card" class="card" style="max-width:680px;margin:0 auto"></div>
+      </section>
       <section id="client-content-edit" class="hidden">
         <div class="card" style="max-width: 600px; margin: 0 auto;">
           <h3>Editar Dados Cadastrais</h3>
@@ -797,6 +845,7 @@ body.dark-theme select:-webkit-autofill {
       <div class="tabs">
         <button class="tab active" data-tab="orders" onclick="switchTab('orders')">Pedidos</button>
         <button class="tab" data-tab="products" onclick="switchTab('products')">Produtos</button>
+        <button class="tab" data-tab="reports" onclick="switchTab('reports')">📊 Relatórios</button>
       </div>
       <section id="tab-orders">
         <div class="filters"><select id="order-filter" onchange="renderAdminOrders()"><option value="all">Todos os pedidos</option><option value="novo">Novos</option><option value="producao">Em produção</option><option value="enviado">Enviados</option><option value="concluido">Concluídos</option></select></div>
@@ -814,6 +863,7 @@ body.dark-theme select:-webkit-autofill {
               <label class="field"><span>Descrição</span><textarea id="p-desc" placeholder="Material, medidas..."></textarea></label>
               <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
                 <label class="field"><span>Preço Base (R$) *</span><input id="p-price" type="number" step="0.01" min="0" required placeholder="79.90"></label>
+                <label class="field"><span>Custo estimado por unidade (R$)</span><input id="p-unit-cost" type="number" step="0.01" min="0" placeholder="Ex: 12.50"></label>
                 <label class="field"><span>Categoria</span><input id="p-cat" placeholder="Ex: Decoração"></label>
               </div>
               <label class="field"><span>Cores (separadas por vírgula)</span><input id="p-colors" placeholder="Ex: Preto, Branco, Azul"></label>
@@ -840,6 +890,13 @@ body.dark-theme select:-webkit-autofill {
             <h3>Produtos cadastrados</h3>
             <div id="admin-products-list"><div class="empty">Carregando…</div></div>
           </div>
+        </div>
+      </section>
+      <section id="tab-reports" class="hidden">
+        <div class="card">
+          <h3>Relatório de vendas</h3>
+          <p class="muted" style="font-size:13px">Resumo calculado com base nos pedidos com Pix confirmado.</p>
+          <div id="sales-report"><div class="empty">Carregando relatório…</div></div>
         </div>
       </section>
     </div>
@@ -911,6 +968,20 @@ body.dark-theme select:-webkit-autofill {
   </div>
 </aside>
 
+
+<div class="loyalty-promo-overlay" id="loyalty-promo-overlay" role="dialog" aria-modal="true" aria-labelledby="loyalty-promo-title">
+  <div class="loyalty-promo-card">
+    <button class="loyalty-promo-close" type="button" aria-label="Fechar" onclick="closeLoyaltyPromo()">×</button>
+    <span class="loyalty-promo-kicker">PROGRAMA DE FIDELIDADE</span>
+    <div class="loyalty-promo-gift" aria-hidden="true">🎁⭐</div>
+    <h2 id="loyalty-promo-title">Suas compras valem recompensas!</h2>
+    <p>Participe do PrintLab Rewards e acumule pontos nas suas compras e avaliações.</p>
+    <div class="loyalty-promo-reward"><strong>500 pontos = R$ 5</strong><span>em recompensa para solicitar na loja</span></div>
+    <button class="loyalty-promo-join" id="loyalty-promo-join" type="button" onclick="joinLoyaltyPromo()">QUERO PARTICIPAR!</button>
+    <span class="loyalty-promo-foot">É gratuito participar. Consulte seu saldo na área Minha Conta.</span>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
@@ -962,6 +1033,12 @@ let cartStep = 1;
 let pendingImages = [];
 let unsubOrders = null;
 let unsubMyOrders = null;
+let unsubMyLoyalty = null;
+let myLoyalty = { points: 0 };
+let loyaltyLoaded = false;
+let loyaltyToastSuppressedUntil = 0;
+let loyaltyPromoCheckStarted = false;
+let loyaltyPromoActionBusy = false;
 let unsubReviews = null;
 let unsubProducts = null;
 let unsubStoreSettings = null;
@@ -1116,11 +1193,13 @@ window.switchAuthTab = function (tab) {
   byId("form-register").classList.toggle("hidden", tab !== "register");
 };
 window.switchClientTab = function (tab) {
-  byId("client-tab-orders").classList.toggle("active", tab === "orders");
-  byId("client-tab-edit").classList.toggle("active", tab === "edit");
-  byId("client-content-orders").classList.toggle("hidden", tab !== "orders");
-  byId("client-content-edit").classList.toggle("hidden", tab !== "edit");
+  ["orders", "favorites", "loyalty", "edit"].forEach(name => {
+    byId(`client-tab-${name}`).classList.toggle("active", tab === name);
+    byId(`client-content-${name}`).classList.toggle("hidden", tab !== name);
+  });
   if (tab === "edit") populateEditForm();
+  if (tab === "loyalty") renderLoyalty();
+  if (tab === "favorites") renderFavorites();
 };
 
 // Favorites
@@ -1129,6 +1208,7 @@ window.toggleFav = function (id, event) {
   favorites = favorites.includes(id) ? favorites.filter(value => value !== id) : [...favorites, id];
   saveJSON("pl_favs", favorites);
   renderProducts();
+  renderFavorites();
   if (navigator.vibrate) navigator.vibrate(35);
 };
 
@@ -1262,9 +1342,78 @@ function checkClientAuthUI() {
     switchClientTab("orders");
   } else {
     if (unsubMyOrders) { unsubMyOrders(); unsubMyOrders = null; }
+    if (unsubMyLoyalty) { unsubMyLoyalty(); unsubMyLoyalty = null; }
     myOrders = [];
+    myLoyalty = { points: 0 };
+    loyaltyLoaded = false;
   }
 }
+const LOYALTY_PROMO_PENDING_KEY = "pl_rewards_join_pending";
+function hideLoyaltyPromo() {
+  const modal = byId("loyalty-promo-overlay");
+  if (modal) modal.classList.remove("open");
+}
+window.closeLoyaltyPromo = function () { hideLoyaltyPromo(); };
+async function checkLoyaltyPromoMembership() {
+  loyaltyPromoCheckStarted = true;
+  const modal = byId("loyalty-promo-overlay");
+  if (!modal) return;
+  try {
+    if (currentUser) {
+      const membershipRef = doc(db, "loyaltyPromoMembers", currentUser.uid);
+      const membership = await getDoc(membershipRef);
+      if (membership.exists()) { hideLoyaltyPromo(); return; }
+      let pending = false;
+      try { pending = localStorage.getItem(LOYALTY_PROMO_PENDING_KEY) === "1"; } catch (_) {}
+      if (pending) {
+        await setDoc(membershipRef, { joined: true, joinedAt: serverTimestamp() });
+        try { localStorage.removeItem(LOYALTY_PROMO_PENDING_KEY); } catch (_) {}
+        hideLoyaltyPromo();
+        showToast("🎉 Você agora participa do PrintLab Rewards!");
+        return;
+      }
+    }
+    setTimeout(() => {
+      if (!currentUser) modal.classList.add("open");
+      else {
+        getDoc(doc(db, "loyaltyPromoMembers", currentUser.uid)).then(snapshot => {
+          if (!snapshot.exists()) modal.classList.add("open");
+        }).catch(error => console.error("Não foi possível verificar a adesão ao programa:", error));
+      }
+    }, 850);
+  } catch (error) {
+    console.error("Erro ao verificar participação no PrintLab Rewards:", error);
+    // Falha de rede não impede a loja de abrir; a promoção pode ser exibida novamente.
+    setTimeout(() => modal.classList.add("open"), 1100);
+  }
+}
+window.joinLoyaltyPromo = async function () {
+  if (loyaltyPromoActionBusy) return;
+  loyaltyPromoActionBusy = true;
+  const button = byId("loyalty-promo-join");
+  if (button) { button.disabled = true; button.textContent = "Salvando participação..."; }
+  try {
+    if (!currentUser) {
+      try { localStorage.setItem(LOYALTY_PROMO_PENDING_KEY, "1"); } catch (_) {}
+      hideLoyaltyPromo();
+      showView("account");
+      showToast("Entre ou crie sua conta para participar do PrintLab Rewards!");
+      return;
+    }
+    const membershipRef = doc(db, "loyaltyPromoMembers", currentUser.uid);
+    const existing = await getDoc(membershipRef);
+    if (!existing.exists()) await setDoc(membershipRef, { joined: true, joinedAt: serverTimestamp() });
+    hideLoyaltyPromo();
+    showToast("🎉 Você agora participa do PrintLab Rewards!");
+  } catch (error) {
+    showToast("Não foi possível registrar sua participação. Tente novamente.");
+    console.error("Erro ao registrar participação no PrintLab Rewards:", error);
+  } finally {
+    loyaltyPromoActionBusy = false;
+    if (button) { button.disabled = false; button.textContent = "QUERO PARTICIPAR!"; }
+  }
+};
+
 onAuthStateChanged(auth, async user => {
   currentUser = user;
   const loginButton = byId("nav-login-btn");
@@ -1277,6 +1426,7 @@ onAuthStateChanged(auth, async user => {
     userWrapper.classList.remove("hidden");
     try {
       currentUserProfile = await ensureUserProfile(user);
+      subscribeMyLoyalty();
       const profile = currentUserProfile || {};
       const displayName = profile.name || user.displayName || "Usuário";
       username.textContent = displayName.split(" ")[0];
@@ -1295,10 +1445,15 @@ onAuthStateChanged(auth, async user => {
     userWrapper.classList.add("hidden");
     currentUserProfile = null;
     if (unsubMyOrders) { unsubMyOrders(); unsubMyOrders = null; }
+    if (unsubMyLoyalty) { unsubMyLoyalty(); unsubMyLoyalty = null; }
     myOrders = [];
+    myLoyalty = { points: 0 };
+    loyaltyLoaded = false;
   }
   if (!byId("view-account").classList.contains("hidden")) checkClientAuthUI();
   if (!byId("view-admin").classList.contains("hidden")) checkAdminAuth();
+  loyaltyPromoCheckStarted = false;
+  checkLoyaltyPromoMembership();
 });
 
 function populateEditForm() {
@@ -1410,11 +1565,9 @@ function renderCategories() {
   }));
 }
 window.setFilter = function (category) { currentFilter = category; renderCategories(); renderProducts(); };
-function renderProducts() {
-  const grid = byId("product-grid");
-  const visible = currentFilter === "Todos" ? products : products.filter(product => product.category === currentFilter);
-  if (!visible.length) { grid.innerHTML = '<div class="empty">Nenhum produto cadastrado nesta categoria.</div>'; return; }
-  grid.innerHTML = visible.map(product => {
+function productCardsHTML(visible) {
+  if (!visible.length) return '<div class="empty">Nenhum produto favorito por enquanto.</div>';
+  return visible.map(product => {
     const id = esc(product.id);
     const soldOut = product.soldOut === true;
     const images = productImages(product);
@@ -1433,10 +1586,26 @@ function renderProducts() {
         ${soldOut ? '<button type="button" class="btn btn-outline btn-sm" disabled>Esgotado</button>' : hasOptions ? `<button type="button" class="btn btn-primary btn-sm" data-choose-id="${id}">Escolher</button>` : `<button type="button" class="btn btn-primary btn-sm" data-add-id="${id}">Adicionar</button>`}
       </div></div></article>`;
   }).join("");
+}
+function bindProductCards(grid) {
   grid.querySelectorAll("[data-open-product]").forEach(card => card.addEventListener("click", () => openModal(card.dataset.openProduct)));
   grid.querySelectorAll("[data-fav-id]").forEach(button => button.addEventListener("click", event => toggleFav(button.dataset.favId, event)));
   grid.querySelectorAll("[data-choose-id]").forEach(button => button.addEventListener("click", event => { event.stopPropagation(); openModal(button.dataset.chooseId); }));
   grid.querySelectorAll("[data-add-id]").forEach(button => button.addEventListener("click", event => { event.stopPropagation(); addToCart(button.dataset.addId); }));
+}
+function renderProducts() {
+  const grid = byId("product-grid");
+  const visible = currentFilter === "Todos" ? products : products.filter(product => product.category === currentFilter);
+  grid.innerHTML = visible.length ? productCardsHTML(visible) : '<div class="empty">Nenhum produto cadastrado nesta categoria.</div>';
+  bindProductCards(grid);
+  initScrollAnimations();
+}
+function renderFavorites() {
+  const grid = byId("favorites-grid");
+  if (!grid) return;
+  const favoriteProducts = products.filter(product => favorites.includes(product.id));
+  grid.innerHTML = favoriteProducts.length ? productCardsHTML(favoriteProducts) : '<div class="empty">Você ainda não salvou nenhum produto. Toque no coração de um produto na loja para adicioná-lo aqui.</div>';
+  bindProductCards(grid);
   initScrollAnimations();
 }
 function heartSVG() {
@@ -1683,6 +1852,7 @@ async function submitOrder() {
         name: product?.name || "Produto",
         price: roundMoney(Number(item.price) || 0),
         qty: Number(item.qty) || 1,
+        unitCost: product && Number.isFinite(Number(product.unitCost)) ? Number(product.unitCost) : null,
         color: item.color || null,
         size: item.size || null
       };
@@ -1986,14 +2156,17 @@ window.submitReview = async function () {
     const uploadedImages = [];
     for (const item of pendingReviewFiles) uploadedImages.push(await uploadCloudinaryImage(item.file));
 
-    const reviewRef = doc(collection(db, "reviews"));
+    const reviewRef = doc(db, "reviews", reviewOrderId);
+    const loyaltyRef = doc(db, "loyalty", currentUser.uid);
     await runTransaction(db, async transaction => {
       const orderSnapshot = await transaction.get(orderRef);
+      const loyaltySnapshot = await transaction.get(loyaltyRef);
       if (!orderSnapshot.exists()) throw new Error("Pedido não encontrado.");
       const order = orderSnapshot.data();
       if (order.userId !== currentUser.uid || order.status !== "concluido" || order.reviewed) {
         throw new Error("Este pedido não está disponível para avaliação.");
       }
+      const currentPoints = loyaltySnapshot.exists() ? Number(loyaltySnapshot.data().points || 0) : 0;
       transaction.set(reviewRef, {
         orderId: reviewOrderId,
         userId: currentUser.uid,
@@ -2004,16 +2177,73 @@ window.submitReview = async function () {
         createdAt: serverTimestamp()
       });
       transaction.update(orderRef, { reviewed: true });
+      transaction.set(loyaltyRef, {
+        points: currentPoints + 50,
+        lastReviewOrderId: reviewOrderId,
+        updatedAt: serverTimestamp()
+      });
     });
+    loyaltyToastSuppressedUntil = Date.now() + 5000;
     byId("review-modal").classList.remove("open");
     clearReviewImages();
-    showToast("Avaliação enviada! Obrigado.");
+    showToast("⭐ Avaliação enviada! Você ganhou 50 pontos PrintLab Rewards!");
   } catch (error) { showError("rev-error", firebaseMessage(error)); }
   finally {
     reviewSubmissionInProgress = false;
     button.disabled = false;
     button.textContent = "Enviar Avaliação";
   }
+};
+
+// PrintLab Rewards: the balance is private to the signed-in customer.
+function subscribeMyLoyalty() {
+  if (!currentUser || unsubMyLoyalty) return;
+  const loyaltyRef = doc(db, "loyalty", currentUser.uid);
+  unsubMyLoyalty = onSnapshot(loyaltyRef, snapshot => {
+    const previousPoints = Number(myLoyalty?.points || 0);
+    myLoyalty = snapshot.exists() ? snapshot.data() : { points: 0 };
+    const nextPoints = Number(myLoyalty.points || 0);
+    renderLoyalty();
+    if (loyaltyLoaded && nextPoints > previousPoints && Date.now() > loyaltyToastSuppressedUntil) {
+      showToast(`🎉 Você ganhou ${nextPoints - previousPoints} pontos no PrintLab Rewards!`);
+    }
+    loyaltyLoaded = true;
+  }, error => console.error("Erro ao carregar pontos de fidelidade:", error));
+}
+function renderLoyalty() {
+  const card = byId("loyalty-card");
+  if (!card) return;
+  const points = Math.max(0, Number(myLoyalty?.points || 0));
+  const target = 500;
+  const progress = Math.min(100, Math.round((points / target) * 100));
+  const remaining = Math.max(0, target - points);
+  card.innerHTML = `
+    <div style="text-align:center;padding:10px 4px 18px">
+      <div style="font-size:36px;margin-bottom:6px">⭐</div>
+      <div style="font-size:12px;font-weight:800;letter-spacing:1.5px;color:var(--green-dark)">PRINTLAB REWARDS</div>
+      <h3 style="font-size:32px;margin:8px 0 2px">${points.toLocaleString("pt-BR")} pontos</h3>
+      <p class="muted" style="font-size:13px">Seu saldo de fidelidade</p>
+    </div>
+    <div style="background:var(--bg-soft);padding:16px;border-radius:14px;margin-bottom:14px">
+      <div style="display:flex;justify-content:space-between;gap:10px;font-size:13px;margin-bottom:9px"><strong>Próxima recompensa</strong><strong>${progress}%</strong></div>
+      <div style="height:10px;border-radius:99px;background:var(--border);overflow:hidden"><div style="height:100%;width:${progress}%;background:var(--green);border-radius:99px;transition:width .3s"></div></div>
+      <div style="display:flex;justify-content:space-between;gap:10px;margin-top:9px;font-size:12px;color:var(--muted)"><span>${points} pontos</span><span>500 pontos</span></div>
+      <p style="font-size:13px;margin-top:12px;font-weight:700;color:var(--green-dark)">${remaining === 0 ? "🎁 Você alcançou a primeira recompensa: R$ 5 de desconto!" : `Faltam ${remaining} pontos para alcançar R$ 5 de desconto.`}</p>
+      ${remaining === 0 ? '<button class="btn btn-primary w-full" style="margin-top:12px" onclick="requestRewardRedemption()">Solicitar desconto pelo WhatsApp</button>' : ''}
+    </div>
+    <div style="display:grid;gap:10px;font-size:13px">
+      <div style="display:flex;justify-content:space-between;gap:12px"><span>🛍️ Compras confirmadas</span><strong>10 pontos por R$ 1</strong></div>
+      <div style="display:flex;justify-content:space-between;gap:12px"><span>⭐ Avaliação de pedido</span><strong>50 pontos</strong></div>
+      <div style="display:flex;justify-content:space-between;gap:12px"><span>🎁 Primeira recompensa</span><strong>500 pontos = R$ 5</strong></div>
+    </div>
+    <p class="muted" style="font-size:11px;margin-top:16px;text-align:center">Os pontos das compras são adicionados após a confirmação do Pix. Cada pedido concluído pode receber uma avaliação.</p>`;
+}
+
+window.requestRewardRedemption = function () {
+  const points = Math.max(0, Number(myLoyalty?.points || 0));
+  if (points < 500) { showToast("Você ainda precisa de mais pontos para resgatar."); return; }
+  const link = waLink(CONFIG.whatsappAdmin, `Olá! Tenho ${points} pontos no PrintLab Rewards e gostaria de solicitar minha recompensa de R$ 5,00 de desconto.`);
+  if (link) window.open(link, "_blank", "noopener,noreferrer");
 };
 
 // Customer order history
@@ -2024,6 +2254,23 @@ function subscribeMyOrders() {
     myOrders.sort((a, b) => (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0));
     if (!byId("client-dashboard").classList.contains("hidden")) renderClientOrders();
   }, error => console.error("Erro ao carregar pedidos do cliente:", error));
+}
+
+function orderTimelineHTML(order) {
+  const status = order.status || "novo";
+  const paid = order.paymentStatus === "paid";
+  const production = ["producao", "enviado", "concluido"].includes(status);
+  const shipped = ["enviado", "concluido"].includes(status);
+  const delivered = status === "concluido";
+  const paymentCurrent = !paid && !production;
+  const steps = [
+    { label: "Pedido recebido", done: true, current: false, mark: "✓" },
+    { label: paid ? "Pagamento confirmado" : "Frete / Pix", done: paid, current: paymentCurrent, mark: paid ? "✓" : "2" },
+    { label: "Em produção", done: production, current: paid && !production, mark: production ? "✓" : "3" },
+    { label: "Enviado", done: shipped, current: production && !shipped, mark: shipped ? "✓" : "4" },
+    { label: "Entregue", done: delivered, current: shipped && !delivered, mark: delivered ? "✓" : "5" }
+  ];
+  return `<div class="order-timeline" aria-label="Andamento do pedido">${steps.map(step => `<div class="timeline-step ${step.done ? "done" : ""} ${step.current ? "current" : ""}"><span class="timeline-dot">${step.mark}</span><span>${step.label}</span></div>`).join("")}</div>`;
 }
 function renderClientOrders() {
   const list = byId("client-orders-list");
@@ -2046,7 +2293,7 @@ function renderClientOrders() {
     const pixPanel = !shippingPending && order.paymentStatus !== "paid"
       ? `<div style="margin-top:14px;padding:14px;background:var(--green-soft);border:1px solid var(--green);border-radius:12px;text-align:left;max-width:320px"><strong style="display:block;color:var(--green-dark);margin-bottom:6px">💚 Pronto para pagar via Pix</strong><div style="font-size:12px;margin-bottom:8px">Chave Pix: <strong>${esc(CONFIG.pixKey)}</strong></div><div style="font-size:13px;margin-bottom:10px">Valor: <strong>${fmt(order.total)}</strong></div><div style="display:flex;gap:7px;flex-wrap:wrap"><button class="btn btn-outline btn-sm" data-copy-order-pix-key>Copiar chave Pix</button><button class="btn btn-outline btn-sm" data-copy-order-pix-total="${Number(order.total).toFixed(2)}">Copiar valor</button></div><p style="font-size:11px;margin:9px 0 0;color:var(--text-muted)">Depois do pagamento, envie o comprovante pelo WhatsApp para a loja.</p></div>`
       : order.paymentStatus === "paid" ? '<div style="margin-top:12px;color:var(--green-dark);font-size:12px;font-weight:700">✓ Pagamento confirmado</div>' : "";
-    return `<div class="client-order"><div class="client-order-info"><h4>Pedido ${esc(order.orderId || order.id)} ${express}</h4><p>Realizado em ${date}</p><div class="status-line"><span class="status-dot" style="background:${status.text}"></span><span class="badge" style="background:${status.color};color:${status.text}">${status.label}</span></div>${reviewButton}</div><div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end"><strong style="display:block;font-size:16px;margin-bottom:8px">${total}</strong><button class="btn-buy-again" data-buy-again-id="${esc(order.id)}">Comprar novamente</button>${pixPanel}</div></div>`;
+    return `<div class="client-order"><div class="client-order-info"><h4>Pedido ${esc(order.orderId || order.id)} ${express}</h4><p>Realizado em ${date}</p><div class="status-line"><span class="status-dot" style="background:${status.text}"></span><span class="badge" style="background:${status.color};color:${status.text}">${status.label}</span></div>${orderTimelineHTML(order)}${reviewButton}</div><div style="text-align:right;display:flex;flex-direction:column;align-items:flex-end"><strong style="display:block;font-size:16px;margin-bottom:8px">${total}</strong><button class="btn-buy-again" data-buy-again-id="${esc(order.id)}">Comprar novamente</button>${pixPanel}</div></div>`;
   }).join("");
   list.querySelectorAll("[data-review-id]").forEach(button => button.addEventListener("click", () => openReviewModal(button.dataset.reviewId, button.dataset.reviewNumber)));
   list.querySelectorAll("[data-buy-again-id]").forEach(button => button.addEventListener("click", () => window.buyAgain(button.dataset.buyAgainId)));
@@ -2070,7 +2317,7 @@ function subscribeProducts() {
   if (unsubProducts) unsubProducts();
   unsubProducts = onSnapshot(collection(db, "products"), snapshot => {
     products = snapshot.docs.map(item => ({ id: item.id, ...item.data() }));
-    renderCategories(); renderProducts(); renderAdminProducts(); renderCart(); renderStats();
+    renderCategories(); renderProducts(); renderFavorites(); renderAdminProducts(); renderCart(); renderStats(); renderSalesReport();
   }, error => {
     console.error("Erro ao carregar produtos:", error);
     showToast("Não foi possível carregar os produtos.");
@@ -2144,8 +2391,8 @@ window.logoutAdmin = async function () {
 };
 window.switchTab = function (name) {
   document.querySelectorAll(".tab[data-tab]").forEach(tab => tab.classList.toggle("active", tab.dataset.tab === name));
-  byId("tab-orders").classList.toggle("hidden", name !== "orders");
-  byId("tab-products").classList.toggle("hidden", name !== "products");
+  ["orders", "products", "reports"].forEach(tab => byId(`tab-${tab}`).classList.toggle("hidden", name !== tab));
+  if (name === "reports") renderSalesReport();
 };
 function subscribeAdminOrders() {
   if (unsubOrders) return;
@@ -2158,7 +2405,7 @@ function subscribeAdminOrders() {
       if (newest) showToast(`Novo pedido recebido: ${newest.orderId || newest.id}`);
     }
     orders = nextOrders;
-    renderAdminOrders(); renderStats();
+    renderAdminOrders(); renderStats(); renderSalesReport();
     isFirstOrdersLoad = false;
   }, error => {
     console.error("Erro ao carregar pedidos administrativos:", error);
@@ -2170,6 +2417,7 @@ function unsubscribeAdminOrders() {
   orders = [];
   renderAdminOrders();
   renderStats();
+  renderSalesReport();
 }
 function renderStats() {
   if (!byId("stat-orders")) return;
@@ -2179,6 +2427,50 @@ function renderStats() {
   byId("stat-revenue").textContent = fmt(revenue);
   byId("stat-products").textContent = products.length;
 }
+function renderSalesReport() {
+  const target = byId("sales-report");
+  if (!target) return;
+  const paidOrders = orders.filter(order => order.paymentStatus === "paid");
+  const revenue = paidOrders.reduce((sum, order) => sum + (Number(order.total) || 0), 0);
+  const average = paidOrders.length ? revenue / paidOrders.length : 0;
+  const productMap = new Map(products.map(product => [product.id, product]));
+  const sold = new Map();
+  let estimatedProfit = 0;
+  let profitOrdersCount = 0;
+  paidOrders.forEach(order => {
+    let orderCost = 0;
+    let hasAllCosts = true;
+    (order.items || []).forEach(item => {
+      const qty = Number(item.qty || item.quantity || 0);
+      const product = productMap.get(item.productId);
+      const unitCost = item.unitCost !== undefined && item.unitCost !== null ? item.unitCost : product?.unitCost;
+      if (unitCost === null || unitCost === undefined || !Number.isFinite(Number(unitCost))) hasAllCosts = false;
+      else orderCost += Number(unitCost) * qty;
+      const key = item.productId || item.name || "Produto";
+      const current = sold.get(key) || { name: item.name || product?.name || "Produto", qty: 0, revenue: 0 };
+      current.qty += qty;
+      current.revenue += Number(item.price || 0) * qty;
+      sold.set(key, current);
+    });
+    if (hasAllCosts) {
+      const productRevenue = Number(order.amountBeforeShipping ?? (Number(order.total) - Number(order.shippingFee || 0)));
+      estimatedProfit += productRevenue - orderCost;
+      profitOrdersCount++;
+    }
+  });
+  const topProducts = [...sold.values()].sort((a,b) => b.qty - a.qty).slice(0,5);
+  target.innerHTML = `
+    <div class="report-grid">
+      <div class="report-stat"><span>Faturamento recebido</span><strong>${fmt(revenue)}</strong></div>
+      <div class="report-stat"><span>Pedidos pagos</span><strong>${paidOrders.length}</strong></div>
+      <div class="report-stat"><span>Ticket médio</span><strong>${fmt(average)}</strong></div>
+      <div class="report-stat"><span>Lucro bruto estimado*</span><strong>${profitOrdersCount ? fmt(estimatedProfit) : "—"}</strong></div>
+    </div>
+    <h4 style="margin:22px 0 8px">Produtos mais vendidos</h4>
+    ${topProducts.length ? `<div style="overflow-x:auto"><table class="report-table"><thead><tr><th>Produto</th><th>Unidades</th><th>Vendas</th></tr></thead><tbody>${topProducts.map(item => `<tr><td>${esc(item.name)}</td><td>${item.qty}</td><td>${fmt(item.revenue)}</td></tr>`).join("")}</tbody></table></div>` : '<div class="empty">Ainda não há vendas confirmadas.</div>'}
+    <p class="report-note">* O lucro é uma estimativa sobre o valor dos produtos (sem frete), descontando o custo por unidade cadastrado em cada produto. Atualmente ${profitOrdersCount} de ${paidOrders.length} pedido(s) pago(s) têm custo cadastrado para todos os itens. Não inclui energia, manutenção, embalagem ou outros custos indiretos.</p>`;
+}
+
 function renderAdminOrders() {
   const list = byId("orders-list");
   if (!list) return;
@@ -2258,8 +2550,31 @@ window.confirmPayment = async function (id) {
   if (!(await userIsAdmin())) return;
   if (!confirm("Confirma que o Pix deste pedido foi recebido?")) return;
   try {
-    await updateDoc(doc(db, "orders", id), { paymentStatus: "paid", updatedAt: serverTimestamp() });
-    showToast("Pagamento marcado como confirmado.");
+    const orderRef = doc(db, "orders", id);
+    await runTransaction(db, async transaction => {
+      const orderSnapshot = await transaction.get(orderRef);
+      if (!orderSnapshot.exists()) throw new Error("Pedido não encontrado.");
+      const order = orderSnapshot.data();
+      if (order.paymentStatus === "paid") throw new Error("Este pedido já está marcado como pago.");
+      if (order.shippingFee === null || order.shippingFee === undefined || !Number.isFinite(Number(order.total))) {
+        throw new Error("Defina o frete antes de confirmar o pagamento.");
+      }
+      const pointsToAward = Math.max(0, Math.floor((Number(order.total) || 0) * 10));
+      const loyaltyRef = doc(db, "loyalty", order.userId);
+      const loyaltySnapshot = await transaction.get(loyaltyRef);
+      const currentPoints = loyaltySnapshot.exists() ? Number(loyaltySnapshot.data().points || 0) : 0;
+      transaction.update(orderRef, {
+        paymentStatus: "paid",
+        loyaltyPointsAwarded: true,
+        loyaltyPointsAwardedAmount: pointsToAward,
+        updatedAt: serverTimestamp()
+      });
+      transaction.set(loyaltyRef, {
+        points: currentPoints + pointsToAward,
+        updatedAt: serverTimestamp()
+      }, { merge: true });
+    });
+    showToast("Pagamento confirmado! Os pontos da compra foram adicionados ao cliente.");
   } catch (error) { alert(firebaseMessage(error)); }
 };
 window.deleteOrder = async function (id) {
@@ -2334,6 +2649,7 @@ window.editProduct = function (id) {
   byId("p-name").value = product.name || "";
   byId("p-desc").value = product.description || "";
   byId("p-price").value = product.price ?? "";
+  byId("p-unit-cost").value = product.unitCost ?? "";
   byId("p-cat").value = product.category || "";
   byId("p-colors").value = product.colors || "";
   byId("p-sizes").value = product.sizes || "";
@@ -2356,6 +2672,8 @@ window.saveProduct = async function (event) {
   const name = byId("p-name").value.trim();
   const description = byId("p-desc").value.trim();
   const price = Number(byId("p-price").value);
+  const unitCostRaw = byId("p-unit-cost").value.trim();
+  const unitCost = unitCostRaw === "" ? null : Number(unitCostRaw.replace(",", "."));
   const category = byId("p-cat").value.trim() || "Geral";
   const colors = byId("p-colors").value.trim();
   const sizes = byId("p-sizes").value.trim();
@@ -2364,6 +2682,7 @@ window.saveProduct = async function (event) {
   const shippingWidthCm = Number(byId("p-shipping-width").value);
   const shippingHeightCm = Number(byId("p-shipping-height").value);
   if (!name || !Number.isFinite(price) || price <= 0) { alert("Informe nome e preço válido maior que zero."); return; }
+  if (unitCost !== null && (!Number.isFinite(unitCost) || unitCost < 0)) { alert("Informe um custo estimado válido ou deixe o campo vazio."); return; }
   if (![shippingWeightKg, shippingLengthCm, shippingWidthCm, shippingHeightCm].every(Number.isFinite) || shippingWeightKg <= 0 || shippingLengthCm <= 0 || shippingWidthCm <= 0 || shippingHeightCm <= 0) {
     alert("Informe o peso embalado em kg e as três medidas da embalagem em cm para calcular o frete.");
     return;
@@ -2375,7 +2694,7 @@ window.saveProduct = async function (event) {
     const imageURLs = [];
     for (const item of pendingImages) imageURLs.push(item.file ? await uploadCloudinaryImage(item.file) : item.url);
     const productData = {
-      name, description, price: roundMoney(price), category, colors, sizes,
+      name, description, price: roundMoney(price), unitCost: unitCost === null ? null : roundMoney(unitCost), category, colors, sizes,
       shippingWeightKg, shippingLengthCm, shippingWidthCm, shippingHeightCm,
       isEco: byId("p-eco").checked,
       isHandmade: byId("p-handmade").checked,

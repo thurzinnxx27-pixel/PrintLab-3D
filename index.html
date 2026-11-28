@@ -407,10 +407,19 @@ body.dark-theme .express-box-text { color: #F59E0B; }
 
 /* Botão Dark Mode */
 /* Botão de tema: formato compacto, moderno e confortável no celular */
-.theme-toggle { width:46px; height:46px; border:1px solid var(--border); border-radius:999px; cursor:pointer; color:var(--text); background:var(--bg-soft); display:inline-flex; align-items:center; justify-content:center; font-size:21px; box-shadow:var(--shadow-sm); transition:background-color .18s ease, border-color .18s ease, box-shadow .18s ease; -webkit-tap-highlight-color:transparent; touch-action:manipulation; flex:0 0 auto; }
+.theme-toggle { width:44px; height:44px; border:1px solid var(--border); border-radius:999px; cursor:pointer; color:var(--green-dark); background:var(--bg-soft); display:inline-flex; align-items:center; justify-content:center; box-shadow:var(--shadow-sm); transition:background-color .18s ease, border-color .18s ease, box-shadow .18s ease; -webkit-tap-highlight-color:transparent; touch-action:manipulation; flex:0 0 auto; padding:0; }
+.theme-toggle svg { width:21px; height:21px; display:block; }
 .theme-toggle:hover { background:var(--green-soft); border-color:var(--green); box-shadow:var(--shadow-md); }
-.theme-toggle:active { transform:scale(.96); }
+.theme-toggle:active { background:var(--green-soft); }
 .theme-toggle:focus-visible { outline:3px solid var(--green); outline-offset:3px; }
+body.dark-theme .theme-toggle { color:#F6C85F; background:#202B24; border-color:#385742; }
+body.dark-theme .theme-toggle:hover { background:#2A3C30; border-color:#4C8C61; }
+
+/* O tema é definido no elemento HTML para que a página inteira acompanhe a escolha. */
+html[data-theme="light"] { color-scheme:light; }
+html[data-theme="dark"] { color-scheme:dark; --bg:#121212; --bg-soft:#1A1F26; --text:#FFFFFF; --muted:#A0A6B2; --border:#2A303A; --green-soft:#1E3B2B; --shadow-sm:0 1px 2px rgba(0,0,0,.5); --shadow-md:0 8px 24px rgba(0,0,0,.6); --shadow-lg:0 24px 60px rgba(0,0,0,.8); }
+html[data-theme="light"] body { background-color:#FFFFFF !important; color:#0F1419 !important; }
+html[data-theme="dark"] body { background-color:#121212 !important; color:#FFFFFF !important; }
 
 /* Campo de senha com botão mostrar/ocultar */
 .password-input-wrap { position:relative; width:100%; display:flex; align-items:center; }
@@ -1164,15 +1173,25 @@ window.togglePasswordVisibility = function (inputId, button) {
     : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12Z"/><circle cx="12" cy="12" r="3"/></svg>';
 };
 
-// Tema claro/escuro — atualização imediata e compatível com toque no iPhone.
+// Tema claro/escuro — aplica a escolha no documento inteiro e salva a preferência.
 function applyTheme(theme) {
-  const dark = theme === "dark";
+  const normalizedTheme = theme === "dark" ? "dark" : "light";
+  const dark = normalizedTheme === "dark";
+  const root = document.documentElement;
+  root.setAttribute("data-theme", normalizedTheme);
+  root.style.colorScheme = normalizedTheme;
   document.body.classList.toggle("dark-theme", dark);
-  document.documentElement.style.colorScheme = dark ? "dark" : "light";
+  document.body.style.backgroundColor = dark ? "#121212" : "#FFFFFF";
+  document.body.style.color = dark ? "#FFFFFF" : "#0F1419";
+
   const button = document.getElementById("theme-toggle");
   if (button) {
-    button.textContent = dark ? "☀️" : "🌙";
+    button.innerHTML = dark
+      ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42"/></svg>'
+      : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20.9 13A8.5 8.5 0 0 1 11 3.1 8.7 8.7 0 1 0 20.9 13Z"/></svg>';
     button.setAttribute("aria-label", dark ? "Ativar tema claro" : "Ativar tema escuro");
+    button.setAttribute("aria-pressed", dark ? "true" : "false");
+    button.title = dark ? "Ativar tema claro" : "Ativar tema escuro";
   }
 }
 window.toggleTheme = function (event) {
@@ -1180,15 +1199,20 @@ window.toggleTheme = function (event) {
     event.preventDefault();
     event.stopPropagation();
   }
-  const nextTheme = document.body.classList.contains("dark-theme") ? "light" : "dark";
+  const currentTheme = document.documentElement.getAttribute("data-theme") || (document.body.classList.contains("dark-theme") ? "dark" : "light");
+  const nextTheme = currentTheme === "dark" ? "light" : "dark";
   applyTheme(nextTheme);
   try { localStorage.setItem("pl_theme", nextTheme); }
   catch (error) { console.warn("Não foi possível salvar a preferência de tema neste navegador:", error); }
 };
 function loadTheme() {
   let savedTheme = "light";
-  try { savedTheme = localStorage.getItem("pl_theme") || "light"; }
-  catch (error) { console.warn("Não foi possível ler a preferência de tema neste navegador:", error); }
+  try {
+    const storedTheme = localStorage.getItem("pl_theme");
+    if (storedTheme === "dark" || storedTheme === "light") savedTheme = storedTheme;
+  } catch (error) {
+    console.warn("Não foi possível ler a preferência de tema neste navegador:", error);
+  }
   applyTheme(savedTheme);
 }
 
